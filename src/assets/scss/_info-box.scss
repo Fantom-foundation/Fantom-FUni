@@ -1,0 +1,73 @@
+@import "vars";
+
+.info-box {
+    .balance {
+        h3 {
+            font-size: 28px;
+            margin-top: 0;
+            margin-bottom: 0;
+        }
+
+        .currency {
+            color: $light-gray-color;
+            font-size: 24px;
+            line-height: 1.1;
+        }
+
+        .label.h3 {
+            font-size: 18px;
+            margin-bottom: 0;
+            padding-top: 4px;
+            padding-bottom: 0 !important;
+        }
+    }
+
+    .balances {
+        display: flex;
+        //flex-flow: row wrap;
+        //justify-content: center;
+        margin-left: -16px;
+
+        > * {
+            flex: 1;
+            padding-left: 16px;
+            padding-right: 16px;
+        }
+    }
+}
+
+@include media-max($bp-large) {
+    .info-box {
+        .balance {
+            .currency {
+                line-height: 1;
+            }
+        }
+
+        .actions-box {
+            margin-top: 20px;
+        }
+
+        .label.h3 {
+            text-align: center;
+        }
+
+        .balances {
+            margin-left: 0;
+            flex-flow: row wrap;
+            justify-content: center;
+
+            > * {
+                flex: initial;
+            }
+        }
+    }
+}
+
+@include media-max($bp-small) {
+    .info-box {
+        .total-balance {
+            //padding-top: 16px;
+        }
+    }
+}

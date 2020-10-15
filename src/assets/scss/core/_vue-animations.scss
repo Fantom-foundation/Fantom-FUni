@@ -1,0 +1,44 @@
+$vue-transition-duration: 250ms !default;
+
+@include fade-animation('in-vue', 0, 1);
+@include fade-animation('out-vue', 1, 0);
+@include scale-center-fade-in-animation('vue', 0.75, 1);
+@include scale-center-fade-animation('out-vue', 1, 0.75, 1, 0);
+@include scale-center-fade-animation('out-forward-vue', 1, 1.25, 1, 0);
+@include slide-in-animation('right-vue', 100%, 0);
+@include slide-in-animation('left-vue', -100%, 0);
+@include slide-out-animation('right-vue', 0, 100%);
+@include slide-out-animation('left-vue', 0, -100%);
+
+.fade-enter-active {
+    animation: fade-in-vue $vue-transition-duration cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+}
+.fade-leave-active {
+    animation: fade-out-vue $vue-transition-duration cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+}
+
+.scale-center-enter-active {
+    animation: scale-center-fade-in-vue $vue-transition-duration cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+    //animation-delay: 1000ms;
+}
+.scale-center-leave-active {
+    //animation: scale-in-center $vue-transition-duration cubic-bezier(0.25, 0.46, 0.45, 0.94) both reverse;
+    animation: scale-center-fade-out-vue $vue-transition-duration cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+}
+.scale-center-forward-leave-active {
+    animation: scale-center-fade-out-forward-vue $vue-transition-duration cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+}
+
+.slide-right-enter-active {
+    animation: slide-in-left-vue 320ms cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+}
+.slide-right-leave-active {
+    animation: slide-out-right-vue 320ms cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+}
+
+.slide-left-enter-active {
+    animation: slide-in-right-vue 320ms cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+}
+.slide-left-leave-active {
+    animation: slide-out-left-vue 320ms cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+}

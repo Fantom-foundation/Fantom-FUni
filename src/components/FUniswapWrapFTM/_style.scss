@@ -1,0 +1,24 @@
+@import "../../assets/scss/vars";
+
+.funiswap-wrap-ftm {
+    &__exchange-price {
+        display: flex;
+        align-items: center;
+        margin-top: 16px;
+        padding-left: 16px;
+        padding-right: 16px;
+
+        .defi-label {
+            flex: 1 1 auto;
+            margin-bottom: 0;
+        }
+
+        .value {
+            text-align: right;
+            padding: 0 8px;
+        }
+
+        .swap-price {
+        }
+    }
+}

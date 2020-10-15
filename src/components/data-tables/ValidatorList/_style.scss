@@ -1,0 +1,20 @@
+@import "../../../assets/scss/vars";
+
+.validator-list-dt {
+    .offline {
+        color: var(--f-error-color);
+        //color: #f00;
+        font-weight: bold;
+    }
+
+    .select-validator-mv {
+        padding-top: 16px !important;
+    }
+
+    .validator-img {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        margin-right: 0;
+    }
+}

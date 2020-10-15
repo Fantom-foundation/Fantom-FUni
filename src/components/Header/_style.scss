@@ -1,0 +1,28 @@
+@import "../../assets/scss/vars";
+
+.f-header {
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    padding: 16px;
+    color: #000;
+
+    a, a:visited {
+        --f-link-color: #000;
+    }
+
+    &__logo {
+        margin-right: 12px;
+    }
+
+    .toolbar {
+        margin-left: auto;
+    }
+}
+
+@include media-max($bp-menu) {
+    .f-header {
+        justify-content: space-between;
+    }
+}
+

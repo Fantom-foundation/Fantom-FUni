@@ -1,0 +1,27 @@
+@import "../../assets/scss/vars";
+
+.wallet-list {
+    --f-wallet-list-item-color: #eee;
+    --f-wallet-list-item-hover-color: #ccddff;
+
+    max-width: 300px;
+    margin: 0 auto;
+
+    ul > li {
+        padding: 4px 24px;
+        margin-bottom: 24px;
+        border-radius: $input-border-radius;
+        cursor: pointer;
+        background-color: var(--f-wallet-list-item-color);
+        transition: background-color $transition-length $transition-func;
+
+        &:hover {
+            background-color: var(--f-wallet-list-item-hover-color);
+        }
+
+        .loader {
+            padding-top: 8px;
+            height: 32px;
+        }
+    }
+}

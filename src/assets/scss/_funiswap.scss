@@ -1,0 +1,109 @@
+.funiswap {
+    //--f-funiswap-btn-border-color: #{$grey-color-semi};
+    --f-funiswap-btn-border-color: #f7f8fa;
+    --f-funiswap-btn-border: 1px solid var(--f-funiswap-btn-border-color);
+    --f-funiswap-bottom-box-background-color: #f4f4f4;
+
+    > .f-card {
+        width: 100%;
+        max-width: 440px;
+        //max-width: 480px;
+        margin: 0 auto;
+    }
+
+    &__box {
+        padding: 12px 16px;
+        border-radius: 20px;
+        border: 1px solid var(--f-funiswap-btn-border-color);
+    }
+
+    &__bottom-box {
+        //display: none;
+        width: 100%;
+        max-width: 400px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: var(--f-funiswap-bottom-box-background-color);
+        border-radius: 0 0 16px 16px;
+    }
+
+    &__token {
+        &__sign {
+            opacity: 0.5;
+        }
+
+        &__balance {
+            display: flex;
+            flex-wrap: nowrap;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        &__body {
+            display: inline-flex;
+            flex-wrap: nowrap;
+            align-items: center;
+            margin-top: 16px;
+            font-size: 24px;
+
+            input.text-input {
+                flex: 1 1 auto;
+                width: 100%;
+                color: inherit;
+                font-weight: bold;
+
+                -moz-appearance: textfield;
+
+                &::-webkit-outer-spin-button,
+                &::-webkit-inner-spin-button {
+                    -webkit-appearance: none;
+                    margin: 0;
+                }
+
+                &.invalid {
+                    color: red;
+                }
+            }
+
+            .f-crypto-symbol .img {
+                margin-top: -4px;
+            }
+
+            .max-amount {
+                margin-right: 8px;
+            }
+        }
+    }
+
+    &__select-token-btn {
+        &.small {
+            padding-right: 0;
+        }
+
+        svg {
+            margin-right: 0;
+            margin-left: 8px;
+        }
+    }
+
+    &__swap-cont {
+        margin: 8px 0;
+        text-align: center;
+    }
+
+    &__submit-cont {
+        margin-top: 16px;
+
+        .btn {
+            font-size: 21px;
+            width: 100%;
+            min-height: 64px;
+        }
+    }
+
+    .uniswap-f-info {
+        position: relative;
+        top: -2px;
+        right: -2px;
+    }
+}

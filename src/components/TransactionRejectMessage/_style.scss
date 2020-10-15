@@ -1,0 +1,19 @@
+@import "../../assets/scss/vars";
+
+.transaction-reject-message {
+    margin: 0 auto;
+    max-width: 600px;
+    text-align: center;
+
+    h2, h3 {
+        text-align: center;
+    }
+
+    .reject-icon {
+        color: var(--f-error-color);
+    }
+
+    .continue-to {
+        margin-top: 32px;
+    }
+}

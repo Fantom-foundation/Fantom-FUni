@@ -1,0 +1,51 @@
+{
+    "no_items": "No items.",
+    "loading": "Loading...",
+    "from": "From",
+    "to": "To",
+    "block": "Block",
+    "fee": "Fee",
+    "amount": "Amount",
+    "time": "Time",
+    "timestamp": "Timestamp",
+    "success": "Success",
+    "error": "Error",
+    "pending": "Pending",
+    "transactions": "Transactions",
+    "validators": "Validators",
+    "back_to_home": "Back to home",
+    "created_on": "Created On",
+    "address": "Address",
+    "name": "Name",
+
+    "navigation": [
+        {
+            "url": "/",
+            "title": "Home"
+        }
+    ],
+
+    "view_validator_list": {
+        "title": "Staking",
+        "validators": "@:validators",
+        "id": "ID",
+        "logo": "Logo",
+        "name": "@:name",
+        "address": "@:address",
+        "poi": "Proof of Importance",
+        "created_on": "@:created_on",
+        "self_staked": "Self-Staked (FTM)",
+        "delegated": "Delegated (FTM)",
+        "total_staked": "Total Staked (FTM)",
+        "link": "Link",
+        "offline": "Offline",
+        "unknown": "Unknown",
+        "flagged": "Flagged"
+    },
+
+    "view_not_found": {
+        "title": "Page not found :(",
+        "text": "Looks like you've followed a broken link or entered a URL that doesn't exist on this site.",
+        "link_title": "@:back_to_home"
+    }
+}

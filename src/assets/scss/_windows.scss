@@ -1,0 +1,99 @@
+.f-window {
+    &.colored-header {
+        header {
+            color: #fff;
+        }
+
+        .body {
+            padding-top: 24px;
+        }
+    }
+
+    &.ledger-accounts-color {
+        header {
+            background-color: $ledger-accounts-color;
+        }
+    }
+
+    &.create-account-color {
+        header {
+            background-color: $create-account-color;
+        }
+    }
+
+    &.restore-account-color {
+        header {
+            background-color: $restore-account-color;
+        }
+    }
+
+    &.c-footer {
+        .footer {
+            padding-top: 32px;
+            text-align: center;
+        }
+    }
+
+    &.c-main {
+        .main {
+            min-height: 274px;
+        }
+    }
+
+    &.double-body-padding {
+        .body {
+            padding: 0 40px 40px 40px;
+        }
+
+        &:not(.popover).colored-header {
+            .body {
+                padding-top: var(--f-window-padding-with-header) !important;
+            }
+        }
+    }
+
+    .steps {
+        padding-left: 24px;
+
+        .count {
+            opacity: 0.6;
+        }
+    }
+
+    &.popover.light {
+        --f-window-popover-color: var(--f-doc-color);
+        --f-window-popover-background: #fff;
+
+        &.popover-menu {
+            header {
+                padding: 0;
+            }
+
+            &.no-title {
+                .close-btn {
+                    position: relative;
+                    top: 8px;
+                    right: 8px;
+                }
+            }
+        }
+    }
+
+    .inst-content {
+        padding-top: 8px;
+        line-height: 2;
+    }
+
+    &:not(.popover).with-header {
+        .body {
+            padding: var(--f-window-body-padding-with-header) !important;
+        }
+
+        &.normal-padding {
+            .body {
+                --f-window-padding-with-header: 24px;
+                --f-window-body-padding-with-header: 0 var(--f-window-padding-with-header) var(--f-window-padding-with-header) var(--f-window-padding-with-header);
+            }
+        }
+    }
+}

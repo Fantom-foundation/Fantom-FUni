@@ -1,0 +1,26 @@
+@import "../../assets/scss/vars";
+
+.transaction-success-message {
+    margin: 0 auto;
+    max-width: 600px;
+    text-align: center;
+
+    &.loading {
+        min-height: 346px;
+        @include center-v;
+    }
+
+    h2, h3 {
+        text-align: center;
+        margin-bottom: 32px;
+    }
+
+    .success-icon, .error-icon {
+        color: var(--f-success-color);
+        margin-bottom: 32px;
+    }
+
+    .error-icon {
+        color: var(--f-error-color);
+    }
+}

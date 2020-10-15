@@ -1,0 +1,10 @@
+form {
+    .inp, textarea, select, .f-input, .f-select, .f-password-field, .form-field {
+        width: 100%;
+        min-width: 0;
+    }
+}
+
+@include flexbox-cols('form:not(.normal-cols-padding) ') {
+    padding: $grid-layout-gutter-width-half;
+}

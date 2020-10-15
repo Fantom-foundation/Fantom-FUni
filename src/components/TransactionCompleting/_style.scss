@@ -1,0 +1,15 @@
+@import "../../assets/scss/vars";
+
+.transaction-completing {
+    margin: 0 auto;
+    max-width: 640px;
+    text-align: center;
+
+    h2, h3 {
+        text-align: center;
+    }
+
+    .success-icon {
+        color: var(--f-success-color);
+    }
+}

@@ -1,0 +1,16 @@
+.f-auto-resize-input {
+    //display: inline-block;
+    max-width: fit-content;
+
+    input {
+        width: 100%;
+    }
+
+    .hidden-twin {
+        position: fixed;
+        top: -1000px;
+        left: -1000px;
+        visibility: hidden;
+        white-space: pre;
+    }
+}

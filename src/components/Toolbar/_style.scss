@@ -1,0 +1,36 @@
+.toolbar {
+    &__items-wrap  {
+        display: flex;
+        align-items: center;
+
+        li {
+            padding-left: 4px;
+        }
+    }
+
+    &__address {
+        max-width: 120px;
+    }
+
+    .account-name {
+        &.has-name .an-address {
+            color: inherit;
+            font-size: inherit;
+        }
+
+        .metamask-account-active {
+            top: 6px;
+            left: -14px;
+        }
+    }
+}
+
+.f-footer {
+    .toolbar {
+        &__items-wrap {
+            li:first-child {
+                flex: 1;
+            }
+        }
+    }
+}

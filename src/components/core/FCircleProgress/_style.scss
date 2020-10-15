@@ -1,0 +1,46 @@
+@import 'custom-properties';
+
+.f-circle-progress {
+    display: inline-block;
+    width: var(--f-circle-progress-width);
+    height: var(--f-circle-progress-height);
+
+    svg {
+        width: 100%;
+        height: 100%;
+
+        /*
+        circle {
+            r: calc(50 - var(--f-circle-progress-stroke-width) * 0.5);
+        }
+        */
+    }
+
+    .circle {
+        stroke: var(--f-circle-progress-circle-color);
+        stroke-linecap: var(--f-circle-progress-stroke-linecap);
+    }
+
+    .bg-circle {
+        stroke: var(--f-circle-progress-bg-circle-color);
+        stroke-linecap: var(--f-circle-progress-stroke-linecap);
+    }
+
+    .text {
+        fill: var(--f-circle-progress-text-color);
+        font-size: var(--f-circle-progress-text-font-size);
+        font-weight: var(--f-circle-progress-text-font-weight);
+        letter-spacing: -3px;
+    }
+
+    .text-percentage {
+        font-size: var(--f-circle-progress-text-percentage-font-size);
+    }
+
+    &.animate {
+        .circle {
+            transition: stroke-dashoffset var(--f-circle-progress-transition-duration)
+                var(--f-circle-progress-transition-func);
+        }
+    }
+}

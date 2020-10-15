@@ -1,0 +1,35 @@
+.f-transaction-status {
+    display: inline-block;
+    padding: 4px 16px;
+    color: #fff;
+    background-color: #F8782A;
+    border-radius: 16px;
+
+    &.success {
+        background-color: var(--f-success-color);
+    }
+
+    &.error {
+        background-color: var(--f-error-color);
+    }
+
+    &.pending {
+        color: #2B3954;
+    }
+
+    &.light {
+        background-color: transparent;
+        border-radius: 0;
+        color: #2B3954;
+        font-weight: bold;
+        padding: initial;
+
+        &.success {
+            color: var(--f-success-color);
+        }
+
+        &.error {
+            color: var(--f-error-color);
+        }
+    }
+}

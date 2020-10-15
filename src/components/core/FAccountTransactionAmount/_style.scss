@@ -1,0 +1,6 @@
+.f-account-t-amount {
+    font-weight: bold;
+    &.received {
+        color: var(--f-success-color);
+    }
+}

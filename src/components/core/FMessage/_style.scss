@@ -1,0 +1,39 @@
+@import "custom-properties";
+
+.f-message {
+    display: flex;
+    align-items: center;
+    align-content: center;
+
+    &.success {
+        color: var(--f-message-success-color);
+    }
+
+    &.info {
+        color: var(--f-message-info-color);
+    }
+
+    &.warning {
+        color: var(--f-message-warning-color);
+    }
+
+    &.error {
+        color: var(--f-message-error-color);
+    }
+
+    .f-message-body {
+        width: 100%;
+    }
+
+    &.prefix-slot, &.with-icon {
+        .f-message-body {
+            padding-left: 8px;
+        }
+    }
+
+    &.suffix-slot {
+        .f-message-body {
+            padding-right: 8px;
+        }
+    }
+}

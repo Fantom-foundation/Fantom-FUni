@@ -1,0 +1,64 @@
+@import "vars";
+
+.actions-box {
+    --f-actions-box-color: var(--f-primary-color);
+    --f-actions-box-btn-background-color: #fff;
+    --f-actions-box-btn-hover-background-color: #ccddff;
+
+    ul {
+        white-space: nowrap;
+
+        li {
+            display: inline-block;
+            //padding-left: 8px;
+
+            .action {
+                display: inline-block;
+                text-align: center;
+                min-width: 80px;
+                color: var(--f-actions-box-color);
+                cursor: pointer;
+
+                &:hover {
+                    text-decoration: none;
+                }
+
+                .link-label {
+                    display: block;
+                    font-size: 14px;
+                    padding-top: 8px;
+                    max-width: 80px;
+                    word-break: break-word;
+                    white-space: normal !important;
+                    line-height: 1.1;
+                }
+
+                &.router-link-exact-active {
+                    .btn {
+                        color: var(--f-actions-box-color);
+                        border-color: var(--f-actions-box-color);
+                        background-color: var(--f-actions-box-btn-background-color);
+
+                        &:hover {
+                            color: var(--f-actions-box-color) !important;
+                            background-color: var(--f-actions-box-btn-hover-background-color) !important;
+                            border-color: var(--f-actions-box-color);
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@include media-max($bp-small) {
+    .actions-box {
+        ul {
+            li {
+                a {
+                    min-width: 74px;
+                }
+            }
+        }
+    }
+}

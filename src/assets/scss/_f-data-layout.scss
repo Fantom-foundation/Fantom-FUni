@@ -1,0 +1,27 @@
+.f-data-layout {
+    //color: #000;
+
+    .row > * {
+        font-weight: bold;
+    }
+
+    .f-row-label {
+        opacity: 0.85;
+        font-weight: normal;
+    }
+
+    @include flexbox-rows() {
+        margin-right: $f-data-layout-cols-padding-neg !important;
+        margin-left: $f-data-layout-cols-padding-neg !important;;
+    }
+
+    @include flexbox-rows('&') {
+        margin-right: $f-data-layout-cols-padding-neg !important;
+        margin-left: $f-data-layout-cols-padding-neg !important;;
+    }
+
+    @include flexbox-cols() {
+        //padding: 0 $grid-layout-gutter-width-2x $grid-layout-gutter-width-4x;
+        padding: $f-data-layout-cols-padding;
+    }
+}

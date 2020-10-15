@@ -1,0 +1,33 @@
+@import "../../assets/scss/vars";
+
+.defi-token-list {
+    --f-defi-token-list-item-color: #eee;
+    --f-defi-token-list-item-hover-color: #ccddff;
+
+    ul > li {
+        padding: 4px 24px 4px 16px;
+        margin-bottom: 8px;
+        font-weight: bold;
+        border-radius: $input-border-radius;
+        transition: background-color $transition-length $transition-func;
+        background-color: var(--f-defi-token-list-item-color);
+
+        &:not(.disabled) {
+            cursor: pointer;
+
+            &:hover {
+                background-color: var(--f-defi-token-list-item-hover-color);
+            }
+        }
+
+        &.disabled {
+            opacity: 0.3;
+        }
+
+        .available-balance {
+            color: $light-gray-color;
+            font-weight: normal;
+            text-align: right;
+        }
+    }
+}

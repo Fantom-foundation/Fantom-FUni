@@ -1,0 +1,88 @@
+{
+    "name": "fantom-funi",
+    "version": "0.1.0",
+    "scripts": {
+        "serve": "vue-cli-service serve",
+        "serve:chrome-extension:app": "vue-cli-service serve --mode chrome-extension-development",
+        "build": "vue-cli-service build",
+        "lint": "vue-cli-service lint",
+        "format:prettier": "prettier \"**/*.vue\" --write --ignore-path .gitignore",
+        "i18n:report": "vue-cli-service i18n:report --src './src/**/*.?(js|vue)' --locales './src/locales/**/*.json'"
+    },
+    "dependencies": {
+        "@metamask/detect-provider": "^1.1.0",
+        "@yzfe/vue-svgicon-loader": "^1.0.0-alpha.0",
+        "apollo-cache-inmemory": "^1.6.6",
+        "apollo-client": "^2.6.8",
+        "apollo-link": "^1.2.14",
+        "apollo-link-error": "^1.1.13",
+        "apollo-link-http": "^1.5.17",
+        "apollo-link-retry": "^2.2.16",
+        "apollo-link-ws": "^1.0.20",
+        "copy-to-clipboard": "^3.3.1",
+        "core-js": "^3.6.5",
+        "dayjs": "^1.8.28",
+        "eslint": "^6.8.0",
+        "fantom-ledgerjs": "file:Fantom_LedgerJS",
+        "focus-visible": "^5.1.0",
+        "graphql": "^14.7.0",
+        "graphql-tag": "^2.11.0",
+        "register-service-worker": "^1.6.2",
+        "shortid": "^2.2.15",
+        "subscriptions-transport-ws": "^0.9.16",
+        "vue": "^2.6.11",
+        "vue-apollo": "^3.0.4",
+        "vue-async-computed": "^3.8.2",
+        "vue-i18n": "^8.18.2",
+        "vue-observe-visibility": "^0.4.6",
+        "vue-qrcode-component": "^2.1.1",
+        "vue-router": "^3.3.4",
+        "vue-spinner": "^1.0.4",
+        "vue-svgicon": "^4.0.0-alpha.3",
+        "vue-timeago": "^5.1.2",
+        "vuex": "^3.4.0",
+        "vuex-persist": "^2.2.0",
+        "web3": "^1.2.11"
+    },
+    "devDependencies": {
+        "@vue/cli-plugin-babel": "~4.4.6",
+        "@vue/cli-plugin-eslint": "~4.4.6",
+        "@vue/cli-plugin-pwa": "^4.4.6",
+        "@vue/cli-service": "~4.4.6",
+        "babel-eslint": "^10.0.3",
+        "eslint-config-prettier": "^6.10.1",
+        "eslint-plugin-prettier": "^3.1.4",
+        "eslint-plugin-vue": "^6.1.2",
+        "prettier": "^2.0.5",
+        "resize-observer-polyfill": "^1.5.1",
+        "sass": "^1.25.0",
+        "sass-loader": "^8.0.2",
+        "vue-cli-plugin-i18n": "~0.6.1",
+        "vue-template-compiler": "^2.6.11"
+    },
+    "eslintConfig": {
+        "root": true,
+        "env": {
+            "node": true
+        },
+        "extends": [
+            "plugin:vue/recommended",
+            "eslint:recommended",
+            "prettier/vue",
+            "plugin:prettier/recommended"
+        ],
+        "parserOptions": {
+            "parser": "babel-eslint"
+        },
+        "rules": {}
+    },
+    "browserslist": {
+        "production": [
+            "> 1%",
+            "last 2 versions"
+        ],
+        "development": [
+            "last 1 Chrome versions"
+        ]
+    }
+}

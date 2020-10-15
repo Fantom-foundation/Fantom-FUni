@@ -1,0 +1,71 @@
+@import "../../assets/scss/vars";
+
+.account-name {
+    position: relative;
+    display: block;
+    word-break: break-word;
+    font-weight: normal;
+    //max-width: 100%;
+    //overflow: hidden;
+
+    /*
+    > * {
+        flex: 1 0 100%;
+    }
+    */
+
+    text-align: left;
+
+    .an-name, > svg {
+        //min-width: 100%;
+        color: var(--f-primary-color);
+        //padding-right: 16px;
+        //white-space: nowrap;
+        //@include zpe-three-dots;
+    }
+
+    .an-address {
+        white-space: nowrap;
+    }
+
+    &.an-align-right {
+        text-align: right;
+    }
+
+    &.has-name {
+        a, a:visited {
+            color: $light-gray-color;
+        }
+
+        .an-address {
+            color: $light-gray-color;
+            font-weight: normal;
+            font-size: 0.75em;
+            margin-top: 4px;
+        }
+    }
+
+    .metamask-account-active {
+        position: absolute;
+        top: 4px;
+        left: -18px;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        background-color: var(--f-success-color);
+    }
+}
+
+@include media-max($bp-medium) {
+    .account-name {
+        &.an-align-right {
+            text-align: left;
+        }
+
+        &.has-name {
+            .an-address {
+                //display: none;
+            }
+        }
+    }
+}

@@ -1,0 +1,19 @@
+@import "../../assets/scss/vars";
+
+.view-home {
+    position: relative;
+    //padding-top: $f-header-height;
+
+    .main {
+        position: relative;
+        z-index: 1;
+    }
+}
+
+@include media-max($bp-small) {
+    .view-home {
+        &::before {
+            height: 350px;
+        }
+    }
+}

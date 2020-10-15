@@ -1,0 +1,37 @@
+@import "../../assets/scss/vars";
+
+.f-footer {
+    display: none;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    z-index: 2;
+    padding: 16px;
+    background-color: #fff;
+    border-radius: 12px 12px 0 0;
+
+    .narrow-container {
+        padding-top: 8px;
+        padding-bottom: 8px;
+        height: 100%;
+
+        > .row {
+            height: 100%;
+        }
+    }
+
+    @include links() {
+        transition: color $transition-length ease;
+    }
+
+    a:not(.btn):hover {
+        /*color: #fff;*/
+        text-decoration: none;
+    }
+}
+
+@include media-max($bp-menu) {
+    .f-footer {
+        display: block;
+    }
+}

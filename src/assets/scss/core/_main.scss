@@ -1,0 +1,43 @@
+html {
+    font-size: $font-size;
+    font-family: $font-family;
+    background-color: var(--f-doc-background-color);
+    line-height: $line-height;
+}
+
+body {
+    color: var(--f-doc-color);
+    font-size: $fs-body;
+    background-color: var(--f-doc-background-color);
+}
+
+@include links() {
+    color: var(--f-link-color);
+}
+
+p {
+    //line-height: inherit;
+    padding: $p-padding;
+
+    &:last-child {
+        padding-bottom: 0;
+    }
+}
+
+*[hidden] {
+    display: none;
+}
+
+/*
+  This will hide the focus indicator if the element receives focus via the mouse,
+  but it will still show up on keyboard focus.
+*/
+.js-focus-visible :focus:not(.focus-visible) {
+    outline: none;
+}
+
+/*
+.js-focus-visible :focus.focus-visible {
+    outline: 1px solid red;
+}
+*/

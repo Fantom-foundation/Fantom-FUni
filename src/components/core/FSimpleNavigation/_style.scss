@@ -1,0 +1,45 @@
+@import "../variables";
+@import "custom-properties";
+
+.f-simple-navigation {
+    display: inline-block;
+
+    nav {
+        ul {
+            text-align: right;
+            li {
+                display: inline-block;
+                margin-left: 4px;
+
+                @include links() {
+                    color: var(--f-simple-navigation-link-color);
+                    font-weight: bold;
+                    letter-spacing: normal;
+                    display: inline-block;
+                    padding: var(--f-simple-navigation-link-padding);
+                    text-decoration: none;
+                    transition: all $transition-length ease;
+                    border-radius: $border-radius;
+
+                    &:not(.disabled) {
+                        &.router-link-active, &:hover {
+                            color: var(--f-simple-navigation-link-hover-color);
+                            text-decoration: none;
+                        }
+                    }
+
+                    &.disabled {
+                        cursor: initial;
+                        opacity: 0.5;
+                    }
+                }
+            }
+        }
+    }
+}
+
+@include media-max($bp-menu) {
+    .f-simple-navigation {
+        --f-simple-navigation-link-padding: 0 6px;
+    }
+}

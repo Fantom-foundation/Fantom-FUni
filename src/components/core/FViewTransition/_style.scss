@@ -1,0 +1,17 @@
+.view-transition {
+    &.animation-container {
+        &.children-absolute {
+            position: relative;
+
+            > *[class*="-enter-active"], > *[class*="-leave-active"] {
+                position: absolute;
+                left: 0;
+                width: 100%;
+            }
+        }
+    }
+}
+
+.view-transition-on {
+    overflow-x: hidden;
+}

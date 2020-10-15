@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="45px" height="53px" viewBox="0 0 45 53" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>download</title>
+    <g id="icons" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" stroke-linecap="round">
+        <g id="download" transform="translate(2.530000, 2.450000)" stroke="#0B1823" stroke-width="3">
+            <path d="M7.91,36 L6.66,36 C3,36 0,33.3 0,30 L0,6 C0,2.7 3,0 6.66,0 L33.33,0 C37,0 40,2.7 40,6 L40,30 C40,33.3 37,36 33.33,36 L31.64,36" id="Path" stroke-linejoin="round"></path>
+            <path d="M20.03,31.49 L20.03,47.49 M20.03,47.62 L12.47,40.11 M20.04,47.62 L27.55,40.05" id="Shape"></path>
+        </g>
+    </g>
+</svg>
