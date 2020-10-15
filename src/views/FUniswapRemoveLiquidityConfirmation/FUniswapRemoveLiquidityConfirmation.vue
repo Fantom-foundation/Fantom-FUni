@@ -179,6 +179,7 @@ export default {
             let txToSign;
             const web3 = new Web3();
             const { slippageTolerance } = params;
+            const maxLiquidity = params.currLiquidity === 100;
 
             if (!fromToken || !toToken) {
                 return;
@@ -198,7 +199,8 @@ export default {
                     web3,
                     contractAddress,
                     params.pair.pairAddress,
-                    Web3.utils.toHex($defi.shiftDecPointRight(liquidity.toString(), 18))
+                    Web3.utils.toHex($defi.shiftDecPointRight((liquidity * (1 + slippageTolerance)).toString(), 18))
+                    // Web3.utils.toHex($defi.shiftDecPointRight(liquidity.toString(), 18))
                 );
             } else {
                 let amounts = [params.fromTokenLiquidity, params.toTokenLiquidity];
@@ -215,7 +217,10 @@ export default {
                     contractAddress,
                     fromToken.address,
                     toToken.address,
-                    Web3.utils.toHex($defi.shiftDecPointRight(liquidity.toString(), 18)),
+                    maxLiquidity
+                        ? params.pair.shareOf
+                        : Web3.utils.toHex($defi.shiftDecPointRight(liquidity.toString(), 18)),
+                    // Web3.utils.toHex($defi.shiftDecPointRight(liquidity.toString(), 18)),
                     amounts[0],
                     amounts[1],
                     this.currentAccount.address,
