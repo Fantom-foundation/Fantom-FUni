@@ -174,22 +174,6 @@ export default {
 
             return dPair.pairAddress ? parseInt(dPair.shareOf, 16) / parseInt(dPair.totalSupply, 16) : 0;
         },
-
-        fromTokenBalance() {
-            const { fromToken } = this;
-            let balance =
-                this.$defi.fromTokenValue(fromToken.availableBalance, fromToken) - (fromToken.symbol === 'FTM' ? 2 : 0);
-
-            if (balance < 0) {
-                balance = 0;
-            }
-
-            return balance;
-        },
-
-        toTokenBalance() {
-            return this.$defi.fromTokenValue(this.toToken.availableBalance, this.toToken);
-        },
     },
 
     watch: {
@@ -235,20 +219,6 @@ export default {
 
                 this.setTokenPrices();
             }
-        },
-
-        async getUniswapPair() {
-            const addressA = this.fromToken.address;
-            const addressB = this.toToken.address;
-
-            if (addressA && addressB) {
-                return await this.$defi.fetchUniswapPairs(this.currentAccount ? this.currentAccount.address : '', [
-                    addressA,
-                    addressB,
-                ]);
-            }
-
-            return {};
         },
 
         async setTokenPrices() {

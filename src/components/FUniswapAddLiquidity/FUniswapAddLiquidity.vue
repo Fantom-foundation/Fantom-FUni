@@ -233,7 +233,7 @@ export default {
             if (dPair.pairAddress && dPair.shareOf) {
                 const share = parseInt(dPair.shareOf, 16) / parseInt(dPair.totalSupply, 16);
 
-                return `${(share * 100).toFixed(3)} %`;
+                return `${(share * 100).toFixed(3)}%`;
             }
 
             return '-';
@@ -362,10 +362,17 @@ export default {
             const addressB = this.toToken.address;
 
             if (addressA && addressB) {
-                return await this.$defi.fetchUniswapPairs(this.currentAccount ? this.currentAccount.address : '', '', [
-                    addressA,
-                    addressB,
-                ]);
+                const address = this.currentAccount ? this.currentAccount.address : '';
+                let uniswapPairs = await this.$defi.fetchUniswapPairs(address, '', [addressA, addressB]);
+
+                if (uniswapPairs.pairAddress) {
+                    uniswapPairs = await this.$defi.fetchUniswapPairs(address, uniswapPairs.pairAddress, [
+                        addressA,
+                        addressB,
+                    ]);
+                }
+
+                return uniswapPairs;
             }
 
             return {};
