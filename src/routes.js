@@ -14,14 +14,13 @@ import TransactionRejectMessageView from '@/views/TransactionRejectMessageView/T
 import WrapFTM from '@/views/WrapFTM/WrapFTM.vue';
 import FUniswapWrapFTM from '@/components/FUniswapWrapFTM/FUniswapWrapFTM.vue';
 import FUniswapWrapFTMConfirmation from '@/views/FUniswapWrapFTMConfirmation/FUniswapWrapFTMConfirmation.vue';
-import appConfig from '../app.config.js';
 
 export const routes = [
     {
         name: 'home',
         path: '/',
         component: Home,
-        redirect: { name: appConfig.tmpSwapEnabled ? 'funiswap-swap' : 'funiswap-add-liquidity' },
+        redirect: { name: 'funiswap-swap' },
         children: [
             {
                 name: 'swap',
@@ -199,7 +198,3 @@ export const routes = [
         component: NotFound,
     },
 ];
-
-if (!appConfig.tmpSwapEnabled) {
-    routes[0].children.shift();
-}

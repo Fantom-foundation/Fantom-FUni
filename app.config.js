@@ -54,8 +54,6 @@ const appConfig = {
     },
     // tmp
     tmpWFTM: true,
-    // tmp
-    tmpSwapEnabled: false,
     //
     useTestnet: false,
     // testnet config
@@ -102,7 +100,6 @@ if (appConfig.useTestnet) {
     appConfig.apollo.providers = appConfig.testnet.providers;
     appConfig.explorerUrl = appConfig.testnet.explorerUrl;
     appConfig.chainId = appConfig.testnet.chainId;
-    appConfig.tmpSwapEnabled = true;
 }
 
 module.exports = appConfig;

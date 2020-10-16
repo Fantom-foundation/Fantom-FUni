@@ -11,7 +11,6 @@
 <script>
 import FSimpleNavigation from '@/components/core/FSimpleNavigation/FSimpleNavigation.vue';
 import Toolbar from '@/components/Toolbar/Toolbar.vue';
-import appConfig from '../../../app.config.js';
 
 /**
  * Renderes header and takes care of navigation.
@@ -62,12 +61,6 @@ export default {
 
             return menuMobileBreakpoint && menuMobileBreakpoint.matches;
         },
-    },
-
-    created() {
-        if (!appConfig.tmpSwapEnabled) {
-            this.navigation.shift();
-        }
     },
 };
 </script>
