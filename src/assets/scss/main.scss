@@ -254,6 +254,23 @@ form {
     }
 }
 
+.defi-buttons {
+    padding-top: 48px;
+    text-align: center;
+
+    > .btn {
+        min-width: 200px;
+    }
+}
+
+.defi-label {
+    font-family: $font-family-proxima;
+    color: $light-gray-color;
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 2px;
+}
+
 .f-window {
     .form-buttons {
         padding-bottom: 8px;

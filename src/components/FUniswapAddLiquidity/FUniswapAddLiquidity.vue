@@ -307,7 +307,21 @@ export default {
                         this.setTokenPrices();
                     }
 
-                    this.setToValue();
+                    this.toValue_ = this.convertFrom2To(this.fromValue_);
+
+                    this.updateInputColor(this.fromValue_);
+                    this.updateInputColor(this.toValue_, true);
+                    this.updateSubmitLabel();
+
+                    this.setPrices();
+
+                    const cValue = this.correctToInputValue(this.toValue_);
+                    if (this.toValue_ > cValue) {
+                        this.toValue = cValue;
+                    }
+
+                    this.setToInputValue(this.correctToInputValue(this.toValue_));
+                    this.setFromInputValue(this.fromValue_);
                 }
             }
         },
@@ -392,15 +406,13 @@ export default {
 
         swapTokens() {
             const hToken = this.fromToken;
-            const hValue = this.fromValue;
+            const hValue = this.fromValue_;
 
             this.fromToken = this.toToken;
             this.toToken = hToken;
 
-            this.fromValue = this.toValue || '';
-            this.toValue = hValue || '';
-
-            this.fromValue = this.correctFromInputValue(this.fromValue) || '';
+            this.fromValue = this.correctFromInputValue(this.toValue_) || '';
+            this.toValue = this.correctToInputValue(hValue) || '';
 
             this.setFromInputValue(this.fromValue);
             this.setToInputValue(this.toValue);
@@ -476,18 +488,6 @@ export default {
             });
         },
 
-        setToValue() {
-            const value = this.$refs.fromInput.value;
-
-            if (value !== '') {
-                this.toValue = this.convertFrom2To(this.$refs.fromInput.value);
-                this.setToInputValue(this.toValue);
-            }
-
-            this.updateSubmitLabel();
-            this.setPrices();
-        },
-
         setPrices() {
             this.toPerFromPrice = this.convertFrom2To(1).toFixed(4);
             this.fromPerToPrice = this.convertTo2From(1).toFixed(4);
@@ -536,8 +536,16 @@ export default {
 
             if (toValue > this.toTokenBalance) {
                 this.toValue = this.toTokenBalance;
+
+                defer(() => {
+                    this.setToInputValue(this.toValue_);
+                });
             } else {
                 this.fromValue = fromValue;
+
+                defer(() => {
+                    this.setFromInputValue(this.fromValue_);
+                });
             }
         },
 
@@ -547,8 +555,16 @@ export default {
 
             if (fromValue > this.fromTokenBalance) {
                 this.fromValue = this.fromTokenBalance;
+
+                defer(() => {
+                    this.setFromInputValue(this.fromValue_);
+                });
             } else {
                 this.toValue = toValue;
+
+                defer(() => {
+                    this.setToInputValue(this.toValue_);
+                });
             }
         },
 
@@ -596,6 +612,10 @@ export default {
                 this.toValue = this.toTokenBalance;
             } else {
                 this.fromValue = cValue;
+
+                defer(() => {
+                    this.setFromInputValue(this.fromValue_);
+                });
             }
         },
 
@@ -610,6 +630,10 @@ export default {
                 this.fromValue = this.fromTokenBalance;
             } else {
                 this.toValue = cValue;
+
+                defer(() => {
+                    this.setToInputValue(this.toValue_);
+                });
             }
         },
 
