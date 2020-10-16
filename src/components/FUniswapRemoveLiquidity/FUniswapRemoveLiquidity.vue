@@ -57,10 +57,9 @@
             </div>
         </f-card>
 
-        <!--
         <div class="funiswap__bottom-box">
+            <f-uniswap-pair-liquidity-info :pair="dPair" :from-token="fromToken" :to-token="toToken" />
         </div>
-        -->
     </div>
 </template>
 
@@ -71,11 +70,13 @@ import { mapGetters } from 'vuex';
 import FTokenValue from '@/components/core/FTokenValue/FTokenValue.vue';
 import FSlider from '@/components/core/FSlider/FSlider.vue';
 import FCryptoSymbol from '@/components/core/FCryptoSymbol/FCryptoSymbol.vue';
+import FUniswapPairLiquidityInfo from '@/components/FUniswapPairLiquidityInfo/FUniswapPairLiquidityInfo.vue';
+import { formatNumberByLocale } from '@/filters.js';
 
 export default {
     name: 'FUniswapRemoveLiquidity',
 
-    components: { FCryptoSymbol, FSlider, FTokenValue, FCard },
+    components: { FUniswapPairLiquidityInfo, FCryptoSymbol, FSlider, FTokenValue, FCard },
 
     props: {
         pair: {
@@ -133,7 +134,10 @@ export default {
             const { fromTokenLiquidity } = this;
 
             if (fromTokenLiquidity > 0) {
-                return fromTokenLiquidity.toFixed(this.$defi.getTokenDecimals(this.fromToken) + this.addDeciamals);
+                return formatNumberByLocale(
+                    fromTokenLiquidity,
+                    this.$defi.getTokenDecimals(this.fromToken) + this.addDeciamals
+                );
             }
 
             return '-';
@@ -159,7 +163,10 @@ export default {
             const { toTokenLiquidity } = this;
 
             if (toTokenLiquidity > 0) {
-                return toTokenLiquidity.toFixed(this.$defi.getTokenDecimals(this.toToken) + this.addDeciamals);
+                return formatNumberByLocale(
+                    toTokenLiquidity,
+                    this.$defi.getTokenDecimals(this.toToken) + this.addDeciamals
+                );
             }
 
             return '-';

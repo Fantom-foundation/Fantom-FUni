@@ -1,0 +1,10 @@
+.funiswap-pair-liquidity-info {
+    &__position {
+        display: flex;
+        align-items: center;
+
+        > span {
+            padding-right: 8px;
+        }
+    }
+}

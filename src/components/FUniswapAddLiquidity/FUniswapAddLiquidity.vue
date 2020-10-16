@@ -125,8 +125,11 @@
         </f-card>
 
         <div class="funiswap__bottom-box">
-            By adding liquidity you'll earn 0.3% of all trades on this pair proportional to your share of the pool. Fees
-            are added to the pool, accrue in real time and can be claimed by withdrawing your liquidity.
+            <template v-if="!dPair.pairAddress">
+                By adding liquidity you'll earn 0.3% of all trades on this pair proportional to your share of the pool.
+                Fees are added to the pool, accrue in real time and can be claimed by withdrawing your liquidity.
+            </template>
+            <f-uniswap-pair-liquidity-info v-else :pair="dPair" :from-token="fromToken" :to-token="toToken" />
         </div>
 
         <defi-token-picker-window
@@ -146,11 +149,12 @@ import FTokenValue from '@/components/core/FTokenValue/FTokenValue.vue';
 import FSelectButton from '@/components/core/FSelectButton/FSelectButton.vue';
 import FCryptoSymbol from '@/components/core/FCryptoSymbol/FCryptoSymbol.vue';
 import DefiTokenPickerWindow from '@/components/windows/DefiTokenPickerWindow/DefiTokenPickerWindow.vue';
+import FUniswapPairLiquidityInfo from '@/components/FUniswapPairLiquidityInfo/FUniswapPairLiquidityInfo.vue';
 
 export default {
     name: 'FUniswapAddLiquidity',
 
-    components: { DefiTokenPickerWindow, FCryptoSymbol, FSelectButton, FTokenValue, FCard },
+    components: { FUniswapPairLiquidityInfo, DefiTokenPickerWindow, FCryptoSymbol, FSelectButton, FTokenValue, FCard },
 
     data() {
         return {
