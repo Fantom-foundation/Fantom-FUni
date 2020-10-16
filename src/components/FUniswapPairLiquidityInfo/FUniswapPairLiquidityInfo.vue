@@ -24,7 +24,7 @@
             </div>
 
             <br />
-            <h4>Total supply</h4>
+            <h4>Pool total</h4>
             <div class="row no-vert-col-padding no-collapse">
                 <div class="col defi-label">{{ $defi.getTokenSymbol(fromToken) }}</div>
                 <div class="col align-right">{{ totalFromTokenLiquidity }}</div>
