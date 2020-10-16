@@ -16,7 +16,6 @@
                     </span>
                 </div>
                 <div class="funiswap__token__body">
-                    <div class="funiswap__token__sign">-</div>
                     <input
                         :id="`text-input-${id}`"
                         ref="fromInput"
@@ -63,7 +62,6 @@
                     </span>
                 </div>
                 <div class="funiswap__token__body">
-                    <div class="funiswap__token__sign">+</div>
                     <input
                         :id="`text-input-${id}`"
                         ref="toInput"
@@ -182,13 +180,6 @@ export default {
         FCryptoSymbol,
     },
 
-    props: {
-        slippageTolerance: {
-            type: Number,
-            default: 0.005,
-        },
-    },
-
     data() {
         return {
             fromValue: '',
@@ -216,7 +207,7 @@ export default {
     },
 
     computed: {
-        ...mapGetters(['currentAccount']),
+        ...mapGetters(['currentAccount', 'fUniswapSlippageTolerance']),
 
         /**
          * @return {{fromToken: DefiToken, toToken: DefiToken}}
@@ -277,7 +268,7 @@ export default {
         },
 
         minimumReceived() {
-            return this.formatToInputValue(this.toValue_ * (1 - this.slippageTolerance));
+            return this.formatToInputValue(this.toValue_ * (1 - this.fUniswapSlippageTolerance));
         },
     },
 
@@ -688,7 +679,7 @@ export default {
                 toValue: this.toValue_,
                 fromToken: { ...fromToken },
                 toToken: { ...toToken },
-                slippageTolerance: this.slippageTolerance,
+                slippageTolerance: this.fUniswapSlippageTolerance,
                 steps: 2,
                 step: 1,
                 max: this.maxFromInputValue === this.fromValue,

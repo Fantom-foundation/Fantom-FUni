@@ -18,11 +18,27 @@
     //--f-doc-color: #fbfcff;
     --f-doc-background-color: var(--f-dark-color);
 
-    --f-body-background-image: radial-gradient(50% 50% at 50% 50%, rgba(33, 114, 229, 0.1) 0%, rgba(33, 36, 41, 0) 100%);;
+    --f-body-background-image: none;
 
-    //--f-simple-navigation-link-color: #2C2E3F;
-    --f-simple-navigation-link-color: var(--f-lighter-color);
-    //--f-simple-navigation-link-hover-color: #fff;
+    .f-simple-navigation {
+        //--f-simple-navigation-link-color: #2C2E3F;
+        --f-simple-navigation-link-color: var(--f-lighter-color);
+        --f-simple-navigation-link-hover-color: #fff;
+    }
+
+    .f-header {
+        color: #fff;
+        border-bottom-color: var(--f-darker-color-2);
+
+        a, a:visited {
+            --f-link-color: #fff;
+        }
+    }
+
+    .f-footer {
+        background-color: var(--f-darker-color);
+    }
+
 
     .f-card {
         --f-card-background-color: var(--f-darker-color);

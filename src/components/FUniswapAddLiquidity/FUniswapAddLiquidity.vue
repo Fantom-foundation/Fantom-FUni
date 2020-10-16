@@ -152,13 +152,6 @@ export default {
 
     components: { DefiTokenPickerWindow, FCryptoSymbol, FSelectButton, FTokenValue, FCard },
 
-    props: {
-        slippageTolerance: {
-            type: Number,
-            default: 0.005,
-        },
-    },
-
     data() {
         return {
             fromValue: '',
@@ -187,7 +180,7 @@ export default {
     },
 
     computed: {
-        ...mapGetters(['currentAccount']),
+        ...mapGetters(['currentAccount', 'fUniswapSlippageTolerance']),
 
         /**
          * @return {{fromToken: DefiToken, toToken: DefiToken}}
@@ -656,7 +649,7 @@ export default {
                 toValue: this.toValue_,
                 fromToken: { ...fromToken },
                 toToken: { ...toToken },
-                slippageTolerance: this.slippageTolerance,
+                slippageTolerance: this.fUniswapSlippageTolerance,
                 steps: 3,
                 step: 1,
                 max: this.maxFromInputValue === this.fromValue,

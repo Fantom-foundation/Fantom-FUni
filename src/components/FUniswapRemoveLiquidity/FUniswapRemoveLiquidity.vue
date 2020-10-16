@@ -78,10 +78,6 @@ export default {
     components: { FCryptoSymbol, FSlider, FTokenValue, FCard },
 
     props: {
-        slippageTolerance: {
-            type: Number,
-            default: 0.005,
-        },
         pair: {
             type: Object,
             default() {
@@ -106,7 +102,7 @@ export default {
     },
 
     computed: {
-        ...mapGetters(['currentAccount']),
+        ...mapGetters(['currentAccount', 'fUniswapSlippageTolerance']),
 
         /**
          * @return {{fromToken: DefiToken, toToken: DefiToken}}
@@ -284,7 +280,7 @@ export default {
             const params = {
                 fromToken: { ...fromToken },
                 toToken: { ...toToken },
-                slippageTolerance: this.slippageTolerance,
+                slippageTolerance: this.fUniswapSlippageTolerance,
                 fromTokenLiquidity: this.fromTokenLiquidity,
                 toTokenLiquidity: this.toTokenLiquidity,
                 pair: { ...this.dPair },

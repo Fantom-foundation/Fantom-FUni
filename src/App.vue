@@ -89,7 +89,7 @@ export default {
         // const useDarkColorScheme = window.matchMedia('(prefers-color-scheme: dark)');
 
         this.darkMode(this.$store.state.darkMode);
-        this.setDarkMode(false);
+        // this.setDarkMode(false);
 
         // useDarkColorScheme.addEventListener('change', (_event) => this.darkMode(_event.matches));
 

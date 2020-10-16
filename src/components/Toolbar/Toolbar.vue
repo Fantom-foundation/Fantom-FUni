@@ -17,7 +17,6 @@
                     </template>
                 </button>
             </li>
-            <!--
             <li>
                 <button
                     id="settings-btn"
@@ -29,6 +28,7 @@
                     <icon data="@/assets/svg/settings.svg" width="20" height="20" aria-hidden="true" />
                 </button>
             </li>
+            <!--
             <li>
                 <button class="btn light same-size" title="Links" aria-label="Links" @click="onLinksBtnClick">
                     <icon data="@/assets/svg/ellipsis-v.svg" width="20" height="20" dir="right" aria-hidden="true" />
@@ -39,7 +39,6 @@
 
         <connect-wallet-window ref="connectWalletWindow" />
 
-        <!--
         <f-window
             ref="settingsWindow"
             :popover="true"
@@ -50,13 +49,15 @@
             preferred-attach-position="bottom"
             title="Settings"
             :attach-margin="[4, 4, 4, 4]"
-            style="width: auto; max-width: 360px"
+            style="width: auto; min-width: 260px; max-width: 360px"
+            class="light"
             animation-in="scale-center-enter-active"
             animation-out="scale-center-leave-active"
         >
             <settings />
         </f-window>
 
+        <!--
         <f-window
             ref="linksWindow"
             :popover="true"
@@ -67,7 +68,8 @@
             preferred-attach-position="bottom"
             title="Links"
             :attach-margin="[4, 4, 4, 4]"
-            style="width: auto; max-width: 360px"
+            style="width: auto; min-width: 260px; max-width: 360px"
+            class="light"
             animation-in="scale-center-enter-active"
             animation-out="scale-center-leave-active"
         >
@@ -81,11 +83,13 @@
 import ConnectWalletWindow from '@/components/windows/ConnectWalletWindow/ConnectWalletWindow.vue';
 import { mapGetters, mapState } from 'vuex';
 import FEllipsis from '@/components/core/FEllipsis/FEllipsis.vue';
+import FWindow from '@/components/core/FWindow/FWindow.vue';
+import Settings from '@/components/Settings/Settings.vue';
 
 export default {
     name: 'Toolbar',
 
-    components: { FEllipsis, ConnectWalletWindow },
+    components: { Settings, FWindow, FEllipsis, ConnectWalletWindow },
 
     data() {
         return {
