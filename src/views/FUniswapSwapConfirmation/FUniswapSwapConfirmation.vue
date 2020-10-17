@@ -37,6 +37,11 @@
                     <span class="price">
                         {{ params.toValue.toFixed($defi.getTokenDecimals(params.toToken)) }} {{ toTokenSymbol }}
                     </span>
+                    <br /><br />
+                    Minimum received
+                    <span class="price">
+                        {{ minimumReceived.toFixed($defi.getTokenDecimals(params.toToken)) }} {{ toTokenSymbol }}
+                    </span>
                 </template>
             </div>
 
@@ -84,6 +89,7 @@ export default {
             priceDecimals: 6,
             tx: {},
             gasLimit: GAS_LIMITS.default,
+            minimumReceived: 0,
         };
     },
 
@@ -199,6 +205,9 @@ export default {
                 // apply slippage tolerance
                 amounts = [$defi.fromTokenValue(amounts[0], fromToken), $defi.fromTokenValue(amounts[1], toToken)];
                 amounts = amounts.map((_item) => _item * (1 - slippageTolerance));
+
+                this.minimumReceived = amounts[1];
+
                 amounts = [
                     Web3.utils.toHex($defi.shiftDecPointRight(amounts[0].toString(), fromToken.decimals)),
                     Web3.utils.toHex($defi.shiftDecPointRight(amounts[1].toString(), toToken.decimals)),
