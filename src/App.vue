@@ -175,8 +175,11 @@ export default {
          */
         pickAccount(_address) {
             this.$store.commit(DEACTIVATE_ACTIVE_ACCOUNT);
-            this.$store.commit(SET_ACTIVE_ACCOUNT_BY_ADDRESS, _address);
-            this.$store.commit(SET_ACTIVE_ACCOUNT_ADDRESS, _address);
+
+            if (_address) {
+                this.$store.commit(SET_ACTIVE_ACCOUNT_BY_ADDRESS, _address);
+                this.$store.commit(SET_ACTIVE_ACCOUNT_ADDRESS, _address);
+            }
         },
 
         /**
