@@ -72,11 +72,14 @@ import FSlider from '@/components/core/FSlider/FSlider.vue';
 import FCryptoSymbol from '@/components/core/FCryptoSymbol/FCryptoSymbol.vue';
 import FUniswapPairLiquidityInfo from '@/components/FUniswapPairLiquidityInfo/FUniswapPairLiquidityInfo.vue';
 import { formatNumberByLocale } from '@/filters.js';
+import { pollingMixin } from '@/mixins/polling.js';
 
 export default {
     name: 'FUniswapRemoveLiquidity',
 
     components: { FUniswapPairLiquidityInfo, FCryptoSymbol, FSlider, FTokenValue, FCard },
+
+    mixins: [pollingMixin],
 
     props: {
         pair: {
@@ -199,6 +202,14 @@ export default {
         if (!this.currentAccount) {
             this.submitLabel = 'Connect Wallet';
         }
+
+        this._polling.start(
+            'update-funiswap-remove-liquidity-prices',
+            () => {
+                this.setTokenPrices();
+            },
+            4000
+        );
     },
 
     methods: {
@@ -229,11 +240,28 @@ export default {
         },
 
         async setTokenPrices() {
-            let price = await this.$defi.getUniswapTokenPrice(this.fromToken.address, this.dPair);
-            this.fromToken = { ...this.fromToken, _perPrice: price };
+            const { fromToken } = this;
+            const { toToken } = this;
+            const { dPair } = this;
+            let price = '';
 
-            price = await this.$defi.getUniswapTokenPrice(this.toToken.address, this.dPair);
-            this.toToken = { ...this.toToken, _perPrice: price };
+            if (!dPair.pairAddress) {
+                return;
+            }
+
+            if (fromToken.address) {
+                price = await this.$defi.getUniswapTokenPrice(fromToken.address, dPair);
+                if (price && price !== fromToken._perPrice) {
+                    this.fromToken = { ...fromToken, _perPrice: price };
+                }
+            }
+
+            if (toToken.address) {
+                price = await this.$defi.getUniswapTokenPrice(toToken.address, dPair);
+                if (price && price !== toToken._perPrice) {
+                    this.toToken = { ...toToken, _perPrice: price };
+                }
+            }
         },
 
         convertFrom2To(_value) {
