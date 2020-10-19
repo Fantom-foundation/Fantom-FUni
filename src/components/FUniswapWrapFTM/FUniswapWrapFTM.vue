@@ -17,19 +17,21 @@
                 </div>
                 <div class="funiswap__token__body">
                     <div class="funiswap__token__sign">-</div>
-                    <input
-                        :id="`text-input-${id}`"
-                        ref="fromInput"
-                        v-model="fromValue"
-                        type="number"
-                        placeholder="0"
-                        step="any"
-                        min="0"
-                        :max="maxFromInputValue"
-                        class="text-input no-style"
-                        @change="onFromInputChange"
-                        @keydown="onInputKeydown"
-                    />
+                    <span>
+                        <input
+                            :id="`text-input-${id}`"
+                            ref="fromInput"
+                            v-model="fromValue"
+                            type="number"
+                            placeholder="0"
+                            step="any"
+                            min="0"
+                            :max="maxFromInputValue"
+                            class="text-input no-style"
+                            @change="onFromInputChange"
+                            @keydown="onInputKeydown"
+                        />
+                    </span>
                     <button class="btn small secondary max-amount" @click="onMaxAmountClick">Max</button>
                     <f-crypto-symbol :token="fromToken" img-width="24px" img-height="auto" />
                 </div>
@@ -57,19 +59,21 @@
                 </div>
                 <div class="funiswap__token__body">
                     <div class="funiswap__token__sign">+</div>
-                    <input
-                        :id="`text-input-${id}`"
-                        ref="toInput"
-                        v-model="toValue"
-                        type="number"
-                        placeholder="0"
-                        step="any"
-                        min="0"
-                        :max="maxFromInputValue"
-                        class="text-input no-style"
-                        @change="onToInputChange"
-                        @keydown="onInputKeydown"
-                    />
+                    <span>
+                        <input
+                            :id="`text-input-${id}`"
+                            ref="toInput"
+                            v-model="toValue"
+                            type="number"
+                            placeholder="0"
+                            step="any"
+                            min="0"
+                            :max="maxFromInputValue"
+                            class="text-input no-style"
+                            @change="onToInputChange"
+                            @keydown="onInputKeydown"
+                        />
+                    </span>
                     <f-crypto-symbol :token="toToken" img-width="24px" img-height="auto" />
                 </div>
             </div>

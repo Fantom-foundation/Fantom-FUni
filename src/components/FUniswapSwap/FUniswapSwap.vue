@@ -16,19 +16,21 @@
                     </span>
                 </div>
                 <div class="funiswap__token__body">
-                    <input
-                        :id="`text-input-${id}`"
-                        ref="fromInput"
-                        v-model="fromValue"
-                        type="number"
-                        placeholder="0"
-                        step="any"
-                        min="0"
-                        :max="maxFromInputValue"
-                        class="text-input no-style"
-                        @change="onFromInputChange"
-                        @keydown="onInputKeydown"
-                    />
+                    <span>
+                        <input
+                            :id="`text-input-${id}`"
+                            ref="fromInput"
+                            v-model="fromValue"
+                            type="number"
+                            placeholder="0"
+                            step="any"
+                            min="0"
+                            :max="maxFromInputValue"
+                            class="text-input no-style"
+                            @change="onFromInputChange"
+                            @keydown="onInputKeydown"
+                        />
+                    </span>
                     <button class="btn small secondary max-amount" @click="onMaxAmountClick">Max</button>
                     <f-select-button
                         collapsed
@@ -62,19 +64,21 @@
                     </span>
                 </div>
                 <div class="funiswap__token__body">
-                    <input
-                        :id="`text-input-${id}`"
-                        ref="toInput"
-                        v-model="toValue"
-                        type="number"
-                        placeholder="0"
-                        step="any"
-                        min="0"
-                        :max="maxFromInputValue"
-                        class="text-input no-style"
-                        @change="onToInputChange"
-                        @keydown="onInputKeydown"
-                    />
+                    <span>
+                        <input
+                            :id="`text-input-${id}`"
+                            ref="toInput"
+                            v-model="toValue"
+                            type="number"
+                            placeholder="0"
+                            step="any"
+                            min="0"
+                            :max="maxFromInputValue"
+                            class="text-input no-style"
+                            @change="onToInputChange"
+                            @keydown="onInputKeydown"
+                        />
+                    </span>
                     <f-select-button
                         v-if="toToken.address"
                         collapsed
