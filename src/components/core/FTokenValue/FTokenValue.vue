@@ -1,10 +1,12 @@
 <template>
     <span class="f-token-value">
         <f-placeholder v-if="usePlaceholder" :content-loaded="!!token.symbol" :replacement-text="replacementText">
-            {{ tokenValue }} <span v-if="!noCurrency" class="currency">{{ tokenSymbol }}</span>
+            <span class="value">{{ tokenValue }}</span>
+            <span v-if="!noCurrency" class="currency">{{ tokenSymbol }}</span>
         </f-placeholder>
         <template v-else>
-            {{ tokenValue }} <span v-if="!noCurrency" class="currency">{{ tokenSymbol }}</span>
+            <span class="value">{{ tokenValue }}</span>
+            <span v-if="!noCurrency" class="currency">{{ tokenSymbol }}</span>
         </template>
     </span>
 </template>
@@ -67,6 +69,15 @@ export default {
                 this.decimals > -1 ? this.decimals : this.$defi.tokenDecimals[this.token.symbol] + this.addDecimals;
 
             return this.value === 0 ? 0 : formatNumberByLocale(parseFloat(this.value).toFixed(decimals), decimals);
+        },
+    },
+
+    methods: {
+        formatTokenValue(_value) {
+            const decimals =
+                this.decimals > -1 ? this.decimals : this.$defi.tokenDecimals[this.token.symbol] + this.addDecimals;
+
+            return _value === 0 ? 0 : formatNumberByLocale(parseFloat(_value).toFixed(decimals), decimals);
         },
     },
 };
