@@ -65,17 +65,16 @@ export default {
         },
 
         tokenValue() {
-            let decimals =
-                this.decimals > -1 ? this.decimals : this.$defi.tokenDecimals[this.token.symbol] + this.addDecimals;
-
-            return this.value === 0 ? 0 : formatNumberByLocale(parseFloat(this.value).toFixed(decimals), decimals);
+            return this.formatTokenValue(this.value);
         },
     },
 
     methods: {
         formatTokenValue(_value) {
             const decimals =
-                this.decimals > -1 ? this.decimals : this.$defi.tokenDecimals[this.token.symbol] + this.addDecimals;
+                this.decimals > -1
+                    ? this.decimals
+                    : (this.$defi.tokenDecimals[this.token.symbol] || 0) + this.addDecimals;
 
             return _value === 0 ? 0 : formatNumberByLocale(parseFloat(_value).toFixed(decimals), decimals);
         },
