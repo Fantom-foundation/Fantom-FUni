@@ -240,9 +240,15 @@ export default {
 
         shareOfPool() {
             const { dPair } = this;
+            const pairToken = this.getPairTokenByAddress(this.fromToken.address);
+            let share = 0;
 
             if (dPair.pairAddress && dPair.shareOf) {
-                const share = parseInt(dPair.shareOf, 16) / parseInt(dPair.totalSupply, 16);
+                share = parseInt(dPair.shareOf, 16) / parseInt(dPair.totalSupply, 16);
+
+                if (pairToken && this.fromValue_ > 0) {
+                    share += this.fromValue_ / this.$defi.fromTokenValue(pairToken.balanceOf, this.fromToken);
+                }
 
                 return `${(share * 100).toFixed(3)}%`;
             }
@@ -421,6 +427,15 @@ export default {
             return this.tokens.map((_item) => {
                 return { ..._item, _disabled: _item.address === fromTokenAddress };
             });
+        },
+
+        /**
+         * @param {string} _address
+         * @param {object} [_pair]
+         * @return {{}|null}
+         */
+        getPairTokenByAddress(_address, _pair = this.dPair) {
+            return _pair.tokens ? _pair.tokens.find((_token) => _token.address === _address) : null;
         },
 
         setRouteParams() {

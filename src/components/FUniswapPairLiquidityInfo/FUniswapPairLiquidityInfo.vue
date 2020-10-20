@@ -164,7 +164,7 @@ export default {
     methods: {
         /**
          * @param {string} _address
-         * @param {object} _pair
+         * @param {object} [_pair]
          * @return {{}|null}
          */
         getPairTokenByAddress(_address, _pair = this.pair) {
