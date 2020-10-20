@@ -406,7 +406,7 @@ export default {
             const eMinimumReceived = this.$refs.minimumReceived;
 
             if (eMinimumReceived) {
-                const eValue = eMinimumReceived.$el.querySelector('.value');
+                const eValue = eMinimumReceived.$el.querySelector('.f-token-value__value');
                 if (eValue) {
                     eValue.textContent = eMinimumReceived.formatTokenValue(
                         this.$defi.fromTokenValue(amounts[1], toToken) * (1 - this.fUniswapSlippageTolerance)

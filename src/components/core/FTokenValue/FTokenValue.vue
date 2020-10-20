@@ -1,11 +1,11 @@
 <template>
     <span class="f-token-value">
         <f-placeholder v-if="usePlaceholder" :content-loaded="!!token.symbol" :replacement-text="replacementText">
-            <span class="value">{{ tokenValue }}</span>
+            <span class="f-token-value__value">{{ tokenValue }}</span>
             <span v-if="!noCurrency" class="currency">{{ tokenSymbol }}</span>
         </f-placeholder>
         <template v-else>
-            <span class="value">{{ tokenValue }}</span>
+            <span class="f-token-value__value">{{ tokenValue }}</span>
             <span v-if="!noCurrency" class="currency">{{ tokenSymbol }}</span>
         </template>
     </span>
