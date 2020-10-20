@@ -16,13 +16,6 @@ import {
     SET_CURRENCY,
     SET_FRACTION_DIGITS,
     SET_SEND_DIRECTION,
-    PUSH_BNBRIDGE_PENDING_REQUEST,
-    SHIFT_BNBRIDGE_PENDING_REQUEST,
-    APPEND_CONTACT,
-    MOVE_CONTACT,
-    REMOVE_CONTACT,
-    SET_CONTACT,
-    SET_DEFI_SLIPPAGE_RESERVE,
     SET_DARK_MODE,
     SET_FUNISWAP_SLIPPAGE_TOLERANCE,
 } from './mutations.type.js';
@@ -33,8 +26,6 @@ import {
     UPDATE_ACCOUNT_BALANCE,
     UPDATE_ACCOUNTS_BALANCES,
     REMOVE_ACCOUNT_BY_ADDRESS,
-    UPDATE_CONTACT,
-    ADD_CONTACT,
     ADD_METAMASK_ACCOUNT,
 } from './actions.type.js';
 import { fWallet } from '../plugins/fantom-web3-wallet.js';
@@ -54,12 +45,9 @@ const vuexLocalStorage = new VuexPersist({
         // tokenPrice: _state.tokenPrice,
         // currency: _state.currency,
         // fractionDigits: _state.fractionDigits,
-        // defiSlippageReserve: _state.defiSlippageReserve,
         fUniswapSlippageTolerance: _state.fUniswapSlippageTolerance,
         darkMode: _state.darkMode,
         accounts: _state.accounts,
-        // contacts: _state.contacts,
-        // bnbridgePendingRequests: _state.bnbridgePendingRequests,
         // activeAccountIndex: _state.activeAccountIndex,
     }),
 });
@@ -201,13 +189,6 @@ export const store = new Vuex.Store({
         },
         /**
          * @param {Object} _state
-         * @param {number} _defiSlippageReserve
-         */
-        [SET_DEFI_SLIPPAGE_RESERVE](_state, _defiSlippageReserve) {
-            _state.defiSlippageReserve = _defiSlippageReserve;
-        },
-        /**
-         * @param {Object} _state
          * @param {number} _fUniswapSlippageTolerance
          */
         [SET_FUNISWAP_SLIPPAGE_TOLERANCE](_state, _fUniswapSlippageTolerance) {
@@ -304,73 +285,6 @@ export const store = new Vuex.Store({
 
             if (from !== to && from >= 0 && to >= 0 && from < accountsLen && to < accountsLen) {
                 _state.accounts.splice(to, 0, _state.accounts.splice(from, 1)[0]);
-            }
-        },
-        /**
-         * Push new request to `bnbridgePendingRequests` array.
-         *
-         * @param {Object} _state
-         * @param {FSTRequest} _request
-         */
-        [PUSH_BNBRIDGE_PENDING_REQUEST](_state, _request) {
-            _state.bnbridgePendingRequests.push(_request);
-        },
-        /**
-         * Remove first request from `bnbridgePendingRequests` array.
-         *
-         * @param {Object} _state
-         */
-        [SHIFT_BNBRIDGE_PENDING_REQUEST](_state) {
-            _state.bnbridgePendingRequests.shift();
-        },
-        /**
-         * @param {Object} _state
-         * @param {WalletContact} _contact
-         */
-        [APPEND_CONTACT](_state, _contact) {
-            // if account is not created already
-            if (!_state.contacts.find((_item) => _item.address.toLowerCase() === _contact.address.toLowerCase())) {
-                _state.contacts.push(_contact);
-            }
-        },
-        /**
-         * Move contact from one index to another.
-         *
-         * @param {Object} _state
-         * @param {{from: number, to: number}} _params
-         */
-        [MOVE_CONTACT](_state, _params) {
-            const { from, to } = _params;
-            const contactsLen = _state.contacts.length;
-
-            if (from !== to && from >= 0 && to >= 0 && from < contactsLen && to < contactsLen) {
-                _state.contacts.splice(to, 0, _state.contacts.splice(from, 1)[0]);
-            }
-        },
-        /**
-         * Remove contact by index.
-         *
-         * @param {Object} _state
-         * @param {number} _index
-         */
-        [REMOVE_CONTACT](_state, _index) {
-            if (_index > -1 && _index < _state.contacts.length) {
-                _state.contacts.splice(_index, 1);
-            }
-        },
-        /**
-         * Update contact by `_contactData` object. `_contactData` must contain `index` property.
-         *
-         * @param {Object} _state
-         * @param {{index: number, ...}} _contactData
-         */
-        [SET_CONTACT](_state, _contactData) {
-            const { index } = _contactData;
-
-            if (index !== undefined && index > -1 && index < _state.contacts.length) {
-                delete _contactData.index;
-
-                Vue.set(_state.contacts, index, _contactData);
             }
         },
     },
@@ -542,53 +456,6 @@ export const store = new Vuex.Store({
             }
 
             return activeAccountRemoved;
-        },
-        /**
-         * @param {Object} _context
-         * @param {WalletContact} _contact
-         */
-        [ADD_CONTACT](_context, _contact) {
-            const { order } = _contact;
-            const contacts = _context.getters.contacts;
-
-            delete _contact.order;
-
-            _context.commit(APPEND_CONTACT, _contact);
-
-            if (order !== contacts.length) {
-                _context.commit(MOVE_CONTACT, {
-                    from: contacts.length - 1,
-                    to: order - 1,
-                });
-            }
-        },
-        /**
-         * @param {Object} _context
-         * @param {WalletContact} _contact
-         */
-        [UPDATE_CONTACT](_context, _contact) {
-            const { contact, index } = _context.getters.getContactAndIndexByAddress(_contact.address);
-
-            if (contact) {
-                const name = _contact.name !== contact.address ? _contact.name : '';
-                const { order } = _contact;
-
-                delete _contact.order;
-
-                _context.commit(SET_CONTACT, {
-                    ...contact,
-                    ..._contact,
-                    name,
-                    index,
-                });
-
-                if (order - 1 !== index) {
-                    _context.commit(MOVE_CONTACT, {
-                        from: index,
-                        to: order - 1,
-                    });
-                }
-            }
         },
     },
 });
