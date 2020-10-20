@@ -28,13 +28,11 @@
                     <icon data="@/assets/svg/settings.svg" width="20" height="20" aria-hidden="true" />
                 </button>
             </li>
-            <!--
             <li>
                 <button class="btn light same-size" title="Links" aria-label="Links" @click="onLinksBtnClick">
                     <icon data="@/assets/svg/ellipsis-v.svg" width="20" height="20" dir="right" aria-hidden="true" />
                 </button>
             </li>
--->
         </ul>
 
         <connect-wallet-window ref="connectWalletWindow" />
@@ -57,7 +55,6 @@
             <settings />
         </f-window>
 
-        <!--
         <f-window
             ref="linksWindow"
             :popover="true"
@@ -68,14 +65,13 @@
             preferred-attach-position="bottom"
             title="Links"
             :attach-margin="[4, 4, 4, 4]"
-            style="width: auto; min-width: 260px; max-width: 360px"
+            style="width: auto; min-width: 200px; max-width: 360px"
             class="light"
             animation-in="scale-center-enter-active"
             animation-out="scale-center-leave-active"
         >
             <links />
         </f-window>
--->
     </div>
 </template>
 
@@ -85,11 +81,12 @@ import { mapGetters, mapState } from 'vuex';
 import FEllipsis from '@/components/core/FEllipsis/FEllipsis.vue';
 import FWindow from '@/components/core/FWindow/FWindow.vue';
 import Settings from '@/components/Settings/Settings.vue';
+import Links from '@/components/Links/Links.vue';
 
 export default {
     name: 'Toolbar',
 
-    components: { Settings, FWindow, FEllipsis, ConnectWalletWindow },
+    components: { Links, Settings, FWindow, FEllipsis, ConnectWalletWindow },
 
     data() {
         return {

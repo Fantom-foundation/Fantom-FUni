@@ -4,34 +4,48 @@
 .f-simple-navigation {
     display: inline-block;
 
-    nav {
-        ul {
-            text-align: right;
-            li {
+    ul {
+        //text-align: right;
+
+        li {
+            display: inline-block;
+            margin-left: 4px;
+
+            @include links() {
+                color: var(--f-simple-navigation-link-color);
+                font-weight: bold;
+                letter-spacing: normal;
                 display: inline-block;
-                margin-left: 4px;
+                padding: var(--f-simple-navigation-link-padding);
+                text-decoration: none;
+                transition: all $transition-length ease;
+                border-radius: $border-radius;
 
-                @include links() {
-                    color: var(--f-simple-navigation-link-color);
-                    font-weight: bold;
-                    letter-spacing: normal;
-                    display: inline-block;
-                    padding: var(--f-simple-navigation-link-padding);
-                    text-decoration: none;
-                    transition: all $transition-length ease;
-                    border-radius: $border-radius;
-
-                    &:not(.disabled) {
-                        &.router-link-active, &:hover {
-                            color: var(--f-simple-navigation-link-hover-color);
-                            text-decoration: none;
-                        }
+                &:not(.disabled) {
+                    &.router-link-active, &:hover {
+                        color: var(--f-simple-navigation-link-hover-color);
+                        text-decoration: none;
                     }
+                }
 
-                    &.disabled {
-                        cursor: initial;
-                        opacity: 0.5;
-                    }
+                &.disabled {
+                    cursor: initial;
+                    opacity: 0.5;
+                }
+            }
+        }
+    }
+
+    &--vertical {
+        display: block;
+        --f-simple-navigation-link-padding: 6px;
+
+        ul {
+            li {
+                display: block;
+
+                svg {
+                    margin-right: 8px;
                 }
             }
         }
