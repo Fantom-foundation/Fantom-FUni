@@ -945,9 +945,10 @@ export class DeFi {
             return defiUniswapPairs.find((_pair) => {
                 const { tokens } = _pair;
 
-                return tokens.find((_token) => {
-                    return _filterPair.indexOf(_token.address) > -1;
-                });
+                return (
+                    (tokens[0].address === _filterPair[0] && tokens[1].address === _filterPair[1]) ||
+                    (tokens[0].address === _filterPair[1] && tokens[1].address === _filterPair[0])
+                );
             });
         }
 

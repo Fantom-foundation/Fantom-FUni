@@ -297,6 +297,8 @@ export default {
                     defer(() => {
                         this.updateSubmitLabel();
                     });
+
+                    this.setRouteParams();
                 }
             }
         },
@@ -326,6 +328,8 @@ export default {
 
                     this.setToInputValue(this.correctToInputValue(this.toValue_));
                     this.setFromInputValue(this.fromValue_);
+
+                    this.setRouteParams();
                 }
             }
         },
@@ -334,6 +338,10 @@ export default {
             if (_value !== _oldValue) {
                 this.onAccountPicked();
             }
+        },
+
+        $route() {
+            this.setTokensByRouteParams();
         },
     },
 
@@ -364,13 +372,10 @@ export default {
 
             this.tokens = result[0];
 
-            // if (params.fromToken && params.toToken) {
-            if (params.fromToken) {
-                this.fromToken = this.tokens.find((_item) => _item.symbol === params.fromToken.symbol);
-                // this.toToken = this.tokens.find((_item) => _item.symbol === params.toToken.symbol);
+            if (params.tokena && params.tokenb) {
+                this.setTokensByRouteParams();
             } else if (this.tokens.length >= 2) {
                 this.fromToken = this.tokens[0];
-                // this.toToken = this.tokens[1];
             }
 
             this.setPrices();
@@ -416,6 +421,44 @@ export default {
             return this.tokens.map((_item) => {
                 return { ..._item, _disabled: _item.address === fromTokenAddress };
             });
+        },
+
+        setRouteParams() {
+            const { fromToken } = this;
+            const { toToken } = this;
+            const { $route } = this;
+
+            if (
+                fromToken.address &&
+                toToken.address &&
+                $route.params.tokena !== fromToken.address &&
+                $route.params.tokenb !== toToken.address
+            ) {
+                this.$router.push({
+                    name: $route.name,
+                    params: {
+                        tokena: fromToken.address,
+                        tokenb: toToken.address,
+                    },
+                });
+            }
+        },
+
+        setTokensByRouteParams() {
+            const { params } = this.$route;
+
+            if (params.tokena && params.tokenb) {
+                if (params.tokena !== this.fromToken.address || params.tokenb !== this.toToken.address) {
+                    this.fromToken = this.tokens.find((_item) => _item.address === params.tokena);
+                    this.toToken = this.tokens.find((_item) => _item.address === params.tokenb);
+
+                    this.setTokenPrices();
+                    this.resetInputValues();
+                }
+            } else {
+                this.fromToken = this.tokens[0];
+                this.toToken = {};
+            }
         },
 
         resetInputValues() {

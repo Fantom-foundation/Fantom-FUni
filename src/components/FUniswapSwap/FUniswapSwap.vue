@@ -320,6 +320,8 @@ export default {
                     defer(() => {
                         this.updateSubmitLabel();
                     });
+
+                    this.setRouteParams();
                 }
             }
         },
@@ -342,6 +344,8 @@ export default {
 
                     this.setToInputValue(this.correctToInputValue(this.toValue_));
                     this.setFromInputValue(this.fromValue_);
+
+                    this.setRouteParams();
                 }
             }
         },
@@ -350,6 +354,10 @@ export default {
             if (_value !== _oldValue) {
                 this.onAccountPicked();
             }
+        },
+
+        $route() {
+            this.setTokensByRouteParams();
         },
     },
 
@@ -395,11 +403,15 @@ export default {
                 [fromToken.address, toToken.address]
             );
 
-            const eValue = this.$refs.minimumReceived.$el.querySelector('.value');
-            if (eValue) {
-                eValue.textContent = this.$refs.minimumReceived.formatTokenValue(
-                    this.$defi.fromTokenValue(amounts[1], toToken) * (1 - this.fUniswapSlippageTolerance)
-                );
+            const eMinimumReceived = this.$refs.minimumReceived;
+
+            if (eMinimumReceived) {
+                const eValue = eMinimumReceived.$el.querySelector('.value');
+                if (eValue) {
+                    eValue.textContent = eMinimumReceived.formatTokenValue(
+                        this.$defi.fromTokenValue(amounts[1], toToken) * (1 - this.fUniswapSlippageTolerance)
+                    );
+                }
             }
         },
 
@@ -413,13 +425,10 @@ export default {
 
             this.tokens = result[0];
 
-            // if (params.fromToken && params.toToken) {
-            if (params.fromToken) {
-                this.fromToken = this.tokens.find((_item) => _item.symbol === params.fromToken.symbol);
-                // this.toToken = this.tokens.find((_item) => _item.symbol === params.toToken.symbol);
+            if (params.tokena && params.tokenb) {
+                this.setTokensByRouteParams();
             } else if (this.tokens.length >= 2) {
                 this.fromToken = this.tokens[0];
-                // this.toToken = this.tokens[1];
             }
         },
 
@@ -534,6 +543,44 @@ export default {
             });
         },
 
+        setRouteParams() {
+            const { fromToken } = this;
+            const { toToken } = this;
+            const { $route } = this;
+
+            if (
+                fromToken.address &&
+                toToken.address &&
+                $route.params.tokena !== fromToken.address &&
+                $route.params.tokenb !== toToken.address
+            ) {
+                this.$router.push({
+                    name: $route.name,
+                    params: {
+                        tokena: fromToken.address,
+                        tokenb: toToken.address,
+                    },
+                });
+            }
+        },
+
+        setTokensByRouteParams() {
+            const { params } = this.$route;
+
+            if (params.tokena && params.tokenb) {
+                if (params.tokena !== this.fromToken.address || params.tokenb !== this.toToken.address) {
+                    this.fromToken = this.tokens.find((_item) => _item.address === params.tokena);
+                    this.toToken = this.tokens.find((_item) => _item.address === params.tokenb);
+
+                    this.setTokenPrices();
+                    this.resetInputValues();
+                }
+            } else {
+                this.fromToken = this.tokens[0];
+                this.toToken = {};
+            }
+        },
+
         resetInputValues() {
             this.fromValue = '';
             this.toValue = '';
@@ -576,19 +623,16 @@ export default {
             }
         },
 
-        swapPrice() {
-            this.setFromInputValue(this.fromValue);
-            this.setToInputValue(this.toValue);
-        },
-
         updateInputColor(_value, _toInput = false) {
             const cValue = _toInput ? this.correctToInputValue(_value) : this.correctFromInputValue(_value);
             const eInput = _toInput ? this.$refs.toInput : this.$refs.fromInput;
 
-            if (_value > cValue) {
-                eInput.classList.add('invalid');
-            } else {
-                eInput.classList.remove('invalid');
+            if (eInput) {
+                if (_value > cValue) {
+                    eInput.classList.add('invalid');
+                } else {
+                    eInput.classList.remove('invalid');
+                }
             }
         },
 

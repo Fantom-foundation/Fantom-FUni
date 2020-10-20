@@ -96,6 +96,8 @@ export default {
             fromToken: {},
             /** @type {DefiToken} */
             toToken: {},
+            /** @type {DefiToken[]} */
+            tokens: [],
             sliderLabels: ['0%', '25%', '50%', '75%', '100%'],
             id: getUniqueId(),
             dPair: {},
@@ -192,6 +194,10 @@ export default {
                 this.onAccountPicked();
             }
         },
+
+        $route() {
+            this.setPairAndTokensByRouteParams();
+        },
     },
 
     created() {
@@ -218,25 +224,9 @@ export default {
             const address = this.currentAccount ? this.currentAccount.address : '';
             const result = await Promise.all([$defi.fetchTokens(address), $defi.init()]);
 
-            const tokens = result[0];
+            this.tokens = result[0];
 
-            if (!this.dPair.pairAddress) {
-                let uniswapPairs = await this.$defi.fetchUniswapPairs(address, this.dPair.pairAddress);
-
-                if (uniswapPairs && uniswapPairs.length > 0) {
-                    uniswapPairs = await this.$defi.fetchUniswapPairs(address, uniswapPairs[0].pairAddress);
-
-                    this.dPair = uniswapPairs[0];
-                }
-            }
-
-            const uniswapTokens = this.dPair.tokens;
-            if (uniswapTokens && uniswapTokens.length === 2) {
-                this.fromToken = tokens.find((_item) => _item.address === uniswapTokens[0].address);
-                this.toToken = tokens.find((_item) => _item.address === uniswapTokens[1].address);
-
-                this.setTokenPrices();
-            }
+            this.setPairAndTokensByRouteParams();
         },
 
         async setTokenPrices() {
@@ -260,6 +250,41 @@ export default {
                 price = await this.$defi.getUniswapTokenPrice(toToken.address, dPair);
                 if (price && price !== toToken._perPrice) {
                     this.toToken = { ...toToken, _perPrice: price };
+                }
+            }
+        },
+
+        async setPairAndTokensByRouteParams() {
+            const { params } = this.$route;
+            const address = this.currentAccount ? this.currentAccount.address : '';
+            let uniswapPairs = null;
+            let uniswapPair = null;
+
+            if (params.tokena && params.tokenb) {
+                uniswapPair = await this.$defi.fetchUniswapPairs(address, '', [params.tokena, params.tokenb]);
+            } else {
+                uniswapPairs = await this.$defi.fetchUniswapPairs(address);
+                if (uniswapPairs && uniswapPairs.length > 0) {
+                    uniswapPair = uniswapPairs[0];
+                }
+            }
+
+            if (uniswapPair) {
+                uniswapPair = await this.$defi.fetchUniswapPairs(address, uniswapPair.pairAddress, [
+                    uniswapPair.tokens[0].address,
+                    uniswapPair.tokens[1].address,
+                ]);
+
+                if (uniswapPair) {
+                    this.dPair = uniswapPair;
+
+                    const uniswapTokens = uniswapPair.tokens;
+                    if (uniswapTokens && uniswapTokens.length === 2) {
+                        this.fromToken = this.tokens.find((_item) => _item.address === uniswapTokens[0].address);
+                        this.toToken = this.tokens.find((_item) => _item.address === uniswapTokens[1].address);
+
+                        this.setTokenPrices();
+                    }
                 }
             }
         },
