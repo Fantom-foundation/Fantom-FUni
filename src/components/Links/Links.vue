@@ -33,6 +33,14 @@ export default {
                     icon: codeIcon,
                     fill: true,
                 },
+                {
+                    title: 'Code 2',
+                    url: 'https://github.com/Fantom-foundation/Fantom-Uniswap',
+                    outerLink: true,
+                    blank: true,
+                    icon: codeIcon,
+                    fill: true,
+                },
             ],
         };
     },
