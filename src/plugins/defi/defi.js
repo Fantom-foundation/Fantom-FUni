@@ -626,6 +626,26 @@ export class DeFi {
     }
 
     /**
+     * @param {string} _address
+     * @param {object} _pair
+     * @return {{}|null}
+     */
+    getPairTokenByAddress(_address, _pair) {
+        return _address && _pair && _pair.tokens ? _pair.tokens.find((_token) => _token.address === _address) : null;
+    }
+
+    /**
+     * @param {object} _token
+     * @param {object} _pair
+     * @return {*|number}
+     */
+    totalTokenLiquidity(_token, _pair) {
+        const pairToken = this.getPairTokenByAddress(_token ? _token.address : '', _pair);
+
+        return pairToken ? parseInt(this.fromTokenValue(pairToken.balanceOf, _token)) : 0;
+    }
+
+    /**
      * @return {Promise<DefiSettings>}
      */
     async fetchSettings() {
@@ -727,6 +747,44 @@ export class DeFi {
         }
 
         return tokens;
+    }
+
+    /**
+     * @param {string|array} [_symbol]
+     * @return {Promise<number[]>}
+     */
+    async fetchTokenPrices(_symbol) {
+        const data = await this.apolloClient.query({
+            query: gql`
+                query DefiTokens {
+                    defiTokens {
+                        address
+                        symbol
+                        decimals
+                        price
+                        priceDecimals
+                        isActive
+                    }
+                }
+            `,
+            fetchPolicy: 'network-only',
+        });
+        let defiTokens = data.data.defiTokens || [];
+        let tokens = [];
+
+        this._setTokens(defiTokens);
+
+        if (_symbol) {
+            if (typeof _symbol === 'string') {
+                tokens = defiTokens.find((_item) => _item.symbol === _symbol);
+            } else if (_symbol.length) {
+                tokens = defiTokens.filter((_item) => _symbol.indexOf(_item.symbol) > -1);
+            }
+        } else {
+            tokens = defiTokens;
+        }
+
+        return tokens.map((_token) => this.fromTokenValue(_token.price, _token, true));
     }
 
     /**
@@ -896,42 +954,64 @@ export class DeFi {
      * @return {Promise<[]|undefined>}
      */
     async fetchUniswapPairs(_address, _pairAddress = '', _filterPair = []) {
+        let query = gql`
+            query GetUniswapPairs {
+                defiUniswapPairs {
+                    pairAddress
+                    tokens {
+                        address
+                        name
+                        symbol
+                    }
+                    reservesTimeStamp
+                    reserves
+                    cumulativePrices
+                    totalSupply
+                }
+            }
+        `;
+
+        if (_address) {
+            query = gql`
+                query GetUniswapPairs($user: Address!, $owner: Address!) {
+                    defiUniswapPairs {
+                        pairAddress
+                        tokens {
+                            address
+                            name
+                            symbol
+                            balanceOf(owner: $owner)
+                        }
+                        reservesTimeStamp
+                        reserves
+                        cumulativePrices
+                        totalSupply
+                        shareOf(user: $user)
+                    }
+                }
+            `;
+        } else if (_pairAddress) {
+            query = gql`
+                query GetUniswapPairs($owner: Address!) {
+                    defiUniswapPairs {
+                        pairAddress
+                        tokens {
+                            address
+                            name
+                            symbol
+                            balanceOf(owner: $owner)
+                        }
+                        reservesTimeStamp
+                        reserves
+                        cumulativePrices
+                        totalSupply
+                    }
+                }
+            `;
+        }
+
         const data = await this.apolloClient.query({
-            query: _address
-                ? gql`
-                      query GetUniswapPairs($user: Address!, $owner: Address!) {
-                          defiUniswapPairs {
-                              pairAddress
-                              tokens {
-                                  address
-                                  name
-                                  symbol
-                                  balanceOf(owner: $owner)
-                              }
-                              reservesTimeStamp
-                              reserves
-                              cumulativePrices
-                              totalSupply
-                              shareOf(user: $user)
-                          }
-                      }
-                  `
-                : gql`
-                      query GetUniswapPairs {
-                          defiUniswapPairs {
-                              pairAddress
-                              tokens {
-                                  address
-                                  name
-                                  symbol
-                              }
-                              reservesTimeStamp
-                              reserves
-                              cumulativePrices
-                              totalSupply
-                          }
-                      }
-                  `,
+            query,
             variables: {
                 user: _address,
                 owner: _pairAddress || _address,
@@ -975,23 +1055,6 @@ export class DeFi {
         });
 
         return data.data.defiUniswapQuoteLiquidity || [];
-    }
-
-    async getUniswapTokenPrice(_tokenAAddress, _pair) {
-        const { tokens } = _pair;
-        const tokensPair = [];
-
-        if (_tokenAAddress === tokens[0].address) {
-            tokensPair.push(tokens[0].address);
-            tokensPair.push(tokens[1].address);
-        } else {
-            tokensPair.push(tokens[1].address);
-            tokensPair.push(tokens[0].address);
-        }
-
-        const amounts = await this.fetchUniswapAmountsOut('0xde0b6b3a7640000', tokensPair);
-
-        return amounts[1];
     }
 
     /**

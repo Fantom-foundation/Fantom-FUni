@@ -233,21 +233,30 @@ export default {
             const { fromToken } = this;
             const { toToken } = this;
             const { dPair } = this;
-            let price = '';
+            const address = this.currentAccount ? this.currentAccount.address : '';
+            let price = 0;
 
             if (!dPair.pairAddress) {
                 return;
             }
 
+            const pair = await this.$defi.fetchUniswapPairs(address, dPair.pairAddress, [
+                fromToken.address,
+                toToken.address,
+            ]);
+
+            const fromTokenTotal = this.$defi.totalTokenLiquidity(fromToken, pair);
+            const toTokenTotal = this.$defi.totalTokenLiquidity(toToken, pair);
+
             if (fromToken.address) {
-                price = await this.$defi.getUniswapTokenPrice(fromToken.address, dPair);
+                price = toTokenTotal / fromTokenTotal;
                 if (price && price !== fromToken._perPrice) {
                     this.fromToken = { ...fromToken, _perPrice: price };
                 }
             }
 
             if (toToken.address) {
-                price = await this.$defi.getUniswapTokenPrice(toToken.address, dPair);
+                price = fromTokenTotal / toTokenTotal;
                 if (price && price !== toToken._perPrice) {
                     this.toToken = { ...toToken, _perPrice: price };
                 }
@@ -292,15 +301,19 @@ export default {
         convertFrom2To(_value) {
             const { fromToken } = this;
 
+            return fromToken && fromToken._perPrice ? _value * fromToken._perPrice : 0;
+            /*
             return fromToken && fromToken._perPrice
                 ? _value * this.$defi.fromTokenValue(fromToken._perPrice, fromToken)
                 : 0;
+            */
         },
 
         convertTo2From(_value) {
             const { toToken } = this;
 
-            return toToken && toToken._perPrice ? _value * this.$defi.fromTokenValue(toToken._perPrice, toToken) : 0;
+            return toToken && toToken._perPrice ? _value * toToken._perPrice : 0;
+            // return toToken && toToken._perPrice ? _value * this.$defi.fromTokenValue(toToken._perPrice, toToken) : 0;
         },
 
         onSubmit() {

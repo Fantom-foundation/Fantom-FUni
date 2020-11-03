@@ -80,7 +80,7 @@ export default {
             const { share } = this;
 
             if (share > 0 && pair.pairAddress) {
-                const pairToken = this.getPairTokenByAddress(this.fromToken.address);
+                const pairToken = this.$defi.getPairTokenByAddress(this.fromToken.address, pair);
 
                 return pairToken ? this.$defi.fromTokenValue(pairToken.balanceOf, this.fromToken) * share : 0;
             }
@@ -106,7 +106,7 @@ export default {
             const { share } = this;
 
             if (share > 0 && pair.pairAddress) {
-                const pairToken = this.getPairTokenByAddress(this.toToken.address);
+                const pairToken = this.$defi.getPairTokenByAddress(this.toToken.address, pair);
 
                 return pairToken ? this.$defi.fromTokenValue(pairToken.balanceOf, this.toToken) * share : 0;
             }
@@ -129,19 +129,11 @@ export default {
         },
 
         totalFromTokenLiquidity() {
-            const pairToken = this.getPairTokenByAddress(this.fromToken.address);
-
-            return pairToken
-                ? this.formatNumberByLocale(parseInt(this.$defi.fromTokenValue(pairToken.balanceOf, this.fromToken)), 0)
-                : 0;
+            return this.formatNumberByLocale(this.$defi.totalTokenLiquidity(this.fromToken, this.pair), 0);
         },
 
         totalToTokenLiquidity() {
-            const pairToken = this.getPairTokenByAddress(this.toToken.address);
-
-            return pairToken
-                ? this.formatNumberByLocale(parseInt(this.$defi.fromTokenValue(pairToken.balanceOf, this.fromToken)), 0)
-                : 0;
+            return this.formatNumberByLocale(this.$defi.totalTokenLiquidity(this.toToken, this.pair), 0);
         },
 
         share() {

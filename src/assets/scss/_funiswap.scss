@@ -37,6 +37,11 @@
             flex-wrap: nowrap;
             align-items: center;
             justify-content: space-between;
+
+            .v-spinner {
+                display: inline-block;
+                margin-left: 4px;
+            }
         }
 
         &__body {

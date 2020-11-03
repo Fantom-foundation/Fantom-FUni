@@ -21,13 +21,11 @@
                             :id="`text-input-${id}`"
                             ref="fromInput"
                             v-model="fromValue"
-                            type="number"
+                            type="text"
+                            inputmode="decimal"
+                            autocomplete="off"
                             placeholder="0"
-                            step="any"
-                            min="0"
-                            :max="maxFromInputValue"
                             class="text-input no-style"
-                            @change="onFromInputChange"
                             @keydown="onInputKeydown"
                         />
                     </span>
@@ -64,16 +62,14 @@
                 <div class="funiswap__token__body">
                     <span>
                         <input
-                            :id="`text-input-${id}`"
+                            :id="`text-input-${id}-2`"
                             ref="toInput"
                             v-model="toValue"
-                            type="number"
+                            type="text"
+                            inputmode="decimal"
+                            autocomplete="off"
                             placeholder="0"
-                            step="any"
-                            min="0"
-                            :max="maxFromInputValue"
                             class="text-input no-style"
-                            @change="onToInputChange"
                             @keydown="onInputKeydown"
                         />
                     </span>
@@ -243,8 +239,8 @@ export default {
             const pairToken = this.getPairTokenByAddress(this.fromToken.address);
             let share = 0;
 
-            if (dPair.pairAddress && dPair.shareOf) {
-                share = parseInt(dPair.shareOf, 16) / parseInt(dPair.totalSupply, 16);
+            if (dPair.pairAddress) {
+                share = dPair.shareOf ? parseInt(dPair.shareOf, 16) / parseInt(dPair.totalSupply, 16) : 0;
 
                 if (pairToken && this.fromValue_ > 0) {
                     share += this.fromValue_ / this.$defi.fromTokenValue(pairToken.balanceOf, this.fromToken);
@@ -270,7 +266,8 @@ export default {
 
                 this.setPrices();
 
-                this.setToInputValue(this.correctToInputValue(this.toValue_));
+                this.setToInputValue(this.toValue_);
+                // this.setToInputValue(this.correctToInputValue(this.toValue_));
             }
         },
 
@@ -286,7 +283,8 @@ export default {
 
                 this.setPrices();
 
-                this.setFromInputValue(this.correctFromInputValue(this.fromValue_));
+                this.setFromInputValue(this.fromValue_);
+                // this.setFromInputValue(this.correctFromInputValue(this.fromValue_));
             }
         },
 
@@ -533,21 +531,30 @@ export default {
             const { fromToken } = this;
             const { toToken } = this;
             const { dPair } = this;
-            let price = '';
+            const address = this.currentAccount ? this.currentAccount.address : '';
+            let price = 0;
 
             if (!dPair.pairAddress) {
                 return;
             }
 
+            const pair = await this.$defi.fetchUniswapPairs(address, dPair.pairAddress, [
+                fromToken.address,
+                toToken.address,
+            ]);
+
+            const fromTokenTotal = this.$defi.totalTokenLiquidity(fromToken, pair);
+            const toTokenTotal = this.$defi.totalTokenLiquidity(toToken, pair);
+
             if (fromToken.address) {
-                price = await this.$defi.getUniswapTokenPrice(fromToken.address, dPair);
+                price = toTokenTotal / fromTokenTotal;
                 if (price && price !== fromToken._perPrice) {
                     this.fromToken = { ...fromToken, _perPrice: price };
                 }
             }
 
             if (toToken.address) {
-                price = await this.$defi.getUniswapTokenPrice(toToken.address, dPair);
+                price = fromTokenTotal / toTokenTotal;
                 if (price && price !== toToken._perPrice) {
                     this.toToken = { ...toToken, _perPrice: price };
                 }
@@ -559,15 +566,19 @@ export default {
         convertFrom2To(_value) {
             const { fromToken } = this;
 
+            return fromToken && fromToken._perPrice ? _value * fromToken._perPrice : 0;
+            /*
             return fromToken && fromToken._perPrice
                 ? _value * this.$defi.fromTokenValue(fromToken._perPrice, fromToken)
                 : 0;
+            */
         },
 
         convertTo2From(_value) {
             const { toToken } = this;
 
-            return toToken && toToken._perPrice ? _value * this.$defi.fromTokenValue(toToken._perPrice, toToken) : 0;
+            return toToken && toToken._perPrice ? _value * toToken._perPrice : 0;
+            // return toToken && toToken._perPrice ? _value * this.$defi.fromTokenValue(toToken._perPrice, toToken) : 0;
         },
 
         setFromInputValue(_value) {
@@ -587,6 +598,9 @@ export default {
             this.fromPerToPrice = this.convertTo2From(1).toFixed(4);
         },
 
+        updateInputColor() {},
+
+        /*
         updateInputColor(_value, _toInput = false) {
             const cValue = _toInput ? this.correctToInputValue(_value) : this.correctFromInputValue(_value);
             const eInput = _toInput ? this.$refs.toInput : this.$refs.fromInput;
@@ -597,6 +611,7 @@ export default {
                 eInput.classList.remove('invalid');
             }
         },
+        */
 
         updateSubmitLabel() {
             // const fromInputValue = this.$refs.fromInput.value;
@@ -692,42 +707,6 @@ export default {
                 this.toToken = _token;
 
                 // this.resetInputValues();
-            }
-        },
-
-        /**
-         * @param {InputEvent} _event
-         */
-        onFromInputChange(_event) {
-            const cValue = this.correctFromInputValue(_event.target.value);
-            const toValue = this.convertFrom2To(cValue);
-
-            if (toValue > this.toTokenBalance) {
-                this.toValue = this.toTokenBalance;
-            } else {
-                this.fromValue = cValue;
-
-                defer(() => {
-                    this.setFromInputValue(this.fromValue_);
-                });
-            }
-        },
-
-        /**
-         * @param {InputEvent} _event
-         */
-        onToInputChange(_event) {
-            const cValue = this.correctToInputValue(_event.target.value);
-            const fromValue = this.convertTo2From(cValue);
-
-            if (fromValue > this.fromTokenBalance) {
-                this.fromValue = this.fromTokenBalance;
-            } else {
-                this.toValue = cValue;
-
-                defer(() => {
-                    this.setToInputValue(this.toValue_);
-                });
             }
         },
 

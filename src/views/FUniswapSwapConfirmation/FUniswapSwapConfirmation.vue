@@ -25,11 +25,11 @@
                 <template v-if="params.step === 1">
                     You’re allowing
                     <span class="price">
-                        {{ params.fromValue.toFixed($defi.getTokenDecimals(params.fromToken)) }} {{ fromTokenSymbol }}
+                        {{ allowValue.toFixed($defi.getTokenDecimals(params.fromToken)) }} {{ fromTokenSymbol }}
                     </span>
                 </template>
                 <template v-else>
-                    You're trading
+                    You're trading expected
                     <span class="price">
                         {{ params.fromValue.toFixed($defi.getTokenDecimals(params.fromToken)) }} {{ fromTokenSymbol }}
                     </span>
@@ -38,10 +38,18 @@
                         {{ params.toValue.toFixed($defi.getTokenDecimals(params.toToken)) }} {{ toTokenSymbol }}
                     </span>
                     <br /><br />
-                    Minimum received
-                    <span class="price">
-                        {{ minimumReceived.toFixed($defi.getTokenDecimals(params.toToken)) }} {{ toTokenSymbol }}
-                    </span>
+                    <template v-if="minimumReceived > 0">
+                        Minimum Received
+                        <span class="price">
+                            {{ minimumReceived.toFixed($defi.getTokenDecimals(params.toToken)) }} {{ toTokenSymbol }}
+                        </span>
+                    </template>
+                    <template v-else>
+                        Maximum Spent
+                        <span class="price">
+                            {{ maximumSold.toFixed($defi.getTokenDecimals(params.fromToken)) }} {{ fromTokenSymbol }}
+                        </span>
+                    </template>
                 </template>
             </div>
 
@@ -90,6 +98,8 @@ export default {
             tx: {},
             gasLimit: GAS_LIMITS.default,
             minimumReceived: 0,
+            maximumSold: 0,
+            allowValue: 0,
         };
     },
 
@@ -179,6 +189,7 @@ export default {
             let txToSign;
             const web3 = new Web3();
             const { slippageTolerance } = params;
+            let amounts;
 
             if (!fromToken || !toToken) {
                 return;
@@ -189,49 +200,74 @@ export default {
             }
 
             if (params.step === 1) {
+                this.allowValue =
+                    params.maximumSold > 0 ? params.fromValue * (1 + slippageTolerance) : params.fromValue;
+                console.log(params.fromValue, this.allowValue);
+
                 txToSign = erc20Utils.erc20IncreaseAllowanceTx(
                     fromToken.address,
                     this.$defi.contracts.uniswapRouter,
-                    Web3.utils.toHex(this.$defi.shiftDecPointRight(params.fromValue.toString(), fromToken.decimals))
+                    Web3.utils.toHex(this.$defi.shiftDecPointRight(this.allowValue.toString(), fromToken.decimals))
                     // Web3.utils.toHex(this.$defi.shiftDecPointRight((fromValue * 1.05).toString(), fromToken.decimals))
                 );
             } else {
                 // console.log(fromToken, toToken, params.toValue);
-                let amounts = await this.$defi.fetchUniswapAmountsOut(
-                    Web3.utils.toHex(this.$defi.shiftDecPointRight(params.fromValue.toString(), fromToken.decimals)),
-                    [fromToken.address, toToken.address]
-                );
+                if (params.minimumReceived > 0) {
+                    amounts = await this.$defi.fetchUniswapAmountsOut(
+                        Web3.utils.toHex(
+                            this.$defi.shiftDecPointRight(params.fromValue.toString(), fromToken.decimals)
+                        ),
+                        [fromToken.address, toToken.address]
+                    );
 
-                // apply slippage tolerance
-                amounts = [$defi.fromTokenValue(amounts[0], fromToken), $defi.fromTokenValue(amounts[1], toToken)];
-                amounts = amounts.map((_item) => _item * (1 - slippageTolerance));
+                    // apply slippage tolerance
+                    amounts = [$defi.fromTokenValue(amounts[0], fromToken), $defi.fromTokenValue(amounts[1], toToken)];
+                    amounts[1] *= 1 - slippageTolerance;
+                    // amounts = amounts.map((_item) => _item * (1 - slippageTolerance));
 
-                this.minimumReceived = amounts[1];
+                    this.minimumReceived = amounts[1];
 
-                amounts = [
-                    Web3.utils.toHex($defi.shiftDecPointRight(amounts[0].toString(), fromToken.decimals)),
-                    Web3.utils.toHex($defi.shiftDecPointRight(amounts[1].toString(), toToken.decimals)),
-                ];
+                    amounts = [
+                        Web3.utils.toHex($defi.shiftDecPointRight(amounts[0].toString(), fromToken.decimals)),
+                        Web3.utils.toHex($defi.shiftDecPointRight(amounts[1].toString(), toToken.decimals)),
+                    ];
 
-                txToSign = uniswapUtils.uniswapExactTokensForTokens(
-                    web3,
-                    this.$defi.contracts.uniswapRouter,
-                    amounts[0],
-                    amounts[1],
-                    /*
-                    Web3.utils.toHex(this.$defi.shiftDecPointRight(params.fromValue.toString(), fromToken.decimals)),
-                    // slippage 0.5%
-                    Web3.utils.toHex(
-                        this.$defi.shiftDecPointRight(
-                            (params.toValue * (1 - slippageTolerance)).toString(),
-                            toToken.decimals
-                        )
-                    ),
-                    */
-                    [fromToken.address, toToken.address],
-                    this.currentAccount.address,
-                    (Math.floor(new Date().getTime() / 1000) + 20 * 60).toString()
-                );
+                    txToSign = uniswapUtils.uniswapExactTokensForTokens(
+                        web3,
+                        this.$defi.contracts.uniswapRouter,
+                        amounts[0],
+                        amounts[1],
+                        [fromToken.address, toToken.address],
+                        this.currentAccount.address,
+                        (Math.floor(new Date().getTime() / 1000) + 20 * 60).toString()
+                    );
+                } else {
+                    amounts = await this.$defi.fetchUniswapAmountsIn(
+                        Web3.utils.toHex(this.$defi.shiftDecPointRight(params.toValue.toString(), toToken.decimals)),
+                        [fromToken.address, toToken.address]
+                    );
+
+                    // apply slippage tolerance
+                    amounts = [$defi.fromTokenValue(amounts[0], fromToken), $defi.fromTokenValue(amounts[1], toToken)];
+                    amounts[0] *= 1 + slippageTolerance;
+
+                    this.maximumSold = amounts[0];
+
+                    amounts = [
+                        Web3.utils.toHex($defi.shiftDecPointRight(amounts[0].toString(), fromToken.decimals)),
+                        Web3.utils.toHex($defi.shiftDecPointRight(amounts[1].toString(), toToken.decimals)),
+                    ];
+
+                    txToSign = uniswapUtils.uniswapTokensForExactTokens(
+                        web3,
+                        this.$defi.contracts.uniswapRouter,
+                        amounts[1],
+                        amounts[0],
+                        [fromToken.address, toToken.address],
+                        this.currentAccount.address,
+                        (Math.floor(new Date().getTime() / 1000) + 20 * 60).toString()
+                    );
+                }
             }
 
             if (txToSign) {
