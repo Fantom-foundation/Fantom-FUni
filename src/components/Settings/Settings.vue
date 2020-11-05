@@ -34,7 +34,7 @@
                     </f-input>
 
                     <br />
-                    <f-toggle-button name="night_mode" label="Dark Mode" :checked="darkModeOn" />
+                    <f-dark-mode-switch />
                 </div>
             </fieldset>
         </f-form>
@@ -46,12 +46,12 @@ import FForm from '@/components/core/FForm/FForm.vue';
 import FInput from '@/components/core/FInput/FInput.vue';
 import FInfo from '@/components/core/FInfo/FInfo.vue';
 import FMessage from '@/components/core/FMessage/FMessage.vue';
-import FToggleButton from '@/components/core/FToggleButton/FToggleButton.vue';
+import FDarkModeSwitch from '@/components/core/FDarkModeSwitch/FDarkModeSwitch.vue';
 
 export default {
     name: 'Settings',
 
-    components: { FToggleButton, FMessage, FInfo, FInput, FForm },
+    components: { FDarkModeSwitch, FMessage, FInfo, FInput, FForm },
 
     data() {
         return {
@@ -87,8 +87,6 @@ export default {
                 if (appNode && this.checkSlippageTolerance(detail.value)) {
                     appNode.setFUniswapSlippageTolerance(parseFloat(detail.value));
                 }
-            } else if (detail.eTarget.name === 'night_mode') {
-                appNode.setDarkMode(detail.value === 'on');
             }
         },
 
