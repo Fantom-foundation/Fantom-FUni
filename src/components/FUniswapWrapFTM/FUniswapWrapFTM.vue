@@ -166,8 +166,7 @@ export default {
 
         fromTokenBalance() {
             const { fromToken } = this;
-            let balance =
-                this.$defi.fromTokenValue(fromToken.availableBalance, fromToken) - (fromToken.symbol === 'FTM' ? 2 : 0);
+            let balance = this.$defi.fromTokenValue(fromToken.availableBalance, fromToken);
 
             if (balance < 0) {
                 balance = 0;
@@ -181,6 +180,16 @@ export default {
         },
 
         maxFromInputValue() {
+            let max = this.fromTokenBalance;
+
+            if (this.fromToken.symbol === 'FTM') {
+                max -= 2;
+            }
+
+            if (max < 0) {
+                max = 0;
+            }
+
             /*
             if (this.fromToken.symbol === 'FUSD') {
                 // subtract 0.5% fee
@@ -189,7 +198,7 @@ export default {
             */
             // }
 
-            return this.fromTokenBalance;
+            return max;
         },
 
         maxToInputValue() {
