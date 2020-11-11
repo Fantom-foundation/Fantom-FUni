@@ -754,8 +754,13 @@ export default {
         },
 
         onMaxAmountClick() {
-            this.fromValue = this.maxFromInputValue;
-            this.setFromInputValue(this.fromValue);
+            if (this.fromValue_ !== this.maxFromInputValue) {
+                this.fromValue = 0;
+                defer(() => {
+                    this.fromValue = this.maxFromInputValue;
+                    this.setFromInputValue(this.fromValue);
+                });
+            }
         },
 
         onFromTokenSelectorClick() {
