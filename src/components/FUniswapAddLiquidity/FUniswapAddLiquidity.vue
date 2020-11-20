@@ -132,30 +132,35 @@
             <f-uniswap-pair-liquidity-info v-else :pair="dPair" :from-token="fromToken" :to-token="toToken" />
         </div>
 
-        <defi-token-picker-window
+        <erc20-token-picker-window
             ref="pickFromTokenWindow"
-            :tokens="fromTokens"
-            @defi-token-picked="onFromTokenPicked"
+            :tokens="tokenPickerTokens"
+            @erc20-token-picked="onFromTokenPicked"
         />
-        <defi-token-picker-window ref="pickToTokenWindow" :tokens="toTokens" @defi-token-picked="onToTokenPicked" />
+        <erc20-token-picker-window
+            ref="pickToTokenWindow"
+            :tokens="tokenPickerTokens"
+            @erc20-token-picked="onToTokenPicked"
+        />
     </div>
 </template>
 
 <script>
 import FCard from '@/components/core/FCard/FCard.vue';
-import { defer, getUniqueId } from '@/utils';
+import { cloneObject, defer, getUniqueId } from '@/utils';
 import { mapGetters } from 'vuex';
 import FTokenValue from '@/components/core/FTokenValue/FTokenValue.vue';
 import FSelectButton from '@/components/core/FSelectButton/FSelectButton.vue';
 import FCryptoSymbol from '@/components/core/FCryptoSymbol/FCryptoSymbol.vue';
-import DefiTokenPickerWindow from '@/components/windows/DefiTokenPickerWindow/DefiTokenPickerWindow.vue';
 import FUniswapPairLiquidityInfo from '@/components/FUniswapPairLiquidityInfo/FUniswapPairLiquidityInfo.vue';
 import { pollingMixin } from '@/mixins/polling.js';
+import Erc20TokenPickerWindow from '@/components/windows/Erc20TokenPickerWindow/Erc20TokenPickerWindow.vue';
+import { TokenPairs } from '@/utils/token-pairs.js';
 
 export default {
     name: 'FUniswapAddLiquidity',
 
-    components: { FUniswapPairLiquidityInfo, DefiTokenPickerWindow, FCryptoSymbol, FSelectButton, FTokenValue, FCard },
+    components: { Erc20TokenPickerWindow, FUniswapPairLiquidityInfo, FCryptoSymbol, FSelectButton, FTokenValue, FCard },
 
     mixins: [pollingMixin],
 
@@ -171,18 +176,18 @@ export default {
             perPriceDirF2T: true,
             submitBtnDisabled: true,
             showPriceInfo: false,
-            /** @type {DefiToken} */
+            /** @type {ERC20Token} */
             fromToken: {},
-            /** @type {DefiToken} */
+            /** @type {ERC20Token} */
             toToken: {},
-            /** @type {DefiToken[]} */
-            tokens: [],
             sliderLabels: ['0%', '25%', '50%', '75%', '100%'],
             id: getUniqueId(),
             liquidityProviderFee: 0.003,
             submitLabel: 'Enter an amount',
             dPair: {},
-            addDeciamals: 2,
+            pairs: [],
+            tokenPickerTokens: [],
+            addDeciamals: 0,
         };
     },
 
@@ -190,7 +195,7 @@ export default {
         ...mapGetters(['currentAccount', 'fUniswapSlippageTolerance']),
 
         /**
-         * @return {{fromToken: DefiToken, toToken: DefiToken}}
+         * @return {{fromToken: ERC20Token, toToken: ERC20Token}}
          */
         params() {
             const { $route } = this;
@@ -200,8 +205,7 @@ export default {
 
         fromTokenBalance() {
             const { fromToken } = this;
-            let balance =
-                this.$defi.fromTokenValue(fromToken.availableBalance, fromToken) - (fromToken.symbol === 'FTM' ? 2 : 0);
+            let balance = this.$defi.fromTokenValue(fromToken.balanceOf, fromToken);
 
             if (balance < 0) {
                 balance = 0;
@@ -211,15 +215,9 @@ export default {
         },
 
         toTokenBalance() {
-            return this.$defi.fromTokenValue(this.toToken.availableBalance, this.toToken);
-        },
+            const { toToken } = this;
 
-        fromTokens() {
-            return this.getPickerTokens('from');
-        },
-
-        toTokens() {
-            return this.getPickerTokens('to');
+            return this.$defi.fromTokenValue(toToken.balanceOf, toToken);
         },
 
         maxFromInputValue() {
@@ -236,7 +234,7 @@ export default {
 
         shareOfPool() {
             const { dPair } = this;
-            const pairToken = this.getPairTokenByAddress(this.fromToken.address);
+            const pairToken = TokenPairs.findToken(dPair.tokens, this.fromToken);
             let share = 0;
 
             if (dPair.pairAddress) {
@@ -298,11 +296,20 @@ export default {
                         this.setTokenPrices();
                     }
 
+                    // pair not exists
+                    if (!this.dPair.pairAddress) {
+                        this.toToken = {};
+                    }
+
                     defer(() => {
                         this.updateSubmitLabel();
                     });
 
                     this.setRouteParams();
+                }
+
+                if (!_value._loadingBalance) {
+                    this.setTokenBalance(_value, 'from');
                 }
             }
         },
@@ -334,6 +341,10 @@ export default {
                     this.setFromInputValue(this.fromValue_);
 
                     this.setRouteParams();
+                }
+
+                if (!_value._loadingBalance) {
+                    this.setTokenBalance(_value, 'to');
                 }
             }
         },
@@ -369,23 +380,108 @@ export default {
         async init() {
             const { $defi } = this;
             const { params } = this;
-            const result = await Promise.all([
-                $defi.fetchTokens(this.currentAccount ? this.currentAccount.address : ''),
-                $defi.init(),
-            ]);
+            const result = await Promise.all([$defi.fetchUniswapPairs(), $defi.init()]);
 
-            this.tokens = result[0];
+            this.pairs = result[0];
 
             if (params.tokena && params.tokenb) {
                 this.setTokensByRouteParams();
-            } else if (this.tokens.length >= 2) {
-                this.fromToken = this.tokens[0];
+            } else {
+                this.fromToken = this.getInitialToken();
             }
 
             this.setPrices();
         },
 
+        /**
+         * @return {ERC20Token|{}}
+         */
+        getInitialToken() {
+            const { params } = this;
+            let fromToken = {};
+
+            if (this.pairs.length > 0) {
+                const pairs = params.tokena ? TokenPairs.getTokenPairs(this.pairs, params.tokena) : this.pairs;
+
+                if (pairs.length > 0) {
+                    if (params.tokena) {
+                        fromToken = TokenPairs.findToken(pairs[0].tokens, params.tokena);
+                    } else {
+                        fromToken = TokenPairs.findTokenBySymbol(pairs[0].tokens, 'WFTM') || pairs[0].tokens[0];
+                    }
+                }
+            }
+
+            return fromToken;
+        },
+
         async getUniswapPair() {
+            const address = this.currentAccount ? this.currentAccount.address : '';
+            let pair = TokenPairs.getPairByTokens(this.pairs, [this.fromToken, this.toToken]) || {};
+
+            if (pair.pairAddress) {
+                pair = await this.$defi.fetchUniswapPairs(address, pair.pairAddress, [
+                    this.fromToken.address,
+                    this.toToken.address,
+                ]);
+            }
+
+            return pair;
+        },
+
+        /**
+         * @param {ERC20Token} _token
+         * @param {('from'|'to')} [_tokenType]
+         */
+        async setTokenBalance(_token, _tokenType = 'from') {
+            const address = this.currentAccount ? this.currentAccount.address : '';
+
+            _token._loadingBalance = true;
+
+            if (address && _token.address) {
+                _token.balanceOf = await this.$defi.fetchERC20TokenAvailableBalance(address, _token.address);
+            }
+
+            if (_tokenType === 'from') {
+                this.fromToken = cloneObject(_token);
+            } else {
+                this.toToken = cloneObject(_token);
+            }
+
+            _token._loadingBalance = false;
+        },
+
+        /**
+         * Get token list for `erc20-token-picker-window`.
+         *
+         * @param {('from'|'to')} [_tokenType]
+         * @return {ERC20Token[]}
+         */
+        getTokenPickerTokens(_tokenType = 'from') {
+            let tokens = [];
+            let token = _tokenType === 'from' ? this.fromToken : this.toToken;
+            let currToken = null;
+            const bothPicked = !!this.fromToken.address && !!this.toToken.address;
+
+            if (token.address && !(bothPicked && token !== this.fromToken)) {
+                tokens = cloneObject(TokenPairs.getTokensFromPairs(TokenPairs.getTokenPairs(this.pairs, token)));
+
+                currToken = TokenPairs.findToken(tokens, token);
+            } else {
+                tokens = cloneObject(TokenPairs.getTokensFromPairs(this.pairs));
+
+                currToken = TokenPairs.findToken(tokens, _tokenType === 'from' ? this.toToken : this.fromToken);
+            }
+
+            // disable current token in list
+            if (currToken) {
+                currToken._disabled = true;
+            }
+
+            return tokens;
+        },
+
+        /*        async getUniswapPair() {
             const addressA = this.fromToken.address;
             const addressB = this.toToken.address;
 
@@ -404,37 +500,7 @@ export default {
             }
 
             return {};
-        },
-
-        /**
-         * Get token list for `defi-token-picker-window`.
-         *
-         * @type {('from'|'to')} [_type]
-         * @return {DefiToken[]}
-         */
-        getPickerTokens(_type = 'from') {
-            // const fromTokenAddress = this.fromToken.address;
-            let token = _type === 'from' ? this.fromToken : this.toToken;
-            let fromTokenAddress = token.address;
-
-            // if no 'to' token is selected
-            if (_type === 'to' && !this.toToken.address) {
-                fromTokenAddress = this.fromToken.address;
-            }
-
-            return this.tokens.map((_item) => {
-                return { ..._item, _disabled: _item.address === fromTokenAddress };
-            });
-        },
-
-        /**
-         * @param {string} _address
-         * @param {object} [_pair]
-         * @return {{}|null}
-         */
-        getPairTokenByAddress(_address, _pair = this.dPair) {
-            return _pair.tokens ? _pair.tokens.find((_token) => _token.address === _address) : null;
-        },
+        },*/
 
         setRouteParams() {
             const { fromToken } = this;
@@ -462,15 +528,25 @@ export default {
 
             if (params.tokena && params.tokenb) {
                 if (params.tokena !== this.fromToken.address || params.tokenb !== this.toToken.address) {
-                    this.fromToken = this.tokens.find((_item) => _item.address === params.tokena);
-                    this.toToken = this.tokens.find((_item) => _item.address === params.tokenb);
+                    const pair = TokenPairs.getPairByTokens(this.pairs, [
+                        { address: params.tokena },
+                        { address: params.tokena },
+                    ]);
+
+                    if (pair.pairAddress) {
+                        this.fromToken = TokenPairs.findPairToken(pair, { address: params.tokena });
+                        this.toToken = TokenPairs.findPairToken(pair, { address: params.tokenb });
+                    } else {
+                        this.toToken = {};
+                        this.fromToken = this.getInitialToken();
+                    }
 
                     this.setTokenPrices();
                     this.resetInputValues();
                 }
             } else {
-                this.fromToken = this.tokens[0];
                 this.toToken = {};
+                this.fromToken = this.getInitialToken();
             }
         },
 
@@ -678,15 +754,17 @@ export default {
         },
 
         onFromTokenSelectorClick() {
+            this.tokenPickerTokens = this.getTokenPickerTokens('to');
             this.$refs.pickFromTokenWindow.show();
         },
 
         onToTokenSelectorClick() {
+            this.tokenPickerTokens = this.getTokenPickerTokens('from');
             this.$refs.pickToTokenWindow.show();
         },
 
         /**
-         * @param {DefiToken} _token Picked token.
+         * @param {ERC20Token} _token Picked token.
          */
         onFromTokenPicked(_token) {
             if (_token.address === this.toToken.address) {
@@ -698,7 +776,7 @@ export default {
         },
 
         /**
-         * @param {DefiToken} _token Picked token.
+         * @param {ERC20Token} _token Picked token.
          */
         onToTokenPicked(_token) {
             if (_token.address === this.fromToken.address) {

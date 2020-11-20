@@ -186,6 +186,14 @@ export default {
                 return;
             }
 
+            if (!fromToken.decimals) {
+                fromToken.decimals = 18;
+            }
+
+            if (!toToken.decimals) {
+                toToken.decimals = 18;
+            }
+
             if (!contractAddress) {
                 contractAddress = $defi.contracts.uniswapRouter;
             }

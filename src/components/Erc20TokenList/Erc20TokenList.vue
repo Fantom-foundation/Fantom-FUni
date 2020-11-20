@@ -124,3 +124,7 @@ export default {
     },
 };
 </script>
+
+<style lang="scss">
+@import '../DefiTokenList/style';
+</style>
