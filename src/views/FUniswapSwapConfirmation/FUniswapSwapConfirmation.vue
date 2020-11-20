@@ -193,6 +193,14 @@ export default {
                 return;
             }
 
+            if (!fromToken.decimals) {
+                fromToken.decimals = 18;
+            }
+
+            if (!toToken.decimals) {
+                toToken.decimals = 18;
+            }
+
             if (params.step === 1) {
                 this.allowValue =
                     params.maximumSold > 0 ? params.fromValue * (1 + slippageTolerance) : params.fromValue;
@@ -202,7 +210,7 @@ export default {
                     fromToken.address,
                     $defi.contracts.uniswapRouter,
                     params.max && !params.maximumSold
-                        ? fromToken.availableBalance
+                        ? fromToken.balanceOf || fromToken.availableBalance
                         : Web3.utils.toHex($defi.shiftDecPointRight(this.allowValue.toString(), fromToken.decimals))
                     // Web3.utils.toHex(this.$defi.shiftDecPointRight((fromValue * 1.05).toString(), fromToken.decimals))
                 );
@@ -211,7 +219,7 @@ export default {
                 if (params.minimumReceived > 0) {
                     amounts = await $defi.fetchUniswapAmountsOut(
                         params.max
-                            ? fromToken.availableBalance
+                            ? fromToken.balanceOf || fromToken.availableBalance
                             : Web3.utils.toHex(
                                   this.$defi.shiftDecPointRight(params.fromValue.toString(), fromToken.decimals)
                               ),
