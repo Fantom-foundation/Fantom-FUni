@@ -73,6 +73,7 @@ import FCryptoSymbol from '@/components/core/FCryptoSymbol/FCryptoSymbol.vue';
 import FUniswapPairLiquidityInfo from '@/components/FUniswapPairLiquidityInfo/FUniswapPairLiquidityInfo.vue';
 import { formatNumberByLocale } from '@/filters.js';
 import { pollingMixin } from '@/mixins/polling.js';
+import { TokenPairs } from '@/utils/token-pairs.js';
 
 export default {
     name: 'FUniswapRemoveLiquidity',
@@ -92,16 +93,15 @@ export default {
 
     data() {
         return {
-            /** @type {DefiToken} */
+            /** @type {ERC20Token} */
             fromToken: {},
-            /** @type {DefiToken} */
+            /** @type {ERC20Token} */
             toToken: {},
-            /** @type {DefiToken[]} */
-            tokens: [],
             sliderLabels: ['0%', '25%', '50%', '75%', '100%'],
             id: getUniqueId(),
             dPair: {},
-            addDeciamals: 2,
+            pairs: [],
+            addDeciamals: 0,
             currLiquidity: '0',
             submitLabel: 'Remove',
         };
@@ -111,7 +111,7 @@ export default {
         ...mapGetters(['currentAccount', 'fUniswapSlippageTolerance']),
 
         /**
-         * @return {{fromToken: DefiToken, toToken: DefiToken}}
+         * @return {{fromToken: ERC20Token, toToken: ERC20Token}}
          */
         params() {
             const { $route } = this;
@@ -221,10 +221,9 @@ export default {
     methods: {
         async init() {
             const { $defi } = this;
-            const address = this.currentAccount ? this.currentAccount.address : '';
-            const result = await Promise.all([$defi.fetchTokens(address), $defi.init()]);
+            const result = await Promise.all([$defi.fetchUniswapPairs(), $defi.init()]);
 
-            this.tokens = result[0];
+            this.pairs = result[0];
 
             this.setPairAndTokensByRouteParams();
         },
@@ -263,34 +262,69 @@ export default {
             }
         },
 
-        async setPairAndTokensByRouteParams() {
+        setTokensByRouteParams__() {
             const { params } = this.$route;
-            const address = this.currentAccount ? this.currentAccount.address : '';
-            let uniswapPairs = null;
-            let uniswapPair = null;
 
             if (params.tokena && params.tokenb) {
-                uniswapPair = await this.$defi.fetchUniswapPairs(address, '', [params.tokena, params.tokenb]);
-            } else {
-                uniswapPairs = await this.$defi.fetchUniswapPairs(address);
-                if (uniswapPairs && uniswapPairs.length > 0) {
-                    uniswapPair = uniswapPairs[0];
+                if (params.tokena !== this.fromToken.address || params.tokenb !== this.toToken.address) {
+                    const pair = TokenPairs.getPairByTokens(this.pairs, [
+                        { address: params.tokena },
+                        { address: params.tokena },
+                    ]);
+
+                    if (pair.pairAddress) {
+                        this.fromToken = TokenPairs.findPairToken(pair, { address: params.tokena });
+                        this.toToken = TokenPairs.findPairToken(pair, { address: params.tokenb });
+                    } else {
+                        this.toToken = {};
+                        this.fromToken = this.getInitialToken();
+                    }
+
+                    this.setTPrices();
+                    this.resetInputValues();
                 }
+            } else {
+                this.fromToken = this.getInitialToken();
+                this.toToken = {};
+            }
+        },
+
+        async setPairAndTokensByRouteParams() {
+            const { params } = this.$route;
+            const { pairs } = this;
+            const address = this.currentAccount ? this.currentAccount.address : '';
+            let pair = null;
+
+            if (pairs.length === 0) {
+                return;
             }
 
-            if (uniswapPair) {
-                uniswapPair = await this.$defi.fetchUniswapPairs(address, uniswapPair.pairAddress, [
-                    uniswapPair.tokens[0].address,
-                    uniswapPair.tokens[1].address,
+            if (params.tokena && params.tokenb) {
+                // pair = await this.$defi.fetchUniswapPairs(address, '', [params.tokena, params.tokenb]);
+                pair = TokenPairs.getPairByTokens(pairs, [{ address: params.tokena }, { address: params.tokena }]);
+            } else {
+                pair = pairs[0];
+            }
+
+            if (pair) {
+                pair = await this.$defi.fetchUniswapPairs(address, pair.pairAddress, [
+                    pair.tokens[0].address,
+                    pair.tokens[1].address,
                 ]);
 
-                if (uniswapPair) {
-                    this.dPair = uniswapPair;
+                if (pair) {
+                    this.dPair = pair;
 
-                    const uniswapTokens = uniswapPair.tokens;
-                    if (uniswapTokens && uniswapTokens.length === 2) {
-                        this.fromToken = this.tokens.find((_item) => _item.address === uniswapTokens[0].address);
-                        this.toToken = this.tokens.find((_item) => _item.address === uniswapTokens[1].address);
+                    if (pair.tokens) {
+                        if (params.tokena && params.tokenb) {
+                            this.fromToken = TokenPairs.findPairToken(pair, { address: params.tokena });
+                            this.toToken = TokenPairs.findPairToken(pair, { address: params.tokenb });
+                        } else {
+                            this.fromToken = pair.tokens[0];
+                            this.toToken = pair.tokens[1];
+                        }
+
+                        console.log(this.fromToken, this.toToken);
 
                         this.setTokenPrices();
                     }
