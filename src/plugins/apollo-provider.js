@@ -54,6 +54,10 @@ const httpLink = new HttpLink({
     uri: httpProvider,
 });
 
+export function getCurrentHttpProvider() {
+    return httpProvider;
+}
+
 /*
 const loggerLink = new ApolloLink((operation, forward) => {
     console.log(`GraphQL Request: ${operation.operationName}`);
