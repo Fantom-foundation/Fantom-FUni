@@ -2,12 +2,14 @@ import './defi.types.js';
 import gql from 'graphql-tag';
 import { isObjectEmpty, lowercaseFirstChar } from '../../utils';
 import web3utils from 'web3-utils';
+import { fFetch } from '@/plugins/ffetch.js';
+import { TokenPairs } from '@/utils/token-pairs.js';
 
 /** @type {BNBridgeExchange} */
 export let defi = null;
 
 // TMP!!
-const filterTokens = ['FTM', 'WFTM', 'FUSD']; // []
+const filterTokens = [];
 
 /**
  * Plugin for various DeFi requests and calculations.
@@ -112,12 +114,16 @@ export class DeFi {
         const tokenPrice = this.getTokenPrice(_token);
         let decimals = 0;
 
-        if (tokenPrice < 0.5) {
+        if (tokenPrice === 0) {
+            decimals = 6;
+        } else if (tokenPrice < 0.5) {
             decimals = 1;
         } else if (tokenPrice < 100) {
             decimals = 2;
+        } else if (tokenPrice < 1000) {
+            decimals = 5;
         } else {
-            decimals = 3;
+            decimals = 6;
         }
 
         this.tokenDecimals[_token.symbol] = decimals;
@@ -128,7 +134,7 @@ export class DeFi {
      * @return {number}
      */
     getTokenDecimals(_token) {
-        return this.tokenDecimals[_token.symbol] || 2;
+        return this.tokenDecimals[_token.symbol] || 6;
     }
 
     /**
@@ -362,7 +368,7 @@ export class DeFi {
         let value = 0;
 
         if (_value !== undefined && !isNaN(_value)) {
-            value = parseFloat(this.shiftDecPointLeft(_value, _isPrice ? _token.priceDecimals : _token.decimals));
+            value = parseFloat(this.shiftDecPointLeft(_value, _isPrice ? _token.priceDecimals : _token.decimals || 18));
         }
 
         return value;
@@ -626,21 +632,12 @@ export class DeFi {
     }
 
     /**
-     * @param {string} _address
-     * @param {object} _pair
-     * @return {{}|null}
-     */
-    getPairTokenByAddress(_address, _pair) {
-        return _address && _pair && _pair.tokens ? _pair.tokens.find((_token) => _token.address === _address) : null;
-    }
-
-    /**
      * @param {object} _token
      * @param {object} _pair
      * @return {*|number}
      */
     totalTokenLiquidity(_token, _pair) {
-        const pairToken = this.getPairTokenByAddress(_token ? _token.address : '', _pair);
+        const pairToken = TokenPairs.findPairToken(_pair, _token);
 
         return pairToken ? parseInt(this.fromTokenValue(pairToken.balanceOf, _token)) : 0;
     }
@@ -676,7 +673,7 @@ export class DeFi {
      * @return {Promise<DefiToken[]>}
      */
     async fetchTokens(_ownerAddress, _symbol) {
-        const data = await this.apolloClient.query({
+        const query = {
             query: _ownerAddress
                 ? gql`
                       query DefiTokens($owner: Address!) {
@@ -723,8 +720,11 @@ export class DeFi {
             variables: {
                 owner: _ownerAddress,
             },
-            fetchPolicy: 'network-only',
-        });
+            // fetchPolicy: 'network-only',
+        };
+        // const data = await this.apolloClient.query(query);
+        const data = await fFetch.fetchGQLQuery(query, 'defiTokens');
+
         let defiTokens = data.data.defiTokens || [];
 
         if (filterTokens.length > 0) {
@@ -744,6 +744,135 @@ export class DeFi {
             }
         } else {
             tokens = defiTokens;
+        }
+
+        return tokens;
+    }
+
+    /**
+     * @param {string} [_ownerAddress]
+     * @param {string|array} [_symbol]
+     * @return {Promise<ERC20Token[]>}
+     */
+    async fetchERC20Tokens(_ownerAddress, _symbol) {
+        const query = {
+            query: _ownerAddress
+                ? gql`
+                      query ERC20TokenList($owner: Address!) {
+                          erc20TokenList {
+                              address
+                              name
+                              symbol
+                              decimals
+                              totalSupply
+                              balanceOf(owner: $owner)
+                          }
+                      }
+                  `
+                : gql`
+                      query ERC20TokenList {
+                          erc20TokenList {
+                              address
+                              name
+                              symbol
+                              decimals
+                              totalSupply
+                          }
+                      }
+                  `,
+            variables: {
+                owner: _ownerAddress,
+            },
+            // fetchPolicy: 'network-only',
+        };
+        // const data = await this.apolloClient.query(query);
+        const data = await fFetch.fetchGQLQuery(query, 'erc20TokenList');
+
+        let erc20TokenList = data.data.erc20TokenList || [];
+
+        if (filterTokens.length > 0) {
+            erc20TokenList = erc20TokenList.filter(this.filterTokensBySymbol);
+        }
+        // console.log('erc20', erc20TokenList);
+
+        let tokens = [];
+
+        this._setTokens(erc20TokenList);
+
+        if (_symbol) {
+            if (typeof _symbol === 'string') {
+                tokens = erc20TokenList.find((_item) => _item.symbol === _symbol);
+            } else if (_symbol.length) {
+                tokens = erc20TokenList.filter((_item) => _symbol.indexOf(_item.symbol) > -1);
+            }
+        } else {
+            tokens = erc20TokenList;
+        }
+
+        return tokens;
+    }
+
+    /**
+     * @param {string} _ownerAddress
+     * @return {Promise<ERC20Token[]>}
+     */
+    async fetchERC20TokensAvailableBalances(_ownerAddress) {
+        const query = {
+            query: gql`
+                query ERC20TokenList($owner: Address!) {
+                    erc20TokenList {
+                        address
+                        balanceOf(owner: $owner)
+                    }
+                }
+            `,
+            variables: {
+                owner: _ownerAddress,
+            },
+        };
+        const data = await fFetch.fetchGQLQuery(query, 'erc20TokenList');
+
+        return data.data.erc20TokenList || [];
+    }
+
+    /**
+     * @param {string} _ownerAddress
+     * @param {string} _tokenAddress
+     * @return {Promise<Number>}
+     */
+    async fetchERC20TokenAvailableBalance(_ownerAddress, _tokenAddress) {
+        const query = {
+            query: gql`
+                query ERCTokenBalance($owner: Address!, $token: Address!) {
+                    ercTokenBalance(owner: $owner, token: $token)
+                }
+            `,
+            variables: {
+                owner: _ownerAddress,
+                token: _tokenAddress,
+            },
+        };
+        const data = await fFetch.fetchGQLQuery(query, 'ercTokenBalance');
+
+        return data.data.ercTokenBalance || 0;
+    }
+
+    /**
+     * @param {string} _ownerAddress
+     * @param {ERC20Token[]} _tokens
+     */
+    async getERC20TokensWithAvailableBalances(_ownerAddress, _tokens) {
+        const tokenBalances = await this.fetchERC20TokensAvailableBalances(_ownerAddress);
+        const tokens = cloneObject(_tokens);
+
+        if (tokenBalances) {
+            tokenBalances.forEach((_token) => {
+                const token = tokens.find((_t) => _t.address === _token.address);
+
+                if (token) {
+                    token.balanceOf = _token.balanceOf;
+                }
+            });
         }
 
         return tokens;
@@ -1020,6 +1149,9 @@ export class DeFi {
         });
         const defiUniswapPairs = data.data.defiUniswapPairs || [];
 
+        // TMP
+        // await this.tmpSetTestPairs(defiUniswapPairs, _address);
+
         if (_filterPair.length > 0) {
             // find uniswap pair by given token addresses
             return defiUniswapPairs.find((_pair) => {
@@ -1033,6 +1165,34 @@ export class DeFi {
         }
 
         return defiUniswapPairs;
+    }
+
+    async tmpSetTestPairs(_pairs, _address) {
+        const tokens = await this.fetchERC20Tokens(_address);
+        const testPairs = [
+            ['FBNB', 'FETH'],
+            ['WFTM', 'FBNB'],
+        ];
+
+        testPairs.forEach((_pair, _idx) => {
+            const pair = {
+                pairAddress: `0x2ace15004a2351bcfffe76c5ae1b3e28c29b74f${_idx}`,
+                tokens: [
+                    { ...tokens.find((_token) => _token.symbol === _pair[0]), __typename: 'ERC20Token' },
+                    { ...tokens.find((_token) => _token.symbol === _pair[1]), __typename: 'ERC20Token' },
+                ],
+                reservesTimeStamp: '0x0',
+                reserves: ['0x0', '0x0'],
+                cumulativePrices: ['0x0', '0x0'],
+                totalSupply: '0x0',
+                __typename: 'UniswapPair',
+            };
+
+            if (!_pairs.find((_item) => _item.pairAddress === pair.pairAddress)) {
+                _pairs.push(pair);
+            }
+        });
+        // console.log(_pairs);
     }
 
     /**
