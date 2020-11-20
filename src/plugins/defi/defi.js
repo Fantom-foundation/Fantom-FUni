@@ -1,6 +1,6 @@
 import './defi.types.js';
 import gql from 'graphql-tag';
-import { isObjectEmpty, lowercaseFirstChar } from '../../utils';
+import { cloneObject, isObjectEmpty, lowercaseFirstChar } from '../../utils';
 import web3utils from 'web3-utils';
 import { fFetch } from '@/plugins/ffetch.js';
 import { TokenPairs } from '@/utils/token-pairs.js';
