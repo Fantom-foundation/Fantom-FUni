@@ -72,9 +72,7 @@ export default {
     methods: {
         formatTokenValue(_value) {
             const decimals =
-                this.decimals > -1
-                    ? this.decimals
-                    : (this.$defi.tokenDecimals[this.token.symbol] || 0) + this.addDecimals;
+                this.decimals > -1 ? this.decimals : this.$defi.getTokenDecimals(this.token) + this.addDecimals;
 
             return _value === 0 ? 0 : formatNumberByLocale(parseFloat(_value).toFixed(decimals), decimals);
         },
