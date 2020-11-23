@@ -1,0 +1,15 @@
+.f-uniswap-pair-symbol {
+    display: flex;
+    align-items: center;
+
+    .f-crypto-symbol {
+        margin-right: 0;
+        padding-right: 0;
+    }
+
+    .first-symbol {
+        margin-right: -6px;
+        //z-index: 2;
+        //margin-right: -16px;
+    }
+}

@@ -19,8 +19,7 @@
                     </div>
                 </div>
                 <template v-else>
-                    <f-crypto-symbol :token="item.tokens[0]" />
-                    <f-crypto-symbol :token="item.tokens[1]" />
+                    <f-uniswap-pair-symbol :pair="item" />
                 </template>
             </template>
 
@@ -75,11 +74,12 @@
 import FDataTable from '@/components/core/FDataTable/FDataTable.vue';
 import FCryptoSymbol from '@/components/core/FCryptoSymbol/FCryptoSymbol.vue';
 import { formatNumberByLocale } from '@/filters.js';
+import FUniswapPairSymbol from '@/components/FUniswapPairSymbol/FUniswapPairSymbol.vue';
 
 export default {
     name: 'PairsList',
 
-    components: { FCryptoSymbol, FDataTable },
+    components: { FUniswapPairSymbol, FCryptoSymbol, FDataTable },
 
     data() {
         return {
