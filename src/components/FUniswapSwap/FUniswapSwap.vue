@@ -13,7 +13,7 @@
                             :token="fromToken"
                             :value="fromTokenBalance"
                             :use-placeholder="false"
-                            :add-decimals="addDeciamals"
+                            :add-decimals="addDecimals"
                             no-currency
                         />
                     </span>
@@ -62,7 +62,7 @@
                             :token="toToken"
                             :value="toTokenBalance"
                             :use-placeholder="false"
-                            :add-decimals="addDeciamals"
+                            :add-decimals="addDecimals"
                             no-currency
                         />
                     </span>
@@ -168,7 +168,7 @@
                         <f-token-value
                             :value="fromValue_ * liquidityProviderFee"
                             :token="fromToken"
-                            :add-decimals="addDeciamals"
+                            :add-decimals="addDecimals"
                         />
                     </div>
                 </div>
@@ -248,7 +248,7 @@ export default {
             /** @type {UniswapPair[]} */
             pairs: [],
             tokenPickerTokens: [],
-            addDeciamals: 0,
+            addDecimals: 0,
         };
     },
 
@@ -544,14 +544,14 @@ export default {
          * @param {number} _value
          */
         formatToInputValue(_value) {
-            return _value !== 0 ? _value.toFixed(this.$defi.getTokenDecimals(this.toToken) + this.addDeciamals) : '';
+            return _value !== 0 ? _value.toFixed(this.$defi.getTokenDecimals(this.toToken) + this.addDecimals) : '';
         },
 
         /**
          * @param {number} _value
          */
         formatFromInputValue(_value) {
-            return _value !== 0 ? _value.toFixed(this.$defi.getTokenDecimals(this.fromToken) + this.addDeciamals) : '';
+            return _value !== 0 ? _value.toFixed(this.$defi.getTokenDecimals(this.fromToken) + this.addDecimals) : '';
         },
 
         /**

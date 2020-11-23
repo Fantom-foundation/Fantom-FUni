@@ -42,11 +42,11 @@
                 <div class="value">
                     <f-token-value :value="1" :token="fromToken" :decimals="0" />
                     =
-                    <f-token-value :value="convertFrom2To(1)" :token="toToken" :add-decimals="addDeciamals" />
+                    <f-token-value :value="convertFrom2To(1)" :token="toToken" :add-decimals="addDecimals" />
                     <br />
                     <f-token-value :value="1" :token="toToken" :decimals="0" />
                     =
-                    <f-token-value :value="convertTo2From(1)" :token="fromToken" :add-decimals="addDeciamals" />
+                    <f-token-value :value="convertTo2From(1)" :token="fromToken" :add-decimals="addDecimals" />
                 </div>
             </div>
 
@@ -103,7 +103,7 @@ export default {
             dPair: {},
             /** @type {UniswapPair[]} */
             pairs: [],
-            addDeciamals: 0,
+            addDecimals: 0,
             currLiquidity: '0',
             submitLabel: 'Remove',
         };
@@ -143,7 +143,7 @@ export default {
             if (fromTokenLiquidity > 0) {
                 return formatNumberByLocale(
                     fromTokenLiquidity,
-                    this.$defi.getTokenDecimals(this.fromToken) + this.addDeciamals
+                    this.$defi.getTokenDecimals(this.fromToken) + this.addDecimals
                 );
             }
 
@@ -172,7 +172,7 @@ export default {
             if (toTokenLiquidity > 0) {
                 return formatNumberByLocale(
                     toTokenLiquidity,
-                    this.$defi.getTokenDecimals(this.toToken) + this.addDeciamals
+                    this.$defi.getTokenDecimals(this.toToken) + this.addDecimals
                 );
             }
 
