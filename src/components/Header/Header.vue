@@ -30,15 +30,9 @@ export default {
                 },
                 {
                     url: {
-                        name: 'funiswap-add-liquidity',
+                        name: 'funiswap-pool',
                     },
-                    title: 'Add Liquidity',
-                },
-                {
-                    url: {
-                        name: 'funiswap-remove-liquidity',
-                    },
-                    title: 'Remove Liquidity',
+                    title: 'Pool',
                 },
                 {
                     url: {

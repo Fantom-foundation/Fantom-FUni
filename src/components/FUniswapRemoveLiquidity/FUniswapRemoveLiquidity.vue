@@ -1,5 +1,11 @@
 <template>
     <div class="funiswap-remove-liquidity funiswap">
+        <h1 class="with-back-btn">
+            <f-back-button :route-name="backButtonRoute" />
+            Remove Liquidity
+        </h1>
+        <br />
+
         <f-card>
             <div class="funiswap__box">
                 Amount
@@ -74,11 +80,13 @@ import FUniswapPairLiquidityInfo from '@/components/FUniswapPairLiquidityInfo/FU
 import { formatNumberByLocale } from '@/filters.js';
 import { pollingMixin } from '@/mixins/polling.js';
 import { TokenPairs } from '@/utils/token-pairs.js';
+import FBackButton from '@/components/core/FBackButton/FBackButton.vue';
+import { getAppParentNode } from '@/app-structure.js';
 
 export default {
     name: 'FUniswapRemoveLiquidity',
 
-    components: { FUniswapPairLiquidityInfo, FCryptoSymbol, FSlider, FTokenValue, FCard },
+    components: { FBackButton, FUniswapPairLiquidityInfo, FCryptoSymbol, FSlider, FTokenValue, FCard },
 
     mixins: [pollingMixin],
 
@@ -187,6 +195,12 @@ export default {
             const { dPair } = this;
 
             return dPair.pairAddress ? parseInt(dPair.shareOf, 16) / parseInt(dPair.totalSupply, 16) : 0;
+        },
+
+        backButtonRoute() {
+            const parentNode = getAppParentNode('funiswap-add-liquidity');
+
+            return parentNode ? parentNode.route : '';
         },
     },
 

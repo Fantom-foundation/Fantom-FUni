@@ -1,5 +1,11 @@
 <template>
     <div class="funiswap-add-liquidity funiswap">
+        <h1 class="with-back-btn">
+            <f-back-button :route-name="backButtonRoute" />
+            Add Liquidity
+        </h1>
+        <br />
+
         <f-card>
             <div class="funiswap__box">
                 <div class="funiswap__token__balance">
@@ -156,11 +162,21 @@ import FUniswapPairLiquidityInfo from '@/components/FUniswapPairLiquidityInfo/FU
 import { pollingMixin } from '@/mixins/polling.js';
 import Erc20TokenPickerWindow from '@/components/windows/Erc20TokenPickerWindow/Erc20TokenPickerWindow.vue';
 import { TokenPairs } from '@/utils/token-pairs.js';
+import FBackButton from '@/components/core/FBackButton/FBackButton.vue';
+import { getAppParentNode } from '@/app-structure.js';
 
 export default {
     name: 'FUniswapAddLiquidity',
 
-    components: { Erc20TokenPickerWindow, FUniswapPairLiquidityInfo, FCryptoSymbol, FSelectButton, FTokenValue, FCard },
+    components: {
+        FBackButton,
+        Erc20TokenPickerWindow,
+        FUniswapPairLiquidityInfo,
+        FCryptoSymbol,
+        FSelectButton,
+        FTokenValue,
+        FCard,
+    },
 
     mixins: [pollingMixin],
 
@@ -250,6 +266,12 @@ export default {
             }
 
             return '-';
+        },
+
+        backButtonRoute() {
+            const parentNode = getAppParentNode('funiswap-add-liquidity');
+
+            return parentNode ? parentNode.route : '';
         },
     },
 
