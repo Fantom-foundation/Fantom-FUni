@@ -69,3 +69,15 @@
  * @property {string} balanceOf Represents the total available balance of the token on the account regardless of the DeFi usage of the token.
  * @property {string} allowance Amount of ERC20 tokens unlocked by the owner / token holder to be accessible for DeFi operations
  */
+
+/**
+ * UniswapPair represents the information about single Uniswap pair managed by the Uniswap Core.
+ * @typedef {Object} UniswapPair
+ * @property {string} pairAddress Address of the Pair and also the address of the ERC20 token managing the share of each liquidity participant.
+ * @property {ERC20Token[]} tokens List of tokens in the pair.
+ * @property {string[]} reserves Reserves of the tokens of the pair.
+ * @property {string} reservesTimeStamp The timestamp of the block in which this reserves state was reached.
+ * @property {string[]} cumulativePrices Cumulative prices of the tokens of the pair.
+ * @property {string} totalSupply Total amount of the pair tokens in circulation and represents the total share pool of all the participants.
+ * @property {string} shareOf Share of the given user/participant on the pair.
+ */

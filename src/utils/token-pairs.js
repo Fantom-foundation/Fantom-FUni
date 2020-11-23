@@ -24,7 +24,7 @@ export class TokenPairs {
     /**
      * Get all tokens that occur in pairs.
      *
-     * @param {array} _pairs
+     * @param {UniswapPair[]} _pairs
      * @param {ERC20Token} _excludeToken
      * @return {[]}
      */
@@ -46,7 +46,7 @@ export class TokenPairs {
     }
 
     /**
-     * @param {array} _pairs
+     * @param {UniswapPair[]} _pairs
      * @param {ERC20Token[]} _tokens
      * @return {object}
      */
@@ -61,7 +61,7 @@ export class TokenPairs {
     }
 
     /**
-     * @param {array} _pairs
+     * @param {UniswapPair[]} _pairs
      * @param {ERC20Token} _token
      * @return {[]}
      */
@@ -70,7 +70,7 @@ export class TokenPairs {
     }
 
     /**
-     * @param {array} _pairs
+     * @param {UniswapPair[]} _pairs
      * @param {ERC20Token} _token
      * @param {boolean} [_directPath]
      * @param {array} [_path]
@@ -130,7 +130,7 @@ export class TokenPairs {
     }
 
     /**
-     * @param {array} _pairs
+     * @param {UniswapPair[]} _pairs
      * @return {[]}
      */
     static getPairAddresses(_pairs) {
@@ -156,7 +156,7 @@ export class TokenPairs {
     }
 
     /**
-     * @param {object} _pair
+     * @param {UniswapPair} _pair
      * @param {ERC20Token} _token
      * @return {ERC20Token|undefined}
      */

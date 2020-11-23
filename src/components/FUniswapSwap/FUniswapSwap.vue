@@ -243,7 +243,9 @@ export default {
             id: getUniqueId(),
             liquidityProviderFee: 0.003,
             submitLabel: 'Enter an amount',
+            /** @type {UniswapPair} */
             dPair: {},
+            /** @type {UniswapPair[]} */
             pairs: [],
             tokenPickerTokens: [],
             addDeciamals: 0,
