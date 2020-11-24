@@ -7,7 +7,7 @@
                         <router-link
                             v-if="!item.outerLink"
                             :to="item.url"
-                            :class="{ disabled: item.disabled }"
+                            :class="{ disabled: item.disabled, 'router-link-active': item._active }"
                             :title="item.linkTitle"
                             :target="item.blank ? '_blank' : null"
                         >
@@ -23,7 +23,7 @@
                         <a
                             v-else
                             :href="item.url"
-                            :class="{ disabled: item.disabled }"
+                            :class="{ disabled: item.disabled, 'router-link-active': item._active }"
                             :title="item.linkTitle"
                             :target="item.blank ? '_blank' : null"
                         >
@@ -45,6 +45,8 @@
 
 <script>
 import { helpersMixin } from '../../../mixins/helpers.js';
+import { getAppNodeParents } from '@/app-structure.js';
+import { cloneObject } from '@/utils';
 
 export default {
     mixins: [helpersMixin],
@@ -87,6 +89,43 @@ export default {
 
         navTag() {
             return this.renderNav ? 'nav' : 'div';
+        },
+
+        routeNames() {
+            return this.items.map((_item) => _item.url.name);
+        },
+    },
+
+    watch: {
+        /**
+         * Watches for vue route change.
+         */
+        $route(_route) {
+            this.processRoute(_route);
+        },
+    },
+
+    mounted() {
+        this.processRoute(this.$route);
+    },
+
+    methods: {
+        /**
+         * @param {object} _route
+         */
+        processRoute(_route) {
+            const { routeNames } = this;
+            const appNode = getAppNodeParents(_route.name).find((_item) => routeNames.includes(_item.route));
+
+            if (appNode) {
+                const items = cloneObject(this.items);
+
+                items.forEach((_item) => {
+                    _item._active = _item.url.name === appNode.route;
+                });
+
+                this.items = items;
+            }
         },
     },
 };
