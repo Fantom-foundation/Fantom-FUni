@@ -1,25 +1,38 @@
 <template>
     <div class="pairs-list">
         <div v-if="items.length === 0">No pairs</div>
-        <f-data-table
-            v-else
-            f-card-off
-            :columns="columns"
-            :items="items"
-            class="f-data-table-body-bg-color"
-            action-on-row__
-            @row-action__="onRowAction"
-        >
+        <f-data-table v-else f-card-off :columns="columns" :items="items" class="f-data-table-body-bg-color">
             <template v-slot:column-pair="{ value, item, column }">
                 <div v-if="column" class="row no-collapse no-vert-col-padding">
                     <div class="col-6 f-row-label">{{ column.label }}</div>
                     <div class="col break-word">
-                        <f-crypto-symbol :token="item.tokens[0]" />
-                        <f-crypto-symbol :token="item.tokens[1]" />
+                        <f-uniswap-pair-symbol :pair="item" />
                     </div>
                 </div>
                 <template v-else>
                     <f-uniswap-pair-symbol :pair="item" />
+                </template>
+            </template>
+
+            <template v-slot:column-position="{ value, item, column }">
+                <div v-if="column" class="row no-collapse no-vert-col-padding">
+                    <div class="col-6 f-row-label">{{ column.label }}</div>
+                    <div class="col break-word">
+                        <template v-if="getPairShare(item) > 0">
+                            <f-token-value :token="item.tokens[0]" :value="getTokenShare(item, 0)" />
+                            <br />
+                            <f-token-value :token="item.tokens[1]" :value="getTokenShare(item, 1)" />
+                        </template>
+                        <template v-else> - </template>
+                    </div>
+                </div>
+                <template v-else>
+                    <template v-if="getPairShare(item) > 0">
+                        <f-token-value :token="item.tokens[0]" :value="getTokenShare(item, 0)" />
+                        <br />
+                        <f-token-value :token="item.tokens[1]" :value="getTokenShare(item, 1)" />
+                    </template>
+                    <template v-else> - </template>
                 </template>
             </template>
 
@@ -35,15 +48,17 @@
                         >
                             Add Liquidity
                         </router-link>
-                        ,
-                        <router-link
-                            :to="{
-                                name: 'funiswap-remove-liquidity',
-                                params: { tokena: item.tokens[0].address, tokenb: item.tokens[1].address },
-                            }"
-                        >
-                            Remove Liquidity
-                        </router-link>
+                        <template v-if="item.shareOf && item.shareOf !== '0x0'">
+                            ,
+                            <router-link
+                                :to="{
+                                    name: 'funiswap-remove-liquidity',
+                                    params: { tokena: item.tokens[0].address, tokenb: item.tokens[1].address },
+                                }"
+                            >
+                                Remove Liquidity
+                            </router-link>
+                        </template>
                     </div>
                 </div>
                 <template v-else>
@@ -55,15 +70,17 @@
                     >
                         Add Liquidity
                     </router-link>
-                    <br />
-                    <router-link
-                        :to="{
-                            name: 'funiswap-remove-liquidity',
-                            params: { tokena: item.tokens[0].address, tokenb: item.tokens[1].address },
-                        }"
-                    >
-                        Remove Liquidity
-                    </router-link>
+                    <template v-if="item.shareOf && item.shareOf !== '0x0'">
+                        <br />
+                        <router-link
+                            :to="{
+                                name: 'funiswap-remove-liquidity',
+                                params: { tokena: item.tokens[0].address, tokenb: item.tokens[1].address },
+                            }"
+                        >
+                            Remove Liquidity
+                        </router-link>
+                    </template>
                 </template>
             </template>
         </f-data-table>
@@ -72,14 +89,15 @@
 
 <script>
 import FDataTable from '@/components/core/FDataTable/FDataTable.vue';
-import FCryptoSymbol from '@/components/core/FCryptoSymbol/FCryptoSymbol.vue';
 import { formatNumberByLocale } from '@/filters.js';
 import FUniswapPairSymbol from '@/components/FUniswapPairSymbol/FUniswapPairSymbol.vue';
+import { mapGetters } from 'vuex';
+import FTokenValue from '@/components/core/FTokenValue/FTokenValue.vue';
 
 export default {
     name: 'PairsList',
 
-    components: { FUniswapPairSymbol, FCryptoSymbol, FDataTable },
+    components: { FTokenValue, FUniswapPairSymbol, FDataTable },
 
     data() {
         return {
@@ -103,71 +121,24 @@ export default {
                             this.defi.getTokenDecimals(token)
                         );
                     },
+                    css: { textAlign: 'center' },
+                },
+                {
+                    name: 'position',
+                    label: 'Your Position',
+                    css: { textAlign: 'center' },
                 },
                 {
                     name: 'actions',
                     label: 'Actions',
                     css: { textAlign: 'right' },
                 },
-                /*
-                {
-                    name: 'asset',
-                    label: 'Asset',
-                    sortFunc: (_itemProp, _direction = 'asc') => {
-                        return (_a, _b) => {
-                            const a = _a.symbol;
-                            const b = _b.symbol;
-
-                            return (_direction === 'desc' ? -1 : 1) * stringSort(a, b);
-                        };
-                    },
-                    sortDir: 'desc',
-                    width: '140px',
-                },
-                {
-                    name: 'available',
-                    label: 'Available',
-                    itemProp: 'availableBalance',
-                    formatter: (_value, _item) => {
-                        const balance = _item._availableBalance;
-
-                        return balance > 0 ? formatNumberByLocale(balance, this.defi.getTokenDecimals(_item)) : 0;
-                    },
-                    css: { textAlign: 'right' },
-                    // width: '100px',
-                },
-                {
-                    name: 'deposited',
-                    label: 'Deposited',
-                    itemProp: 'availableBalance',
-                    formatter: (_value, _item) => {
-                        const collateral = _item._deposited;
-
-                        return collateral > 0 ? formatNumberByLocale(collateral, this.defi.getTokenDecimals(_item)) : 0;
-                    },
-                    css: { textAlign: 'right' },
-                    // width: '100px',
-                },
-                {
-                    name: 'borrowed',
-                    label: 'Borrowed',
-                    // hidden: true,
-                    formatter: (_value, _item) => {
-                        const debt = _item._debt;
-
-                        return debt > 0 ? formatNumberByLocale(debt, this.defi.getTokenDecimals(_item)) : 0;
-                    },
-                    css: { textAlign: 'right' },
-                },
-                {
-                    name: 'actions-account',
-                    label: 'Actions',
-                    width: '120px',
-                    css: { textAlign: 'right' },
-                },
-*/
             ],
         };
+    },
+
+    computed: {
+        ...mapGetters(['currentAccount']),
     },
 
     created() {
@@ -178,14 +149,40 @@ export default {
         async init() {
             const { $defi } = this;
             const result = await Promise.all([$defi.fetchUniswapPairs(), $defi.init()]);
-            const pairs = result[0];
 
-            this.items = pairs;
-            console.log(pairs);
+            this.items = result[0];
+
+            setTimeout(async () => {
+                const address = this.currentAccount ? this.currentAccount.address : '';
+                if (address) {
+                    this.items = await $defi.getUniswapPairsWithShare(address, this.items);
+                }
+            }, 30);
         },
 
-        onRowAction(_pair) {
-            console.log('jo', _pair);
+        /**
+         * @param {UniswapPair} _pair
+         * @param {number} [_tokenIdx]
+         * @return {number}
+         */
+        getTokenShare(_pair, _tokenIdx = 0) {
+            const share = this.getPairShare(_pair);
+
+            if (share > 0) {
+                return this.$defi.fromTokenValue(_pair.reserves[_tokenIdx], _pair.tokens[_tokenIdx]) * share;
+            }
+
+            return 0;
+        },
+
+        /**
+         * @param {UniswapPair} _pair
+         * @return {number}
+         */
+        getPairShare(_pair) {
+            const share = _pair && _pair.shareOf ? _pair.shareOf : '0x0';
+
+            return _pair.pairAddress && share !== '0x0' ? parseInt(share, 16) / parseInt(_pair.totalSupply, 16) : 0;
         },
     },
 };

@@ -52,8 +52,6 @@ const appConfig = {
         // use Binance chain
         useBNB: true,
     },
-    // tmp
-    tmpWFTM: true,
     //
     useTestnet: true,
     // testnet config

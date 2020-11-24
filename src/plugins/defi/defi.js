@@ -1167,6 +1167,50 @@ export class DeFi {
         return defiUniswapPairs;
     }
 
+    /**
+     * @param {string} _userAddress
+     * @return {Promise<UniswapPair[]>}
+     */
+    async fetchUniswapPairsWithShare(_userAddress) {
+        const query = {
+            query: gql`
+                query GetUniswapPairs($user: Address!) {
+                    defiUniswapPairs {
+                        pairAddress
+                        shareOf(user: $user)
+                    }
+                }
+            `,
+            variables: {
+                user: _userAddress,
+            },
+        };
+        const data = await fFetch.fetchGQLQuery(query, 'defiUniswapPairs');
+
+        return data.data.defiUniswapPairs || [];
+    }
+
+    /**
+     * @param {string} _userAddress
+     * @param {UniswapPair[]} _pairs
+     */
+    async getUniswapPairsWithShare(_userAddress, _pairs) {
+        const shares = await this.fetchUniswapPairsWithShare(_userAddress);
+        const pairs = cloneObject(_pairs);
+
+        if (shares) {
+            shares.forEach((_pair) => {
+                const pair = pairs.find((_p) => _p.pairAddress === _pair.pairAddress);
+
+                if (pair) {
+                    pair.shareOf = _pair.shareOf;
+                }
+            });
+        }
+
+        return pairs;
+    }
+
     async tmpSetTestPairs(_pairs, _address) {
         const tokens = await this.fetchERC20Tokens(_address);
         const testPairs = [
