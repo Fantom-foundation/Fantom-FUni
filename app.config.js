@@ -55,7 +55,7 @@ const appConfig = {
     // tmp
     tmpWFTM: true,
     //
-    useTestnet: true,
+    useTestnet: false,
     // testnet config
     testnet: {
         // list of providers. if one of them is unavailable, another is randomly picked
