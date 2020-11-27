@@ -80,11 +80,17 @@ export default {
         },
     },
 
+    data() {
+        return {
+            dItems: [],
+        };
+    },
+
     computed: {
         cItems() {
-            this.setIds(this.items);
+            this.setIds(this.dItems);
 
-            return this.items;
+            return this.dItems;
         },
 
         navTag() {
@@ -92,7 +98,7 @@ export default {
         },
 
         routeNames() {
-            return this.items.map((_item) => _item.url.name);
+            return this.dItems.map((_item) => _item.url.name);
         },
     },
 
@@ -106,6 +112,7 @@ export default {
     },
 
     mounted() {
+        this.dItems = this.items;
         this.processRoute(this.$route);
     },
 
@@ -124,7 +131,7 @@ export default {
                     _item._active = _item.url.name === appNode.route;
                 });
 
-                this.items = items;
+                this.dItems = items;
             }
         },
     },
