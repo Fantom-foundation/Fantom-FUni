@@ -30,9 +30,9 @@ export default {
                 },
                 {
                     url: {
-                        name: 'funiswap-pool',
+                        name: 'funiswap-pools',
                     },
-                    title: 'Pool',
+                    title: 'Pools',
                 },
                 {
                     url: {

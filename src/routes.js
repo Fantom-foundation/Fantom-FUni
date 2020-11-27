@@ -68,11 +68,11 @@ export const routes = [
             },
             {
                 name: 'pool',
-                path: '/pool',
+                path: '/pools',
                 component: Pool,
                 children: [
                     {
-                        name: 'funiswap-pool',
+                        name: 'funiswap-pools',
                         path: '',
                         component: FUniswapPool,
                     },

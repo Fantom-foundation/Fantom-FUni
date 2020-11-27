@@ -53,8 +53,8 @@ const appStructure = [
         route: 'pool',
         _c: [
             {
-                id: 'funiswap-pool',
-                route: 'funiswap-pool',
+                id: 'funiswap-pools',
+                route: 'funiswap-pools',
                 _c: [
                     {
                         id: 'funiswap-add-liquidity',
