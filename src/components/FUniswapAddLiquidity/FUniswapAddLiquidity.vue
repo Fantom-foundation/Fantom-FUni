@@ -725,17 +725,24 @@ export default {
 
             if (!this.currentAccount) {
                 this.submitLabel = 'Connect Wallet';
-            } else if (fromInputValue && fromInputValue !== '0' && toInputValue && toInputValue !== '0') {
-                if (parseFloat(fromInputValue) > this.maxFromInputValue) {
+                // } else if (fromInputValue && fromInputValue !== '0' && toInputValue && toInputValue !== '0') {
+            } else if (!this.toToken.address) {
+                this.submitLabel = 'Select a token';
+            } else if (this.fromTokenBalance === 0 && this.toTokenBalance === 0) {
+                this.submitLabel = 'Insufficient  Balance';
+            } else if (this.fromTokenBalance === 0) {
+                this.submitLabel = `Insufficient ${this.$defi.getTokenSymbol(this.fromToken)} balance`;
+            } else if (this.toTokenBalance === 0) {
+                this.submitLabel = `Insufficient ${this.$defi.getTokenSymbol(this.toToken)} balance`;
+            } else if (fromInputValue || toInputValue) {
+                if (fromInputValue > this.maxFromInputValue || (fromInputValue === 0 && this.maxFromInputValue === 0)) {
                     this.submitLabel = `Insufficient ${this.$defi.getTokenSymbol(this.fromToken)} balance`;
-                } else if (parseFloat(toInputValue) > this.maxToInputValue) {
+                } else if (toInputValue > this.maxToInputValue || (toInputValue === 0 && this.maxToInputValue === 0)) {
                     this.submitLabel = `Insufficient ${this.$defi.getTokenSymbol(this.toToken)} balance`;
                 } else {
                     this.submitLabel = 'Supply';
                     this.submitBtnDisabled = false;
                 }
-            } else if (!this.toToken.address) {
-                this.submitLabel = 'Select a token';
             } else if (this.sufficientPairLiquidity === false) {
                 this.submitLabel = 'Insufficient Pair Liquidity';
             } else {
