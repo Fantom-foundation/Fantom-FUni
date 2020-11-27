@@ -48,6 +48,15 @@
                         >
                             Add Liquidity
                         </router-link>
+                        ,
+                        <router-link
+                            :to="{
+                                name: 'funiswap-swap',
+                                params: { tokena: item.tokens[0].address, tokenb: item.tokens[1].address },
+                            }"
+                        >
+                            Swap
+                        </router-link>
                         <template v-if="item.shareOf && item.shareOf !== '0x0'">
                             ,
                             <router-link
@@ -69,6 +78,15 @@
                         }"
                     >
                         Add Liquidity
+                    </router-link>
+                    <br />
+                    <router-link
+                        :to="{
+                            name: 'funiswap-swap',
+                            params: { tokena: item.tokens[0].address, tokenb: item.tokens[1].address },
+                        }"
+                    >
+                        Swap
                     </router-link>
                     <template v-if="item.shareOf && item.shareOf !== '0x0'">
                         <br />
