@@ -285,7 +285,7 @@ export default {
                 if (params.tokena !== this.fromToken.address || params.tokenb !== this.toToken.address) {
                     const pair = TokenPairs.getPairByTokens(this.pairs, [
                         { address: params.tokena },
-                        { address: params.tokena },
+                        { address: params.tokenb },
                     ]);
 
                     if (pair.pairAddress) {

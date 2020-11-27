@@ -534,8 +534,7 @@ export default {
             if (
                 fromToken.address &&
                 toToken.address &&
-                $route.params.tokena !== fromToken.address &&
-                $route.params.tokenb !== toToken.address
+                ($route.params.tokena !== fromToken.address || $route.params.tokenb !== toToken.address)
             ) {
                 this.$router.push({
                     name: $route.name,
@@ -554,7 +553,7 @@ export default {
                 if (params.tokena !== this.fromToken.address || params.tokenb !== this.toToken.address) {
                     const pair = TokenPairs.getPairByTokens(this.pairs, [
                         { address: params.tokena },
-                        { address: params.tokena },
+                        { address: params.tokenb },
                     ]);
 
                     if (pair.pairAddress) {
