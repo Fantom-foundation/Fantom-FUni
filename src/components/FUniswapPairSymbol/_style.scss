@@ -5,11 +5,12 @@
     .f-crypto-symbol {
         margin-right: 0;
         padding-right: 0;
+        z-index: 2;
     }
 
     .first-symbol {
-        margin-right: -6px;
-        //z-index: 2;
-        //margin-right: -16px;
+        //margin-right: -6px;
+        z-index: 1;
+        margin-right: -16px;
     }
 }
