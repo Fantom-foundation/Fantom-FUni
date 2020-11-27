@@ -510,8 +510,7 @@ export default {
             if (
                 fromToken.address &&
                 toToken.address &&
-                $route.params.tokena !== fromToken.address &&
-                $route.params.tokenb !== toToken.address
+                ($route.params.tokena !== fromToken.address || $route.params.tokenb !== toToken.address)
             ) {
                 this.$router.push({
                     name: $route.name,
