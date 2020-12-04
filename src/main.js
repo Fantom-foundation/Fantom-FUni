@@ -11,10 +11,11 @@ import './plugins/dayjs.js';
 import { store } from './store';
 import './filters.js';
 import './registerServiceWorker';
-import { FFetch } from '@/plugins/ffetch.js';
+import { FFetch } from './plugins/ffetch.js';
 import { FantomWeb3Wallet } from './plugins/fantom-web3-wallet.js';
+import { FNano } from './plugins/fantom-nano.js';
 import { DeFi } from './plugins/defi/defi.js';
-import { Metamask } from '@/plugins/metamask/metamask.js';
+import { Metamask } from './plugins/metamask/metamask.js';
 import 'focus-visible';
 
 import './wallet.types.js';
@@ -23,6 +24,7 @@ Vue.use(FFetch);
 Vue.use(FantomWeb3Wallet, {
     apolloClient,
 });
+Vue.use(FNano);
 Vue.use(DeFi, {
     apolloClient,
 });

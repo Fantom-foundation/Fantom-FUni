@@ -14,7 +14,7 @@ module.exports = {
     transpileDependencies: ['fantom-ledgerjs'],
 
     devServer: {
-        https: false,
+        https: true,
     },
 
     /*
