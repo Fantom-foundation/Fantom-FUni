@@ -144,6 +144,8 @@ export default {
                 _event.preventDefault();
 
                 appNode.addLedgerAccount(account);
+
+                this.$emit('ledger-account-picked');
             }
         },
 

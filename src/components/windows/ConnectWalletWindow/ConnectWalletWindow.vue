@@ -11,6 +11,8 @@
         >
             <wallet-list @wallet-picked="onWalletPicked" />
         </f-window>
+
+        <ledger-accounts-window ref="ledgerAccountsWindow" />
     </div>
 </template>
 
@@ -18,27 +20,16 @@
 import FWindow from '@/components/core/FWindow/FWindow.vue';
 import WalletList from '@/components/WalletList/WalletList.vue';
 import { mapGetters } from 'vuex';
+import LedgerAccountsWindow from '../LedgerAccountsWindow/LedgerAccountsWindow.vue';
 
 export default {
     name: 'ConnectWalletWindow',
 
-    components: { WalletList, FWindow },
-
-    computed: {
-        ...mapGetters(['getAccountByAddress']),
-    },
+    components: { LedgerAccountsWindow, WalletList, FWindow },
 
     methods: {
         show() {
             this.$refs.win.show();
-        },
-
-        /**
-         * @param _metamaskAccount
-         * @return {?WalletAccount}
-         */
-        accountExists(_metamaskAccount) {
-            return this.getAccountByAddress(_metamaskAccount);
         },
 
         async onWalletPicked(_wallet) {
@@ -56,9 +47,7 @@ export default {
                     const accounts = await this.$metamask.requestAccounts();
 
                     if (accounts && accounts[0] && appNode) {
-                        if (!this.accountExists(accounts[0])) {
-                            await appNode.addMetamaskAccount(accounts[0]);
-                        }
+                        await appNode.addMetamaskAccount(accounts[0]);
                         // appNode.showMetamaskAccountPickerWindow(accounts[0]);
                     }
 

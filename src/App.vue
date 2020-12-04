@@ -47,6 +47,7 @@ import FNetworkStatus from '@/components/core/FNetworkStatus/FNetworkStatus.vue'
 import MetamaskAccountPickerWindow from '@/components/windows/MetamaskAccountPickerWindow/MetamaskAccountPickerWindow.vue';
 import { mapGetters } from 'vuex';
 import { ADD_METAMASK_ACCOUNT } from '@/store/actions.type.js';
+import { ADD_LEDGER_ACCOUNT } from './store/actions.type.js';
 
 export default {
     name: 'App',
@@ -99,6 +100,14 @@ export default {
     },
 
     methods: {
+        /**
+         * @param {string} _address
+         * @return {?WalletAccount}
+         */
+        accountExists(_address) {
+            return this.getAccountByAddress(_address);
+        },
+
         async setTokenPrice(_currency = filtersOptions.currency) {
             const tokenPrice = await this.$fWallet.getTokenPrice(_currency);
 
@@ -165,9 +174,20 @@ export default {
             }, 250);
         },
 
-        async addMetamaskAccount(_account) {
-            await this.$store.dispatch(ADD_METAMASK_ACCOUNT, _account);
-            this.pickAccount(_account);
+        async addMetamaskAccount(_address) {
+            if (!this.accountExists(_address)) {
+                await this.$store.dispatch(ADD_METAMASK_ACCOUNT, _address);
+            }
+
+            this.pickAccount(_address);
+        },
+
+        async addLedgerAccount(_account) {
+            if (!this.accountExists(_account.address)) {
+                await this.$store.dispatch(ADD_LEDGER_ACCOUNT, _account);
+            }
+
+            this.pickAccount(_account.address);
         },
 
         /**

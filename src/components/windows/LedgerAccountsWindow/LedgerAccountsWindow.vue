@@ -16,7 +16,7 @@
                 </button>
             </template>
 
-            <ledger-account-picker show-try-again-button />
+            <ledger-account-picker show-try-again-button @ledger-account-picked="onLedgerAccountPicked" />
         </f-window>
     </div>
 </template>
@@ -42,6 +42,10 @@ export default {
          */
         onWindowHide(_data) {
             this.$emit('window-hide', _data);
+        },
+
+        onLedgerAccountPicked() {
+            this.$refs.win.hide();
         },
     },
 };
