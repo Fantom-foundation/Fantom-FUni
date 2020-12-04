@@ -3,9 +3,9 @@
         <f-window
             ref="win"
             modal
-            style="max-width: 720px"
+            style="max-width: 640px"
             title="Pick ledger account"
-            class="colored-header ledger-accounts-color double-body-padding"
+            class="double-body-padding"
             animation-in="scale-center-enter-active"
             animation-out="scale-center-leave-active"
             @window-hide="onWindowHide"

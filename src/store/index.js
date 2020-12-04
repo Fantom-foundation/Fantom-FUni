@@ -48,7 +48,7 @@ const vuexLocalStorage = new VuexPersist({
         fUniswapSlippageTolerance: _state.fUniswapSlippageTolerance,
         darkMode: _state.darkMode,
         accounts: _state.accounts,
-        // activeAccountIndex: _state.activeAccountIndex,
+        activeAccountIndex: _state.activeAccountIndex,
     }),
 });
 
