@@ -19,7 +19,6 @@
 <script>
 import FWindow from '@/components/core/FWindow/FWindow.vue';
 import WalletList from '@/components/WalletList/WalletList.vue';
-import { mapGetters } from 'vuex';
 import LedgerAccountsWindow from '../LedgerAccountsWindow/LedgerAccountsWindow.vue';
 
 export default {
