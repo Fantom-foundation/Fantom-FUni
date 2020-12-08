@@ -1,0 +1,26 @@
+.ledger-account-picker {
+    .loader {
+        text-align: center;
+        margin-top: 16px;
+    }
+
+    .ledger-connect-message {
+        font-weight: bold;
+        text-align: center;
+    }
+}
+
+.ledger-accounts-list {
+    li {
+        //padding-bottom: 16px;
+
+        a {
+            line-height: 1;
+        }
+
+        h3 {
+            font-size: 1rem;
+            margin-bottom: 0 !important;
+        }
+    }
+}

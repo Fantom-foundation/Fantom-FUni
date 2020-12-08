@@ -117,10 +117,12 @@ export default {
             }
 
             if (_account) {
-                if (this.accountExists(_account)) {
-                    appNode.pickAccount(_account);
-                } else {
-                    appNode.addMetamaskAccount(_account);
+                if (this.currentAccount.isMetamaskAccount) {
+                    if (this.accountExists(_account)) {
+                        appNode.pickAccount(_account);
+                    } else {
+                        appNode.addMetamaskAccount(_account);
+                    }
                 }
             } else {
                 appNode.pickAccount('');

@@ -27,6 +27,7 @@
 import { cloneObject } from '@/utils';
 import { isAriaAction } from '@/utils/aria.js';
 import metamaskIcon from '../../assets/svg/metamask.svg';
+import ledgerIcon from '../../assets/svg/ledger-logo-icon.svg';
 import PulseLoader from 'vue-spinner/src/PulseLoader.vue';
 
 /**
@@ -46,6 +47,12 @@ export default {
                     icon: metamaskIcon,
                     iconOriginal: true,
                     showLoading: true,
+                },
+                {
+                    code: 'ledger',
+                    name: 'Ledger (Coming)',
+                    icon: ledgerIcon,
+                    iconFill: true,
                 },
             ],
         };
