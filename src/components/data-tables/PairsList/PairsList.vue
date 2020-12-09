@@ -62,18 +62,18 @@
                     <div class="col-6 f-row-label">{{ column.label }}</div>
                     <div class="col break-word">
                         <template v-if="value[0]._perPrice">
-                            {{ value[0]._perPrice.toFixed(4) }} {{ $defi.getTokenSymbol(value[0]) }}/{{
-                                $defi.getTokenSymbol(value[1])
-                            }}
+                            {{ value[0]._perPrice.toFixed(4) }}
+                            <br />
+                            {{ $defi.getTokenSymbol(value[0]) }}/{{ $defi.getTokenSymbol(value[1]) }}
                         </template>
                         <template v-else>0</template>
                     </div>
                 </div>
                 <template v-else>
                     <template v-if="value[0]._perPrice">
-                        {{ value[0]._perPrice.toFixed(4) }} {{ $defi.getTokenSymbol(value[0]) }}/{{
-                            $defi.getTokenSymbol(value[1])
-                        }}
+                        {{ value[0]._perPrice.toFixed(4) }}
+                        <br />
+                        {{ $defi.getTokenSymbol(value[0]) }}/{{ $defi.getTokenSymbol(value[1]) }}
                     </template>
                     <template v-else>0</template>
                 </template>
