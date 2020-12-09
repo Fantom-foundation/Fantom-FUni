@@ -117,7 +117,7 @@ export default {
             }
 
             if (_account) {
-                if (this.currentAccount.isMetamaskAccount) {
+                if (this.currentAccount && this.currentAccount.isMetamaskAccount) {
                     if (this.accountExists(_account)) {
                         appNode.pickAccount(_account);
                     } else {
