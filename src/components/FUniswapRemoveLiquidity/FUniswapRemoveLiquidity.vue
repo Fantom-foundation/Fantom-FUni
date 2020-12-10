@@ -206,7 +206,7 @@ export default {
 
     watch: {
         currentAccount(_value, _oldValue) {
-            if (!_oldValue || _value.address !== _oldValue.address) {
+            if (!_oldValue || !_value || _value.address !== _oldValue.address) {
                 this.onAccountPicked();
             }
         },
