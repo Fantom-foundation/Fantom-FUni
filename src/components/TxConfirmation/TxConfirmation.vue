@@ -11,7 +11,6 @@
                 :waiting="waiting"
                 :disabled-submit="disabledSubmit"
                 :gas-limit="dGasLimit"
-                :tmp-pwd-code="tmpPwdCode"
                 @f-form-submit="onFFormSubmit"
             />
         </f-card>
