@@ -7,7 +7,6 @@
             set-tmp-pwd
             :send-button-label="sendButtonLabel"
             :password-label="passwordLabel"
-            :gas-limit="gasLimit"
             :on-send-transaction-success="onSendTransactionSuccess"
             @change-component="onChangeComponent"
         >
@@ -66,7 +65,6 @@
 <script>
 import TxConfirmation from '../../components/TxConfirmation/TxConfirmation.vue';
 import LedgerConfirmationContent from '../../components/LedgerConfirmationContent/LedgerConfirmationContent.vue';
-import { GAS_LIMITS } from '../../plugins/fantom-web3-wallet.js';
 import { mapGetters } from 'vuex';
 import { toFTM } from '../../utils/transactions.js';
 import FBackButton from '../../components/core/FBackButton/FBackButton.vue';
@@ -96,7 +94,6 @@ export default {
             confirmationCompName: 'funiswap-swap',
             priceDecimals: 6,
             tx: {},
-            gasLimit: GAS_LIMITS.default,
             minimumReceived: 0,
             maximumSold: 0,
             allowValue: 0,
@@ -270,11 +267,7 @@ export default {
             }
 
             if (txToSign) {
-                this.tx = await this.$fWallet.getDefiTransactionToSign(
-                    txToSign,
-                    this.currentAccount.address,
-                    GAS_LIMITS.uniswap
-                );
+                this.tx = await this.$fWallet.getDefiTransactionToSign(txToSign, this.currentAccount.address);
             }
         },
 
