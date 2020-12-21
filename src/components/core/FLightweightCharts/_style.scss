@@ -1,0 +1,14 @@
+.f-lightweight-chart {
+    --f-lightweight-chart-chart-line-color: #286FF6;
+    --f-lightweight-chart-chart-text-color: initial;
+    --f-lightweight-chart-chart-background-color: transparent;
+    --f-lightweight-chart-chart-vert-lines-color: rgba(50,50,50,0);
+    --f-lightweight-chart-chart-horz-lines-color: rgba(50,50,50,0);
+    --f-lightweight-chart-chart-font-size: 12;
+    --f-lightweight-chart-chart-font-family: 'Calibri';
+
+    &__container {
+        width: 100%;
+        overflow: hidden;
+    }
+}
