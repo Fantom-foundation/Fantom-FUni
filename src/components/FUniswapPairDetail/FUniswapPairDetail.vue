@@ -11,12 +11,40 @@
         </h1>
         <br />
 
+        <h3>Volumes</h3>
+        <div class="chart-controls-top-bar">
+            <label for="pd-day">
+                <input
+                    id="pd-day"
+                    v-model="resolution"
+                    type="radio"
+                    name="resolution"
+                    value="day"
+                    class="not-visible"
+                />
+                <span class="btn small secondary">day</span>
+            </label>
+            <label for="pd-hour">
+                <input
+                    id="pd-hour"
+                    v-model="resolution"
+                    type="radio"
+                    name="resolution"
+                    value="1h"
+                    class="not-visible"
+                />
+                <span class="btn small secondary">1h</span>
+            </label>
+        </div>
+
         <f-lightweight-charts
+            ref="chart"
             :series="series"
             series-type="histogram"
+            :series-options="{ priceFormat: { type: 'volume' } }"
             transform-values="to-eth"
             time-to-timestamp
-            :options="{ timeScale: { timeVisible: true } }"
+            :options="{ timeScale: { timeVisible: ['1h'].indexOf(resolution) > -1, secondsVisible: false } }"
             fit-content__
         />
     </div>
@@ -38,7 +66,8 @@ export default {
         return {
             /** @type {UniswapPair} */
             pair: {},
-            series: {},
+            series: [],
+            resolution: 'day',
         };
     },
 
@@ -56,6 +85,12 @@ export default {
         },
     },
 
+    watch: {
+        async resolution(_value) {
+            this.series = await this.fetchTimeVolumes(this.params.address, _value);
+        },
+    },
+
     created() {
         this.init();
     },
@@ -67,7 +102,7 @@ export default {
 
             this.pair = result[0].find((_pair) => _pair.pairAddress === this.params.address) || {};
 
-            this.series = await this.fetchTimeVolumes(this.params.address, '1h');
+            this.series = await this.fetchTimeVolumes(this.params.address, this.resolution);
         },
 
         /**

@@ -91,6 +91,11 @@
     background-color: var(--f-button-light-hover-background-color);
     border-color: transparent;
 }
+@include buttons(':not([disabled]):not(.disabled)', ':checked + ') {
+    color: var(--f-primary-color);
+    background-color: var(--f-button-light-hover-background-color);
+    border-color: transparent;
+}
 
 .btn {
     &.btn-large-font {
