@@ -95,6 +95,16 @@ export default {
                 return ['', 'to-eth'].indexOf(_value) !== -1;
             },
         },
+        /** Inject missing values */
+        addMissingValues: {
+            type: Object,
+            default() {
+                return {
+                    timeResolution: 0,
+                    value: 0,
+                };
+            },
+        },
         /**
          * Transform given series time to timestamp.
          */
@@ -132,6 +142,7 @@ export default {
                     seriesOptions: this.seriesOptions,
                     transformValues: this.transformValues,
                     timeToTimestamp: this.timeToTimestamp,
+                    addMissingValues: this.addMissingValues,
                     series: series,
                 };
             }
@@ -143,8 +154,12 @@ export default {
             Object.keys(data).forEach((_seriesKey) => {
                 const item = data[_seriesKey];
 
-                if (item.timeToTimestamp) {
+                if (item.timeToTimestamp || item.addMissingValues.timeResolution > 0) {
                     this.transformTimeToTimestamp(item.series);
+                }
+
+                if (item.addMissingValues.timeResolution > 0) {
+                    item.series = this.injectMissingValues(item.series, item.addMissingValues);
                 }
 
                 if (item.transformValues) {
@@ -298,6 +313,38 @@ export default {
                     _series[i].time = Math.floor(date.getTime() / 1000);
                 }
             }
+        },
+
+        injectMissingValues(_series, _options) {
+            let data = [];
+            let prevItem;
+            let item;
+            let diff = 0;
+            const { timeResolution } = _options;
+            const { value } = _options;
+
+            if (_series && timeResolution > 0) {
+                for (let i = 0, len1 = _series.length; i < len1; i++) {
+                    item = _series[i];
+
+                    if (i > 0) {
+                        prevItem = _series[i - 1];
+                        diff = item.time - prevItem.time;
+                        if (diff > timeResolution) {
+                            for (let j = 1, len2 = parseInt(diff / timeResolution); j < len2; j++) {
+                                data.push({
+                                    time: prevItem.time + j * timeResolution,
+                                    value,
+                                });
+                            }
+                        }
+                    }
+
+                    data.push({ ...item });
+                }
+            }
+
+            return data;
         },
 
         updateColors() {

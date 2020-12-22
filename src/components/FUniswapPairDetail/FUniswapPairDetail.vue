@@ -44,8 +44,9 @@
             :series-options="{ priceFormat: { type: 'volume' } }"
             transform-values="to-eth"
             time-to-timestamp
+            :add-missing-values="{ value: 0, timeResolution: timeResolution[resolution] }"
             :options="{ timeScale: { timeVisible: ['1h'].indexOf(resolution) > -1, secondsVisible: false } }"
-            fit-content__
+            :fit-content="resolution === 'day'"
         />
     </div>
 </template>
@@ -68,6 +69,10 @@ export default {
             pair: {},
             series: [],
             resolution: 'day',
+            timeResolution: {
+                day: 86400,
+                '1h': 3600,
+            },
         };
     },
 
