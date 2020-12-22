@@ -14,3 +14,12 @@
         overflow: hidden;
     }
 }
+
+.chart-controls-top-bar {
+    text-align: right;
+    padding-bottom: 16px;
+
+    > * {
+        margin-left: 4px;
+    }
+}

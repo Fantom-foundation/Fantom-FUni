@@ -160,7 +160,8 @@ export default {
 
     watch: {
         series() {
-            this.initSeries();
+            this.initChart();
+            // this.initSeries();
         },
     },
 
@@ -174,7 +175,7 @@ export default {
     },
 
     mounted() {
-        this.initChart();
+        // this.initChart();
 
         if (!this.noAutoResize) {
             window.addEventListener('resize', this._resizeCallback, false);
