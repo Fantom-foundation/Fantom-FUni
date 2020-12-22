@@ -1,6 +1,8 @@
 <template>
     <div class="f-lightweight-chart">
+        <slot name="top"></slot>
         <div ref="chartContainer" class="f-lightweight-chart__container"></div>
+        <slot name="bottom"></slot>
     </div>
 </template>
 
@@ -93,6 +95,13 @@ export default {
                 return ['', 'to-eth'].indexOf(_value) !== -1;
             },
         },
+        /**
+         * Transform given series time to timestamp.
+         */
+        timeToTimestamp: {
+            type: Boolean,
+            default: false,
+        },
         /**  */
         fitContent: {
             type: Boolean,
@@ -107,6 +116,7 @@ export default {
 
     data() {
         return {
+            dSeries: [],
             chartOptions: {},
         };
     },
@@ -121,6 +131,7 @@ export default {
                     seriesType: this.seriesType,
                     seriesOptions: this.seriesOptions,
                     transformValues: this.transformValues,
+                    timeToTimestamp: this.timeToTimestamp,
                     series: series,
                 };
             }
@@ -132,6 +143,10 @@ export default {
             Object.keys(data).forEach((_seriesKey) => {
                 const item = data[_seriesKey];
 
+                if (item.timeToTimestamp) {
+                    this.transformTimeToTimestamp(item.series);
+                }
+
                 if (item.transformValues) {
                     if (item.transformValues === 'to-eth') {
                         item.series = this.transformValuesToEth(item.series);
@@ -140,6 +155,12 @@ export default {
             });
 
             return data;
+        },
+    },
+
+    watch: {
+        series() {
+            this.initSeries();
         },
     },
 
@@ -169,33 +190,10 @@ export default {
     },
 
     methods: {
-        transformValuesToEth(_series) {
-            let data = [];
-            let item;
-
-            if (_series) {
-                for (let i = 0, len1 = _series.length; i < len1; i++) {
-                    item = _series[i];
-
-                    data.push({
-                        ...item,
-                        value: parseInt(item.value, 16) / WEI,
-                    });
-                }
-            }
-
-            return data;
-        },
-
         initChart() {
             const defaultOptions = {
                 height: this.height,
-                priceScale: {
-                    scaleMargins: {
-                        top: this.scaleMarginTop,
-                        bottom: this.scaleMarginBottom,
-                    },
-                },
+                priceScale: {},
             };
 
             this.destroyChart();
@@ -205,7 +203,20 @@ export default {
                 ...this.options,
             };
 
+            if (!this.chartOptions.priceScale.scaleMargins) {
+                this.chartOptions.priceScale.scaleMargins = {
+                    top: this.scaleMarginTop,
+                    bottom: this.scaleMarginBottom,
+                };
+            }
+
             this._chart = createChart(this.$refs.chartContainer, this.chartOptions);
+
+            this.initSeries();
+        },
+
+        initSeries() {
+            this._series = {};
 
             Object.keys(this.cSeries).forEach((_seriesKey) => {
                 this.addSeries(_seriesKey);
@@ -259,6 +270,35 @@ export default {
             }
         },
 
+        transformValuesToEth(_series) {
+            let data = [];
+            let item;
+
+            if (_series) {
+                for (let i = 0, len1 = _series.length; i < len1; i++) {
+                    item = _series[i];
+
+                    data.push({
+                        ...item,
+                        value: parseInt(item.value, 16) / WEI,
+                    });
+                }
+            }
+
+            return data;
+        },
+
+        transformTimeToTimestamp(_series) {
+            let date;
+
+            if (_series) {
+                for (let i = 0, len1 = _series.length; i < len1; i++) {
+                    date = new Date(_series[i].time);
+                    _series[i].time = Math.floor(date.getTime() / 1000);
+                }
+            }
+        },
+
         updateColors() {
             const chartCP = this.getChartCustomProperties();
             const series = this._series;
@@ -267,16 +307,20 @@ export default {
             const options = {
                 grid: {},
                 layout: {},
+                timeScale: {},
+                priceScale: {},
             };
             const grid = { ...chartOptions.grid };
             const layout = { ...chartOptions.layout };
+            const timeScale = { ...chartOptions.timeScale };
+            const priceScale = { ...chartOptions.priceScale };
 
             if (chartCP.vertLinesColor && (!grid.vertLines || !grid.vertLines.color)) {
-                options.grid.vertLines = { color: chartCP.vertLinesColor };
+                options.grid.vertLines = { ...grid.vertLines, color: chartCP.vertLinesColor };
             }
 
             if (chartCP.horzLinesColor && (!grid.horzLines || !grid.horzLines.color)) {
-                options.grid.horzLines = { color: chartCP.horzLinesColor };
+                options.grid.horzLines = { ...grid.horzLines, color: chartCP.horzLinesColor };
             }
 
             ['backgroundColor', 'textColor', 'fontSize', 'fontFamily'].forEach((_prop) => {
@@ -284,6 +328,14 @@ export default {
                     options.layout[_prop] = _prop === 'fontSize' ? parseInt(chartCP[_prop]) : chartCP[_prop];
                 }
             });
+
+            if (chartCP.timeScaleBorderColor && !timeScale.borderColor) {
+                options.timeScale.borderColor = chartCP.timeScaleBorderColor;
+            }
+
+            if (chartCP.priceScaleBorderColor && !priceScale.borderColor) {
+                options.priceScale.borderColor = chartCP.priceScaleBorderColor;
+            }
 
             this._chart.applyOptions(options);
 
@@ -311,6 +363,8 @@ export default {
                 backgroundColor: style.getPropertyValue('--f-lightweight-chart-chart-background-color'),
                 fontSize: style.getPropertyValue('--f-lightweight-chart-chart-font-size'),
                 fontFamily: style.getPropertyValue('--f-lightweight-chart-chart-font-family'),
+                timeScaleBorderColor: style.getPropertyValue('--f-lightweight-chart-chart-time-scale-border-color'),
+                priceScaleBorderColor: style.getPropertyValue('--f-lightweight-chart-chart-price-scale-border-color'),
             };
 
             Object.keys(cp).forEach((_key) => {
