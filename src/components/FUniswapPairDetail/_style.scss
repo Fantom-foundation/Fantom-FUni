@@ -1,0 +1,11 @@
+.funiswap-pair-detail {
+    &__title {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        &__pair {
+            padding-left: 8px;
+        }
+    }
+}
