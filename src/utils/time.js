@@ -20,6 +20,8 @@ export function parseTimeCode(_code) {
 }
 
 /**
+ * Get time span in unix timestamp.
+ *
  * @param {string} _code Value + (d|w|m|y)
  * @param {*} [_ends] Dayjs
  * @param {boolean} [_utc]
@@ -27,18 +29,18 @@ export function parseTimeCode(_code) {
  */
 export function getTimeSpan(_code, _ends, _utc = true) {
     const timeCode = parseTimeCode(_code);
-    const now = _utc ? dayjs.utc(_ends) : dayjs(_ends);
-    let startDate = 0;
+    let startDateTS = 0;
+    const endDate = _utc ? dayjs.utc(_ends) : dayjs(_ends);
 
     if (timeCode) {
         if (timeCode.unit === 'w') {
-            startDate = now.subtract(timeCode.value, 'week').startOf('day').unix();
+            startDateTS = endDate.subtract(timeCode.value, 'week').startOf('day').unix();
         } else if (timeCode.unit === 'm') {
-            startDate = now.subtract(timeCode.value, 'month').startOf('day').unix();
+            startDateTS = endDate.subtract(timeCode.value, 'month').startOf('day').unix();
         } else if (timeCode.unit === 'y') {
-            startDate = now.subtract(timeCode.value, 'year').startOf('day').unix();
+            startDateTS = endDate.subtract(timeCode.value, 'year').startOf('day').unix();
         }
     }
 
-    return [startDate, now.unix()];
+    return [startDateTS, endDate.unix()];
 }
