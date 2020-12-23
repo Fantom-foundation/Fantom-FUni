@@ -31,7 +31,6 @@ export function getTimeSpan(_code, _ends, _utc = true) {
     let startDate = 0;
 
     if (timeCode) {
-        console.log(now);
         if (timeCode.unit === 'w') {
             startDate = now.subtract(timeCode.value, 'week').startOf('day').unix();
         } else if (timeCode.unit === 'm') {

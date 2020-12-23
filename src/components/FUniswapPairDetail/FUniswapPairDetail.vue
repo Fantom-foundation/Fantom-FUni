@@ -3,17 +3,28 @@
         <h1 class="with-back-btn">
             <f-back-button :route-name="backButtonRoute" />
             <span class="funiswap-pair-detail__title">
-                <f-uniswap-pair-symbol v-if="pair.pairAddress" :pair="pair" /><span
-                    class="funiswap-pair-detail__title__pair"
-                    >Pair</span
-                >
+                <f-uniswap-pair-symbol v-if="pair.pairAddress" :pair="pair" />
+                <span class="funiswap-pair-detail__title__pair">Pair</span>
             </span>
         </h1>
         <br />
 
         <h3>Volumes</h3>
         <div class="chart-controls-top-bar">
-            <label for="pd-day">
+            <label for="pd-week">
+                <input id="pd-week" v-model="timeSpan" type="radio" name="resolution" value="1W" class="not-visible" />
+                <span class="btn small secondary">1W</span>
+            </label>
+            <label for="pd-month">
+                <input id="pd-month" v-model="timeSpan" type="radio" name="resolution" value="1M" class="not-visible" />
+                <span class="btn small secondary">1M</span>
+            </label>
+            <label for="pd-all">
+                <input id="pd-all" v-model="timeSpan" type="radio" name="resolution" value="all" class="not-visible" />
+                <span class="btn small secondary">All</span>
+            </label>
+
+            <!--            <label for="pd-day">
                 <input
                     id="pd-day"
                     v-model="resolution"
@@ -35,6 +46,7 @@
                 />
                 <span class="btn small secondary">1h</span>
             </label>
+            -->
         </div>
 
         <f-lightweight-charts
@@ -45,7 +57,11 @@
             transform-values="to-eth"
             time-to-timestamp
             :add-missing-values="{ value: 0, timeResolution: timeResolution[resolution] }"
-            :options="{ timeScale: { timeVisible: ['1h'].indexOf(resolution) > -1, secondsVisible: false } }"
+            :options="{
+                timeScale: { timeVisible: ['1h'].indexOf(resolution) > -1, secondsVisible: false },
+                handleScroll: false,
+                handleScale: false,
+            }"
             :fit-content="resolution === 'day'"
         />
     </div>
@@ -57,6 +73,7 @@ import { getAppParentNode } from '../../app-structure.js';
 import FUniswapPairSymbol from '../FUniswapPairSymbol/FUniswapPairSymbol.vue';
 import FLightweightCharts from '../core/FLightweightCharts/FLightweightCharts.vue';
 import gql from 'graphql-tag';
+import { getTimeSpan } from '@/utils/time.js';
 
 export default {
     name: 'FUniswapPairDetail',
@@ -68,6 +85,7 @@ export default {
             /** @type {UniswapPair} */
             pair: {},
             series: [],
+            timeSpan: 'all',
             resolution: 'day',
             timeResolution: {
                 day: 86400,
@@ -91,8 +109,12 @@ export default {
     },
 
     watch: {
+        async timeSpan(_value) {
+            this.loadSeries(_value);
+        },
+
         async resolution(_value) {
-            this.series = await this.fetchTimeVolumes(this.params.address, _value);
+            this.loadSeries(this.timeSpan, _value);
         },
     },
 
@@ -107,7 +129,13 @@ export default {
 
             this.pair = result[0].find((_pair) => _pair.pairAddress === this.params.address) || {};
 
-            this.series = await this.fetchTimeVolumes(this.params.address, this.resolution);
+            this.loadSeries();
+        },
+
+        async loadSeries(_timeSpan = this.timeSpan, _resolution = this.resolution) {
+            const timeSpan = getTimeSpan(_timeSpan);
+
+            this.series = await this.fetchTimeVolumes(this.params.address, _resolution, timeSpan[0], timeSpan[1]);
         },
 
         /**
