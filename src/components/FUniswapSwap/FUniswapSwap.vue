@@ -660,7 +660,7 @@ export default {
 
             // disable current token in list
             if (currToken) {
-                currToken._disabled = true;
+                currToken.disabled = true;
             }
 
             return tokens;
