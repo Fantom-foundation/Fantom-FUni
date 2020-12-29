@@ -85,6 +85,13 @@
         }
     }
 
+    .flistbox {
+        --f-listbox-item-background-color: #eee;
+        --f-listbox-item-hover-background-color: #ccddff;
+        --f-listbox-item-selected-color: inherit;
+        --f-listbox-item-selected-background-color: #ccddff;
+    }
+
     .f-lightweight-chart {
         --f-lightweight-chart-chart-text-color: #8997b1;
     }

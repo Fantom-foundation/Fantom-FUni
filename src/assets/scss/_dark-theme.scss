@@ -137,6 +137,12 @@
     }
     */
 
+    .flistbox {
+        --f-listbox-item-background-color: var(--f-darker-color-2);
+        --f-listbox-item-hover-background-color: var(--f-darker-color-3);
+        --f-listbox-item-selected-background-color: var(--f-darker-color-3);
+    }
+
     .defi-token-list {
         --f-defi-token-list-item-color: var(--f-darker-color-2);
         --f-defi-token-list-item-hover-color: var(--f-darker-color-3);

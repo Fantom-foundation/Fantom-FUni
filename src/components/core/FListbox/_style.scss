@@ -9,6 +9,7 @@
     &_item {
         cursor: pointer;
         padding: var(--f-listbox-item-padding);
+        background-color: var(--f-listbox-item-background-color);
 
         &:not([aria-disabled="true"]):not([aria-selected="true"]):hover {
             color: var(--f-listbox-item-hover-color);
@@ -21,7 +22,7 @@
         }
 
         &[aria-disabled="true"] {
-            opacity: 0.5;
+            opacity: var(--f-listbox-item-disabled-opacity);
             cursor: default;
         }
     }

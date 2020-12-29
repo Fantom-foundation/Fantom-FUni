@@ -3,10 +3,11 @@
         class="flistbox no-markers"
         role="listbox"
         tabindex="0"
-        :aria-activedescendant="selectedItem.id"
+        :aria-activedescendant="focusedItem.id"
         :aria-labelledby="labeledBy"
         @click="onClick"
         @keydown="onKeydown"
+        @keyup="onKeyup"
         @focus="onFocus"
     >
         <li
@@ -14,7 +15,7 @@
             :id="item.id"
             :key="item.id"
             role="option"
-            :aria-selected="item.id === selectedItem.id"
+            :aria-selected="item.id === focusedItem.id"
             :aria-disabled="!!item.disabled"
             class="flistbox_item"
         >
@@ -56,11 +57,16 @@ export default {
             type: Boolean,
             default: false,
         },
+        /** If `true`, first focusable item will be focused. */
+        focusItemOnFocus: {
+            type: Boolean,
+            default: false,
+        },
     },
 
     data() {
         return {
-            selectedItem: {},
+            focusedItem: {},
             selectableItemSelector: '.flistbox_item:not([aria-disabled="true"])',
         };
     },
@@ -80,20 +86,22 @@ export default {
          * Select item by `_key`.
          *
          * @param {*} _value Item value.
+         * @param {boolean} [_selectItem]
          * @param {string} [_key] Name of item key.
          */
-        focusItem(_value, _key = 'id') {
+        focusItem(_value, _selectItem, _key = 'id') {
             let item;
 
             if (_value) {
                 item = this.cItems.find((_item) => _item[_key] === _value);
 
-                if (item && item.id !== this.selectedItem.id) {
-                    if (this.selectImmediately) {
+                // if (item && item.id !== this.focusedItem.id) {
+                if (item) {
+                    if (this.selectImmediately || _selectItem) {
                         this.$emit('listbox-item-selected', cloneObject(item));
                     }
 
-                    this.selectedItem = item;
+                    this.focusedItem = item;
 
                     this.scrollToFocusedItem();
                 }
@@ -101,7 +109,7 @@ export default {
         },
 
         scrollToFocusedItem() {
-            const id = this.selectedItem.id;
+            const id = this.focusedItem.id;
             const { $el } = this;
             const listboxHeight = $el.clientHeight;
             let eItem;
@@ -123,13 +131,24 @@ export default {
         },
 
         /**
+         * Focus first focusable item.
+         */
+        focusFirstItem() {
+            const item = this.cItems.find((_item) => !_item.disabled);
+
+            if (item) {
+                this.focusedItem = item;
+            }
+        },
+
+        /**
          * @param {Event} _event
          */
         onClick(_event) {
             const eItem = _event.target.closest(this.selectableItemSelector);
 
             if (eItem) {
-                this.focusItem(eItem.id);
+                this.focusItem(eItem.id, true);
             }
         },
 
@@ -137,31 +156,38 @@ export default {
          * @param {KeyboardEvent} _event
          */
         onKeydown(_event) {
-            const eItem = keyboardNavigation({
+            let eItem = keyboardNavigation({
                 _event,
                 _selector: this.selectableItemSelector,
                 _direction: 'vertical',
                 _circular: true,
-                _target: document.getElementById(this.selectedItem.id),
+                _target: document.getElementById(this.focusedItem.id),
                 _focusElem: false,
             });
+
+            if (!eItem && !this.focusedItem.id && (isKey('ArrowDown', _event) || isKey('ArrowUp', _event))) {
+                this.focusFirstItem();
+                eItem = document.getElementById(this.focusedItem.id);
+            }
 
             if (eItem) {
                 _event.preventDefault();
                 this.focusItem(eItem.id);
-            } else if (!this.selectImmediately && isKey('Enter', _event)) {
-                this.$emit('listbox-item-selected', cloneObject(this.selectedItem));
+            }
+        },
+
+        /**
+         * @param {KeyboardEvent} _event
+         */
+        onKeyup(_event) {
+            if (!this.selectImmediately && this.focusedItem.id && isKey('Enter', _event)) {
+                this.$emit('listbox-item-selected', cloneObject(this.focusedItem));
             }
         },
 
         onFocus() {
-            let item;
-
-            if (!this.selectedItem.id) {
-                item = this.cItems.find((_item) => !_item.disabled);
-                if (item) {
-                    this.selectedItem = item;
-                }
+            if (this.focusItemOnFocus && !this.focusedItem.id) {
+                this.focusFirstItem();
             }
         },
     },
