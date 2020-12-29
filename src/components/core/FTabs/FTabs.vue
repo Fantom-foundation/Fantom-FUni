@@ -145,7 +145,12 @@ export default {
          * @param {KeyboardEvent} _event
          */
         onTabListKeyup(_event) {
-            const elem = keyboardNavigation(_event, '[role="tab"]:not([aria-disabled="true"])', true);
+            const elem = keyboardNavigation({
+                _event,
+                _selector: '[role="tab"]:not([aria-disabled="true"])',
+                _direction: 'horizontal',
+                _circular: true,
+            });
 
             if (elem) {
                 const tabIndex = this.getTabIndexByElem(elem);
