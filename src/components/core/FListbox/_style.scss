@@ -7,6 +7,7 @@
     padding: var(--f-listbox-padding);
 
     &_item {
+        color: var(--f-listbox-item-color);
         padding: var(--f-listbox-item-padding);
         background-color: var(--f-listbox-item-background-color);
 

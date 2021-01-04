@@ -138,6 +138,8 @@
     */
 
     .flistbox {
+        --f-listbox-item-color: #fff;
+        --f-listbox-item-hover-color: #fff;
         --f-listbox-item-background-color: var(--f-darker-color-2);
         --f-listbox-item-hover-background-color: var(--f-darker-color-3);
         --f-listbox-item-selected-background-color: var(--f-darker-color-3);
