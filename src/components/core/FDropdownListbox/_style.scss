@@ -1,0 +1,42 @@
+@import 'custom-properties';
+
+.fdropdownlistbox {
+    display: inline-block;
+
+    &_button {
+        display: inline-flex;
+        flex-wrap: nowrap;
+        align-items: center;
+        background: none;
+        border: none;
+        cursor: pointer;
+
+        &_label {
+            padding-right: 4px;
+        }
+
+        &_arrow {
+            width: var(--f-dropdownlistbox-arrow-size);
+            height: var(--f-dropdownlistbox-arrow-size);
+            background-image: var(--f-dropdownlistbox-arrow-image);
+            background-repeat: no-repeat;
+            margin: 0 0 0 auto;
+            //background-position: 50% 0;
+            background-position: 100% 0;
+        }
+    }
+
+    &_fwindow {
+        --f-window-popover-padding: 0;
+        --f-window-popover-color: #333;
+        --f-window-popover-background: #fff;
+
+        width: auto;
+        max-width: 360px;
+    }
+
+    &_flistbox {
+        max-height: 300px;
+        overflow: auto;
+    }
+}
