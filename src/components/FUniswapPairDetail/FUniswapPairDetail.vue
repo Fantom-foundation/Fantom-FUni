@@ -11,42 +11,14 @@
 
         <h3>Volumes</h3>
         <div class="chart-controls-top-bar">
-            <label for="pd-week">
-                <input id="pd-week" v-model="timeSpan" type="radio" name="resolution" value="1W" class="not-visible" />
-                <span class="btn small secondary">1W</span>
-            </label>
-            <label for="pd-month">
-                <input id="pd-month" v-model="timeSpan" type="radio" name="resolution" value="1M" class="not-visible" />
-                <span class="btn small secondary">1M</span>
-            </label>
-            <label for="pd-all">
-                <input id="pd-all" v-model="timeSpan" type="radio" name="resolution" value="all" class="not-visible" />
-                <span class="btn small secondary">All</span>
-            </label>
-
-            <!--            <label for="pd-day">
-                <input
-                    id="pd-day"
-                    v-model="resolution"
-                    type="radio"
-                    name="resolution"
-                    value="day"
-                    class="not-visible"
-                />
-                <span class="btn small secondary">day</span>
-            </label>
-            <label for="pd-hour">
-                <input
-                    id="pd-hour"
-                    v-model="resolution"
-                    type="radio"
-                    name="resolution"
-                    value="1h"
-                    class="not-visible"
-                />
-                <span class="btn small secondary">1h</span>
-            </label>
-            -->
+            <span>
+                History:
+                <f-dropdown-listbox v-model="timeSpan" :data="timespanSelectData" button-class="btn small light" />
+            </span>
+            <span>
+                Data:
+                <f-dropdown-listbox v-model="resolution" :data="resolutionSelectData" button-class="btn small light" />
+            </span>
         </div>
 
         <f-lightweight-charts
@@ -58,9 +30,9 @@
             time-to-timestamp
             :add-missing-values="{ value: 0, timeResolution: timeResolution[resolution] }"
             :options="{
-                timeScale: { timeVisible: ['1h'].indexOf(resolution) > -1, secondsVisible: false },
-                handleScroll: false,
-                handleScale: false,
+                timeScale: { timeVisible: ['15m', '1h', '4h'].indexOf(resolution) > -1, secondsVisible: false },
+                handleScroll: true,
+                handleScale: true,
             }"
             :fit-content="resolution === 'day'"
         />
@@ -74,11 +46,12 @@ import FUniswapPairSymbol from '../FUniswapPairSymbol/FUniswapPairSymbol.vue';
 import FLightweightCharts from '../core/FLightweightCharts/FLightweightCharts.vue';
 import gql from 'graphql-tag';
 import { getTimeSpan } from '@/utils/time.js';
+import FDropdownListbox from '@/components/core/FDropdownListbox/FDropdownListbox.vue';
 
 export default {
     name: 'FUniswapPairDetail',
 
-    components: { FLightweightCharts, FUniswapPairSymbol, FBackButton },
+    components: { FDropdownListbox, FLightweightCharts, FUniswapPairSymbol, FBackButton },
 
     data() {
         return {
@@ -89,8 +62,24 @@ export default {
             resolution: 'day',
             timeResolution: {
                 day: 86400,
+                '4h': 14400,
                 '1h': 3600,
+                '15m': 900,
             },
+            /** Data for timespan dropdown */
+            timespanSelectData: [
+                { value: '1W', label: '1W' },
+                { value: '1M', label: '1M' },
+                { value: 'all', label: 'All' },
+            ],
+            /** Data for resolution dropdown */
+            resolutionSelectData: [
+                { value: '15m', label: '15m' },
+                { value: '1h', label: '1H' },
+                { value: '4h', label: '4H' },
+                { value: 'day', label: 'D' },
+                { value: 'month', label: '1M' },
+            ],
         };
     },
 
