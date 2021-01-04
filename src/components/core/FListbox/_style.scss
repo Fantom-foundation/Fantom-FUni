@@ -7,14 +7,8 @@
     padding: var(--f-listbox-padding);
 
     &_item {
-        cursor: pointer;
         padding: var(--f-listbox-item-padding);
         background-color: var(--f-listbox-item-background-color);
-
-        &:not([aria-disabled="true"]):not([aria-selected="true"]):hover {
-            color: var(--f-listbox-item-hover-color);
-            background-color: var(--f-listbox-item-hover-background-color);
-        }
 
         &[aria-selected="true"] {
             color: var(--f-listbox-item-selected-color);
@@ -23,7 +17,25 @@
 
         &[aria-disabled="true"] {
             opacity: var(--f-listbox-item-disabled-opacity);
-            cursor: default;
+        }
+    }
+
+    &:not([aria-disabled="true"]) {
+        .flistbox_item {
+            &:not([aria-disabled="true"]) {
+                cursor: pointer;
+
+                &:not([aria-selected="true"]):hover {
+                    color: var(--f-listbox-item-hover-color);
+                    background-color: var(--f-listbox-item-hover-background-color);
+                }
+            }
+        }
+    }
+
+    &[aria-disabled="true"] {
+        .flistbox_item {
+            opacity: var(--f-listbox-item-disabled-opacity);
         }
     }
 }

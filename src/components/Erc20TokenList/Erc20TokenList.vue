@@ -1,6 +1,6 @@
 <template>
     <div class="defi-token-list">
-        <f-listbox ref="listbox" :items="dTokens" @listbox-item-selected="onListboxItemSelected">
+        <f-listbox ref="listbox" :data="dTokens" @item-selected="onListboxItemSelected">
             <template v-slot="{ item }">
                 <div class="row align-items-center no-collapse">
                     <div class="col"><f-crypto-symbol :token="item" img-width="40px" img-height="40px" /></div>

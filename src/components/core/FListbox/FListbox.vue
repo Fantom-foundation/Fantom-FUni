@@ -1,17 +1,19 @@
 <template>
     <ul
-        class="flistbox no-markers"
+        :id="id"
         role="listbox"
-        tabindex="0"
+        class="flistbox no-markers"
+        :tabindex="disabled ? -1 : 0"
         :aria-activedescendant="focusedItem.id"
         :aria-labelledby="labeledBy"
+        :aria-disabled="disabled"
         @click="onClick"
         @keydown="onKeydown"
         @keyup="onKeyup"
         @focus="onFocus"
     >
         <li
-            v-for="item in cItems"
+            v-for="item in items"
             :id="item.id"
             :key="item.id"
             role="option"
@@ -27,21 +29,41 @@
 </template>
 
 <script>
-import { helpersMixin } from '../../../mixins/helpers.js';
-import { cloneObject } from '../../../utils';
-import { isKey, keyboardNavigation } from '../../../utils/aria.js';
+import { helpersMixin } from '@/mixins/helpers.js';
+import { cloneObject } from '@/utils';
+import { isKey, keyboardNavigation } from '@/utils/aria.js';
+import { selectMixin } from '@/mixins/select.js';
+
+/**
+ * FListbox item.
+ * @typedef {Object} FListboxItem
+ * @property {string} [value] Specifies the value of listbox item
+ * @property {string} [label] Specifies a label for an item
+ * @property {boolean} [disabled] Specifies that an item should be disabled
+ * @property {boolean} [selected] Specifies that an item should be pre-selected
+ */
 
 /**
  * Listbox component created according to WAI-ARIA rules and practices.
+ *
+ * @mixes selectMixin
  */
 export default {
     name: 'FListbox',
 
-    mixins: [helpersMixin],
+    mixins: [selectMixin, helpersMixin],
+
+    model: {
+        prop: 'value',
+        event: 'change',
+    },
 
     props: {
-        /** Listbox's items */
-        items: {
+        /**
+         * Listbox's items
+         * @type {FListboxItem[]}
+         */
+        data: {
             type: Array,
             default() {
                 return [];
@@ -52,13 +74,18 @@ export default {
             type: String,
             default: '',
         },
-        /** If `true`, `listbox-item-selected` event will be fired right on item focus (keyboard movement, click) */
+        /** If `true`, `item-selected` event will be fired right on item focus (keyboard movement, click) */
         selectImmediately: {
             type: Boolean,
             default: false,
         },
-        /** If `true`, first focusable item will be focused. */
+        /** If `true`, first focusable item will be focused */
         focusItemOnFocus: {
+            type: Boolean,
+            default: false,
+        },
+        /** If `true`, keyboard navigation will be circular (last item -> first item, first item -> last item) */
+        circularNavigation: {
             type: Boolean,
             default: false,
         },
@@ -66,19 +93,35 @@ export default {
 
     data() {
         return {
+            val: this.value,
             focusedItem: {},
             selectableItemSelector: '.flistbox_item:not([aria-disabled="true"])',
         };
     },
 
     computed: {
-        cItems() {
-            const items = [...this.items];
+        items() {
+            const items = [...this.data];
 
             this.setIds(items);
+            this.setSelected();
 
             return items;
         },
+    },
+
+    watch: {
+        value(_val) {
+            this.val = _val;
+
+            if (this.focusedItem.value !== _val) {
+                this.focusItem(_val, false, 'value');
+            }
+        },
+    },
+
+    created() {
+        this._firstKeyup = true;
     },
 
     methods: {
@@ -92,19 +135,45 @@ export default {
         focusItem(_value, _selectItem, _key = 'id') {
             let item;
 
-            if (_value) {
-                item = this.cItems.find((_item) => _item[_key] === _value);
+            if (_value && !this.disabled) {
+                item = this.items.find((_item) => _item[_key] === _value);
 
                 // if (item && item.id !== this.focusedItem.id) {
-                if (item) {
+                if (item && !item.disabled) {
                     if (this.selectImmediately || _selectItem) {
-                        this.$emit('listbox-item-selected', cloneObject(item));
+                        this.emitChangeEvent(cloneObject(item));
                     }
 
                     this.focusedItem = item;
 
                     this.scrollToFocusedItem();
                 }
+            }
+        },
+
+        focus() {
+            if (this.$el && !this.disabled) {
+                this.$el.focus();
+            }
+        },
+
+        /**
+         * Set selected item.
+         */
+        setSelected() {
+            const { value } = this;
+            let selectedItem = this.data.find((_item) => !!_item.selected);
+
+            if (!selectedItem && value) {
+                selectedItem = this.data.find((_item) => _item.value === value);
+            }
+
+            this.focusedItem = {};
+
+            if (selectedItem) {
+                this.$nextTick(() => {
+                    this.focusItem(selectedItem.id);
+                });
             }
         },
 
@@ -131,10 +200,28 @@ export default {
         },
 
         /**
+         * @param {FListboxItem} _item
+         */
+        emitChangeEvent(_item) {
+            if (this.disabled) {
+                return;
+            }
+
+            this.val = _item.value || '';
+
+            this.$emit('item-selected', _item);
+            this.$emit('change', this.val);
+        },
+
+        /**
          * Focus first focusable item.
          */
         focusFirstItem() {
-            const item = this.cItems.find((_item) => !_item.disabled);
+            if (this.disabled) {
+                return;
+            }
+
+            const item = this.items.find((_item) => !_item.disabled);
 
             if (item) {
                 this.focusedItem = item;
@@ -145,6 +232,10 @@ export default {
          * @param {Event} _event
          */
         onClick(_event) {
+            if (this.disabled) {
+                return;
+            }
+
             const eItem = _event.target.closest(this.selectableItemSelector);
 
             if (eItem) {
@@ -156,11 +247,15 @@ export default {
          * @param {KeyboardEvent} _event
          */
         onKeydown(_event) {
+            if (this.disabled) {
+                return;
+            }
+
             let eItem = keyboardNavigation({
                 _event,
                 _selector: this.selectableItemSelector,
                 _direction: 'vertical',
-                _circular: true,
+                _circular: this.circularNavigation,
                 _target: document.getElementById(this.focusedItem.id),
                 _focusElem: false,
             });
@@ -180,14 +275,30 @@ export default {
          * @param {KeyboardEvent} _event
          */
         onKeyup(_event) {
-            if (!this.selectImmediately && this.focusedItem.id && isKey('Enter', _event)) {
-                this.$emit('listbox-item-selected', cloneObject(this.focusedItem));
+            if (this.disabled) {
+                return;
             }
+
+            if (!this.selectImmediately && this.focusedItem.id && isKey('Enter', _event) && !this._firstKeyup) {
+                this.emitChangeEvent(cloneObject(this.focusedItem));
+            }
+
+            this._firstKeyup = false;
         },
 
         onFocus() {
+            if (this.disabled) {
+                return;
+            }
+
+            this._firstKeyup = true;
+
             if (this.focusItemOnFocus && !this.focusedItem.id) {
-                this.focusFirstItem();
+                if (this.value) {
+                    this.focusItem(this.value, false, 'value');
+                } else {
+                    this.focusFirstItem();
+                }
             }
         },
     },
