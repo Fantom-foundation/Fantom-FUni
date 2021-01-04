@@ -8,6 +8,7 @@
             :disabled="disabled"
             aria-haspopup="listbox"
             class="fdropdownlistbox_button"
+            :class="[buttonClass]"
             @click="onButtonClick"
         >
             <span class="fdropdownlistbox_button_label">
@@ -52,9 +53,9 @@
 </template>
 
 <script>
-import FListbox from '@/components/FListbox/FListbox.vue';
-import FWindow from '@/components/FWindow/FWindow.vue';
-import FSelect from '@/components/FSelect/FSelect.vue';
+import FListbox from '@/components/core/FListbox/FListbox.vue';
+import FWindow from '@/components/core/FWindow/FWindow.vue';
+import FSelect from '@/components/core/FSelect/FSelect.vue';
 import { defer, getUniqueId } from '@/utils';
 
 /**
@@ -72,6 +73,11 @@ export default {
         buttonInitLabel: {
             type: String,
             default: 'Select something',
+        },
+        /** CSS class(es) for button */
+        buttonClass: {
+            type: String,
+            default: '',
         },
         /** Animation that starts when the popover is just about to show */
         animationIn: {
