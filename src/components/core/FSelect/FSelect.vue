@@ -23,14 +23,14 @@
 </template>
 
 <script>
-import { helpersMixin } from '../../../mixins/helpers.js';
-import { inputCommonMixin } from '../../../mixins/input-common.js';
-import { getUniqueId } from '../../../utils';
+import { helpersMixin } from '@/mixins/helpers.js';
+import { selectMixin } from '@/mixins/select.js';
+import { getUniqueId } from '@/utils';
 
 export default {
     name: 'FSelect',
 
-    mixins: [inputCommonMixin, helpersMixin],
+    mixins: [selectMixin, helpersMixin],
 
     model: {
         prop: 'value',
@@ -81,13 +81,6 @@ export default {
                 large: this.selectSize === 'large',
                 small: this.selectSize === 'small',
                 disabled: this.disabled,
-            };
-        },
-
-        selectProps() {
-            return {
-                ...this.inputCommonProps,
-                type: null,
             };
         },
 
