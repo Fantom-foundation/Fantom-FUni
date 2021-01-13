@@ -72,6 +72,23 @@ a:not(.btn):hover {
     letter-spacing: normal;
 }
 
+details {
+    margin-top: 16px;
+
+    &:not([open]) {
+        color: $light-gray-color;
+    }
+
+    summary {
+        text-align: left;
+        cursor: pointer;
+    }
+
+    p:first-of-type {
+        margin-top: 16px;
+    }
+}
+
 .narrow-container {
     padding-top: 16px;
     padding-bottom: 16px;

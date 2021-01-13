@@ -42,12 +42,16 @@
                             >
                                 {{ sendButtonLabel }}
                             </button>
-                            <div class="gas-info">
-                                Estimated Gas:
-                                <f-placeholder :content-loaded="!!gasLimit" :replacement-num-chars="4">
-                                    {{ formatNumberByLocale(parseInt(gasLimit, 16), 0) }}
-                                </f-placeholder>
-                            </div>
+
+                            <details>
+                                <summary>Gas Settings</summary>
+                                <div class="gas-info">
+                                    Estimated Gas:
+                                    <f-placeholder :content-loaded="!!gasLimit" :replacement-num-chars="4">
+                                        {{ formatNumberByLocale(parseInt(gasLimit, 16), 0) }}
+                                    </f-placeholder>
+                                </div>
+                            </details>
                         </template>
                         <pulse-loader v-else color="#1969ff"></pulse-loader>
                     </div>
@@ -151,9 +155,3 @@ export default {
     },
 };
 </script>
-<style lang="scss">
-@import '../../assets/scss/vars';
-.gas-info {
-    color: $light-gray-color;
-}
-</style>
