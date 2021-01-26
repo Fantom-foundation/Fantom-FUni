@@ -1,0 +1,42 @@
+@import 'custom-properties';
+
+.flistbox {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    padding: var(--f-listbox-padding);
+
+    &_item {
+        color: var(--f-listbox-item-color);
+        padding: var(--f-listbox-item-padding);
+        background-color: var(--f-listbox-item-background-color);
+
+        &[aria-selected="true"] {
+            color: var(--f-listbox-item-selected-color);
+            background-color: var(--f-listbox-item-selected-background-color);
+        }
+
+        &[aria-disabled="true"] {
+            opacity: var(--f-listbox-item-disabled-opacity);
+        }
+    }
+
+    &:not([aria-disabled="true"]) {
+        .flistbox_item {
+            &:not([aria-disabled="true"]) {
+                cursor: pointer;
+
+                &:not([aria-selected="true"]):hover {
+                    color: var(--f-listbox-item-hover-color);
+                    background-color: var(--f-listbox-item-hover-background-color);
+                }
+            }
+        }
+    }
+
+    &[aria-disabled="true"] {
+        .flistbox_item {
+            opacity: var(--f-listbox-item-disabled-opacity);
+        }
+    }
+}

@@ -1,0 +1,11 @@
+.flistbox {
+    --f-listbox-padding: 0;
+    --f-listbox-item-padding: 8px 16px;
+    --f-listbox-item-color: inherit;
+    --f-listbox-item-background-color: #fff;
+    --f-listbox-item-hover-color: inherit;
+    --f-listbox-item-hover-background-color: var(--f-primary-color-lighter);
+    --f-listbox-item-selected-color: #fff;
+    --f-listbox-item-selected-background-color: var(--f-primary-color);
+    --f-listbox-item-disabled-opacity: 0.3;
+}

@@ -16,6 +16,7 @@ import FUniswapWrapFTM from '@/components/FUniswapWrapFTM/FUniswapWrapFTM.vue';
 import FUniswapWrapFTMConfirmation from '@/views/FUniswapWrapFTMConfirmation/FUniswapWrapFTMConfirmation.vue';
 import Pool from '@/views/Pool/Pool.vue';
 import FUniswapPool from '@/components/FUniswapPool/FUniswapPool.vue';
+import FUniswapPairDetail from './components/FUniswapPairDetail/FUniswapPairDetail.vue';
 
 export const routes = [
     {
@@ -174,6 +175,11 @@ export const routes = [
                                 component: TransactionRejectMessageView,
                             },
                         ],
+                    },
+                    {
+                        name: 'funiswap-pair-detail',
+                        path: '/pair/:address',
+                        component: FUniswapPairDetail,
                     },
                 ],
             },

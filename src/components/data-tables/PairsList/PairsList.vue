@@ -13,11 +13,17 @@
                 <div v-if="column" class="row no-collapse no-vert-col-padding">
                     <div class="col-6 f-row-label">{{ column.label }}</div>
                     <div class="col break-word">
-                        <f-uniswap-pair-symbol :pair="item" />
+                        <f-uniswap-pair-symbol
+                            :pair="item"
+                            :router-link-to="{ name: 'funiswap-pair-detail', params: { address: item.pairAddress } }"
+                        />
                     </div>
                 </div>
                 <template v-else>
-                    <f-uniswap-pair-symbol :pair="item" />
+                    <f-uniswap-pair-symbol
+                        :pair="item"
+                        :router-link-to="{ name: 'funiswap-pair-detail', params: { address: item.pairAddress } }"
+                    />
                 </template>
             </template>
 

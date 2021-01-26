@@ -1,0 +1,25 @@
+.f-lightweight-chart {
+    --f-lightweight-chart-chart-line-color: #286FF6;
+    --f-lightweight-chart-chart-text-color: initial;
+    --f-lightweight-chart-chart-background-color: transparent;
+    --f-lightweight-chart-chart-vert-lines-color: transparent;
+    --f-lightweight-chart-chart-horz-lines-color: transparent;
+    --f-lightweight-chart-chart-font-size: 12;
+    --f-lightweight-chart-chart-font-family: 'Calibri';
+    --f-lightweight-chart-chart-time-scale-border-color: transparent;
+    --f-lightweight-chart-chart-price-scale-border-color: transparent;
+
+    &__container {
+        width: 100%;
+        overflow: hidden;
+    }
+}
+
+.chart-controls-top-bar {
+    text-align: right;
+    padding-bottom: 16px;
+
+    > * {
+        margin-left: 4px;
+    }
+}

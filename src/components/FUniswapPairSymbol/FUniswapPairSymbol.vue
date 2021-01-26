@@ -9,7 +9,10 @@
         />
         <f-crypto-symbol :token="tokens[1]" :img-width="imgWidth" :img-height="imgHeight" no-symbol />
 
-        {{ $defi.getTokenSymbol(tokens[0]) }}-{{ $defi.getTokenSymbol(tokens[1]) }}
+        <router-link v-if="routerLinkTo.name" :to="routerLinkTo">
+            {{ $defi.getTokenSymbol(tokens[0]) }}-{{ $defi.getTokenSymbol(tokens[1]) }}
+        </router-link>
+        <template v-else> {{ $defi.getTokenSymbol(tokens[0]) }}-{{ $defi.getTokenSymbol(tokens[1]) }} </template>
     </div>
 </template>
 
@@ -43,6 +46,12 @@ export default {
         imgHeight: {
             type: String,
             default: '32px',
+        },
+        routerLinkTo: {
+            type: Object,
+            default() {
+                return {};
+            },
         },
     },
 
