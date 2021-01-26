@@ -43,7 +43,7 @@
                                 {{ sendButtonLabel }}
                             </button>
 
-                            <details>
+                            <!--                            <details>
                                 <summary>Gas Settings</summary>
                                 <div class="gas-info">
                                     Estimated Gas:
@@ -51,7 +51,7 @@
                                         {{ formatNumberByLocale(parseInt(gasLimit, 16), 0) }}
                                     </f-placeholder>
                                 </div>
-                            </details>
+                            </details>-->
                         </template>
                         <pulse-loader v-else color="#1969ff"></pulse-loader>
                     </div>
@@ -67,13 +67,12 @@ import FPasswordField from '../core/FPasswordField/FPasswordField.vue';
 import FMessage from '../core/FMessage/FMessage.vue';
 import PulseLoader from 'vue-spinner/src/PulseLoader.vue';
 import { mapGetters } from 'vuex';
-import FPlaceholder from '@/components/core/FPlaceholder/FPlaceholder.vue';
 import { formatNumberByLocale } from '@/filters.js';
 
 export default {
     name: 'TransactionConfirmationForm',
 
-    components: { FPlaceholder, FMessage, FPasswordField, FForm, PulseLoader },
+    components: { FMessage, FPasswordField, FForm, PulseLoader },
 
     props: {
         showPasswordField: {
