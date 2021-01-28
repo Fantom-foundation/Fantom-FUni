@@ -200,7 +200,7 @@ export default {
 
             _event.detail.data.pwd = '';
 
-            if (currentAccount && this.tx && this.tx.to) {
+            if (currentAccount && this.tx && fWallet.isValidAddress(this.tx.to)) {
                 this.tx.nonce = await fWallet.getTransactionCount(currentAccount.address);
                 this.tx.nonce = `0x${this.tx.nonce.toString(16)}`;
                 this.tx.chainId = appConfig.chainId;
