@@ -1,7 +1,10 @@
 <template>
     <span class="fpricediff" :class="classes">
-        <span class="fpricediff_sign">{{ sign }}</span
-        >{{ diffFormated }}%
+        <template v-if="diff !== 0">
+            <span class="fpricediff_sign">{{ sign }}</span
+            >{{ diffFormated }}%
+        </template>
+        <template v-else> - </template>
     </span>
 </template>
 
@@ -36,9 +39,8 @@ export default {
         diff() {
             const currValue = parseFloat(this.currValue);
             const prevValue = parseFloat(this.prevValue);
-            const diff = prevValue !== 0 ? ((currValue - prevValue) / prevValue) * 100 : 0;
 
-            return this.decimals > 0 ? diff.toFixed(this.decimals) : diff;
+            return prevValue !== 0 ? ((currValue - prevValue) / prevValue) * 100 : 0;
         },
 
         diffFormated() {
