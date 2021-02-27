@@ -322,6 +322,7 @@ export default {
             let diff = 0;
             const { timeResolution } = _options;
             const { value } = _options;
+            const useLastValue = value === 'last';
 
             if (_series && timeResolution > 0) {
                 for (let i = 0, len1 = _series.length; i < len1; i++) {
@@ -334,7 +335,7 @@ export default {
                             for (let j = 1, len2 = parseInt(diff / timeResolution); j < len2; j++) {
                                 data.push({
                                     time: prevItem.time + j * timeResolution,
-                                    value,
+                                    value: useLastValue ? prevItem.value : value,
                                 });
                             }
                         }
@@ -396,7 +397,13 @@ export default {
                 }
 
                 if (chartCP.lineColor && (!seriesOptions || !seriesOptions.color)) {
-                    series[_seriesKey].applyOptions({ color: chartCP.lineColor });
+                    series[_seriesKey].applyOptions({
+                        color: chartCP.lineColor,
+                        lineColor: chartCP.lineColor,
+                        topColor: chartCP.topColor,
+                        bottomColor: chartCP.bottomColor,
+                        lineWidth: chartCP.lineWidth,
+                    });
                 }
             });
         },
@@ -406,6 +413,9 @@ export default {
             const cp = {
                 lineColor: style.getPropertyValue('--f-lightweight-chart-chart-line-color'),
                 textColor: style.getPropertyValue('--f-lightweight-chart-chart-text-color'),
+                topColor: style.getPropertyValue('--f-lightweight-chart-chart-top-color'),
+                bottomColor: style.getPropertyValue('--f-lightweight-chart-chart-bottom-color'),
+                lineWidth: style.getPropertyValue('--f-lightweight-chart-chart-line-width'),
                 vertLinesColor: style.getPropertyValue('--f-lightweight-chart-chart-vert-lines-color'),
                 horzLinesColor: style.getPropertyValue('--f-lightweight-chart-chart-horz-lines-color'),
                 backgroundColor: style.getPropertyValue('--f-lightweight-chart-chart-background-color'),
