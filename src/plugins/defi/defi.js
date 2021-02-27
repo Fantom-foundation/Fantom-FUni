@@ -131,10 +131,23 @@ export class DeFi {
 
     /**
      * @param {DefiToken} _token
+     * @param {number} _default
      * @return {number}
      */
-    getTokenDecimals(_token) {
-        return this.tokenDecimals[_token.symbol] || 6;
+    getTokenDecimals(_token, _default = 6) {
+        const tokenPrice = this.getTokenPrice(_token);
+        let decimals = _default;
+
+        if (tokenPrice < 0.5 && tokenPrice > 0) {
+            decimals = 1;
+        } else if (tokenPrice < 100) {
+            decimals = 2;
+        } else if (tokenPrice < 1000) {
+            decimals = 5;
+        }
+
+        return decimals;
+        // return this.tokenDecimals[_token.symbol] || _default;
     }
 
     /**
@@ -643,6 +656,24 @@ export class DeFi {
     }
 
     /**
+     * @param {UniswapPair} _pair
+     * @param {number} _tokenIndex
+     * @return {ERC20Token|{}}
+     */
+    getPairToken(_pair, _tokenIndex = 0) {
+        return _pair && _pair.tokens ? _pair.tokens[_tokenIndex] : {};
+    }
+
+    /**
+     * @param {UniswapPair} _pair
+     * @param {number} _tokenIndex
+     * @return {string}
+     */
+    getPairTokenSymbol(_pair, _tokenIndex = 0) {
+        return _pair && _pair.tokens ? this.getTokenSymbol(_pair.tokens[_tokenIndex]) : '';
+    }
+
+    /**
      * @return {Promise<DefiSettings>}
      */
     async fetchSettings() {
@@ -1082,7 +1113,7 @@ export class DeFi {
      * @param {string} _address
      * @param {string} _pairAddress
      * @param {[string, string]} [_filterPair] Array of token addresses.
-     * @return {Promise<[]|undefined>}
+     * @return {Promise<UniswapPair[]|undefined>}
      */
     async fetchUniswapPairs(_address, _pairAddress = '', _filterPair = []) {
         let query = gql`
@@ -1094,6 +1125,7 @@ export class DeFi {
                         name
                         symbol
                         logoURL
+                        decimals
                     }
                     reservesTimeStamp
                     reserves
@@ -1113,6 +1145,7 @@ export class DeFi {
                             name
                             symbol
                             logoURL
+                            decimals
                             balanceOf(owner: $owner)
                         }
                         reservesTimeStamp
@@ -1133,6 +1166,7 @@ export class DeFi {
                             name
                             symbol
                             logoURL
+                            decimals
                             balanceOf(owner: $owner)
                         }
                         reservesTimeStamp

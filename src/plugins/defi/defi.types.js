@@ -81,3 +81,48 @@
  * @property {string} totalSupply Total amount of the pair tokens in circulation and represents the total share pool of all the participants.
  * @property {string} shareOf Share of the given user/participant on the pair.
  */
+
+/**
+ * UniswapAction represents a Uniswap action - swap, mint, burn
+ * @typedef {Object} UniswapAction
+ * @property {string} id
+ * @property {UniswapPair} uniswapPair
+ * @property {string} pairAddress
+ * @property {string} transactionHash
+ * @property {string} sender
+ * @property {number} type 0 - swap, 1 - mint, 2 - burn
+ * @property {string} blockNr
+ * @property {string} time
+ * @property {string} amount0in
+ * @property {string} amount0out
+ * @property {string} amount1in
+ * @property {string} amount1out
+ */
+
+/**
+ * DefiTimeVolume represents swap volume for given pair and time interval
+ * @typedef {Object} DefiTimeVolume
+ * @property {string} pairAddress
+ * @property {string} time
+ * @property {string} value
+ */
+
+/**
+ * DefiTimePrice represents a calculated price for swap pairs in history
+ * @typedef {Object} DefiTimePrice
+ * @property {string} pairAddress
+ * @property {string} time
+ * @property {number} open
+ * @property {number} close
+ * @property {number} low
+ * @property {number} high
+ * @property {number} average
+ */
+
+/**
+ * DefiTimeReserve represents a Uniswap pair reserve in history
+ * @typedef {Object} DefiTimeReserve
+ * @property {UniswapPair} uniswapPair
+ * @property {string} time
+ * @property {string} reserveClose
+ */
