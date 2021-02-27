@@ -1,0 +1,11 @@
+.fpricediff {
+    display: inline-block;
+
+    &-green {
+        color: #008000;
+    }
+
+    &-red {
+        color: #f00;
+    }
+}
