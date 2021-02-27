@@ -1,6 +1,8 @@
 <template>
     <div :id="id" class="f-tab" role="tabpanel" tabindex="0" :aria-labelledby="labelledBy" :hidden="!dActive">
-        <slot></slot>
+        <template v-if="!showContentOnActive || dActive">
+            <slot></slot>
+        </template>
     </div>
 </template>
 
@@ -43,6 +45,11 @@ export default {
         },
         /** Is tab panel disabled? */
         disabled: {
+            type: Boolean,
+            default: false,
+        },
+        /** Show content only when tab is active */
+        showContentOnActive: {
             type: Boolean,
             default: false,
         },

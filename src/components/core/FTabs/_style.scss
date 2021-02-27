@@ -9,7 +9,7 @@
         li {
             position: relative;
             top: var(--f-tabs-border-width);
-            padding: 8px 16px;
+            padding: var(--f-tabs-tab-padding);
             cursor: pointer;
         }
     }
