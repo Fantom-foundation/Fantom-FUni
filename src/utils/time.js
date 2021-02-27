@@ -44,3 +44,10 @@ export function getTimeSpan(_code, _ends, _utc = true) {
 
     return [startDateTS, endDate.unix()];
 }
+
+/**
+ * @return {dayjs.Dayjs}
+ */
+export function nowDJS() {
+    return dayjs();
+}

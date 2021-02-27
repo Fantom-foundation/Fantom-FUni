@@ -178,7 +178,7 @@ export const routes = [
                     },
                     {
                         name: 'funiswap-pair-detail',
-                        path: '/pair/:address',
+                        path: '/pair/:pairAddress',
                         component: FUniswapPairDetail,
                     },
                 ],

@@ -1,11 +1,142 @@
-.funiswap-pair-detail {
-    &__title {
+@import "../../assets/scss/vars";
+@import "custom-properties";
+
+.funiswappairdetail {
+    .f-card {
+        --f-card-padding: 16px;
+    }
+
+    .f-tabs {
+        --f-tabs-font-size: 1rem;
+        --f-tabs-tab-padding: 4px 8px;
+    }
+
+    &_title {
         display: flex;
         align-items: center;
         justify-content: center;
 
-        &__pair {
+        &_pair {
             padding-left: 8px;
+        }
+    }
+
+    &_subtitle {
+        font-size: 21px !important;
+        margin-top: 24px;
+        margin-bottom: 16px;
+    }
+
+    &_subsubtitle {
+        font-size: 16px !important;
+        margin-bottom: 8px;
+        opacity: 0.85;
+    }
+
+    &_main {
+        display: grid;
+        grid-template-columns: 1fr 2fr;
+        grid-template-rows: auto;
+        grid-gap: var(--funiswappairdetail-gap) var(--funiswappairdetail-gap);
+    }
+
+    &_stats {
+        > * + * {
+            margin-top: var(--funiswappairdetail-gap);
+        }
+
+        &_body {
+            font-size: 28px;
+
+            .f-crypto-symbol {
+                margin-right: -2px;
+            }
+        }
+
+        &_cols {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .fpricediff {
+            font-size: 14px;
+        }
+    }
+
+    &_charts {
+        position: relative;
+
+        .f-lightweight-chart {
+            min-height: 280px;
+        }
+
+        .chart-controls-top-bar {
+            position: absolute;
+            top: 20px;
+            right: 16px;
+        }
+    }
+
+    &_prices {
+        font-weight: bold;
+        //font-size: 21px;
+        margin-top: 28px;
+
+        &_item {
+            display: inline-block;
+
+            & + * {
+                margin-left: var(--funiswappairdetail-gap);
+            }
+
+            &.f-card {
+                --f-card-padding: 8px 16px;
+            }
+        }
+
+        .f-crypto-symbol {
+            position: relative;
+            top: 2px;
+            margin-right: -6px;
+        }
+    }
+
+    &_info {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+        grid-gap: var(--funiswappairdetail-gap);
+
+        &_item {
+            .f-ellipsis {
+                display: inline-flex;
+                max-width: 160px;
+            }
+
+            .btn {
+                vertical-align: top;
+                margin-left: 8px;
+            }
+        }
+    }
+}
+
+@include media-max($bp-small) {
+    .funiswappairdetail {
+        &_charts {
+            .chart-controls-top-bar {
+                position: static;
+                padding-top: 16px;
+                text-align: center;
+            }
+        }
+    }
+}
+
+@include media-max($bp-large) {
+    .funiswappairdetail {
+        &_main {
+            grid-template-columns: 1fr;
         }
     }
 }

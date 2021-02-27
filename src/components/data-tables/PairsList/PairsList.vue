@@ -15,14 +15,17 @@
                     <div class="col break-word">
                         <f-uniswap-pair-symbol
                             :pair="item"
-                            :router-link-to="{ name: 'funiswap-pair-detail', params: { address: item.pairAddress } }"
+                            :router-link-to="{
+                                name: 'funiswap-pair-detail',
+                                params: { pairAddress: item.pairAddress },
+                            }"
                         />
                     </div>
                 </div>
                 <template v-else>
                     <f-uniswap-pair-symbol
                         :pair="item"
-                        :router-link-to="{ name: 'funiswap-pair-detail', params: { address: item.pairAddress } }"
+                        :router-link-to="{ name: 'funiswap-pair-detail', params: { pairAddress: item.pairAddress } }"
                     />
                 </template>
             </template>
