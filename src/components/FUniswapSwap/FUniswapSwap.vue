@@ -493,7 +493,10 @@ export default {
             this.setPriceImpact();
         },
 
-        async init() {
+        /**
+         * @param {boolean} [_accountPicked]
+         */
+        async init(_accountPicked) {
             const { $defi } = this;
             const { params } = this;
             const result = await Promise.all([$defi.fetchUniswapPairs(), $defi.init()]);
@@ -501,7 +504,7 @@ export default {
             this.pairs = result[0];
 
             if (params.tokena && params.tokenb) {
-                this.setTokensByRouteParams();
+                this.setTokensByRouteParams(_accountPicked);
             } else {
                 this.fromToken = this.getInitialToken();
             }
@@ -687,11 +690,18 @@ export default {
             }
         },
 
-        setTokensByRouteParams() {
+        /**
+         * @param {boolean} [_accountPicked]
+         */
+        setTokensByRouteParams(_accountPicked) {
             const { params } = this.$route;
 
             if (params.tokena && params.tokenb) {
-                if (params.tokena !== this.fromToken.address || params.tokenb !== this.toToken.address) {
+                if (
+                    _accountPicked ||
+                    params.tokena !== this.fromToken.address ||
+                    params.tokenb !== this.toToken.address
+                ) {
                     const pair = TokenPairs.getPairByTokens(this.pairs, [
                         { address: params.tokena },
                         { address: params.tokenb },
@@ -934,7 +944,7 @@ export default {
         },
 
         onAccountPicked() {
-            this.init();
+            this.init(true);
             this.resetInputValues();
         },
     },

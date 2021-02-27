@@ -340,8 +340,6 @@ export default {
                             this.toToken = pair.tokens[1];
                         }
 
-                        console.log(this.fromToken, this.toToken);
-
                         this.setTokenPrices();
                     }
                 }
