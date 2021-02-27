@@ -164,6 +164,7 @@ import { pollingMixin } from '@/mixins/polling.js';
 import Erc20TokenPickerWindow from '@/components/windows/Erc20TokenPickerWindow/Erc20TokenPickerWindow.vue';
 import { TokenPairs } from '@/utils/token-pairs.js';
 import { getAppParentNode } from '@/app-structure.js';
+import appConfig from '../../../app.config.js';
 
 export default {
     name: 'FUniswapAddLiquidity',
@@ -198,7 +199,7 @@ export default {
             toToken: {},
             sliderLabels: ['0%', '25%', '50%', '75%', '100%'],
             id: getUniqueId(),
-            liquidityProviderFee: 0.003,
+            liquidityProviderFee: appConfig.settings.fUniswapLiquidityProviderFee,
             submitLabel: 'Select a token',
             /** @type {UniswapPair} */
             dPair: {},

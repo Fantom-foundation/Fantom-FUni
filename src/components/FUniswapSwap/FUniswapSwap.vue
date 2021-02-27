@@ -201,6 +201,7 @@ import { pollingMixin } from '@/mixins/polling.js';
 import FPlaceholder from '@/components/core/FPlaceholder/FPlaceholder.vue';
 import { TokenPairs } from '@/utils/token-pairs.js';
 import Erc20TokenPickerWindow from '@/components/windows/Erc20TokenPickerWindow/Erc20TokenPickerWindow.vue';
+import appConfig from '../../../app.config.js';
 // import PulseLoader from 'vue-spinner/src/PulseLoader.vue';
 
 export default {
@@ -241,7 +242,7 @@ export default {
             toToken: {},
             sliderLabels: ['0%', '25%', '50%', '75%', '100%'],
             id: getUniqueId(),
-            liquidityProviderFee: 0.003,
+            liquidityProviderFee: appConfig.settings.fUniswapLiquidityProviderFee,
             submitLabel: 'Select a token',
             /** @type {UniswapPair} */
             dPair: {},

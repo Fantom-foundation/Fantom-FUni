@@ -70,7 +70,7 @@ const appConfig = {
         useBNB: true,
     },
     //
-    useTestnet: false,
+    useTestnet: true,
     // testnet config
     testnet: {
         // list of providers. if one of them is unavailable, another is randomly picked
@@ -108,6 +108,8 @@ const appConfig = {
         defaultDefiSlippageReserve: 0.3,
         // default funiswap slippage tolerance in percentage
         defaultFUniswapSlippageTolerance: 0.5,
+        // funiswap provider fee (0.3%)
+        fUniswapLiquidityProviderFee: 0.003,
         // success transaction message will automatically continue to the next step after this number of ms
         autoContinueToAfter: 2000,
     },
