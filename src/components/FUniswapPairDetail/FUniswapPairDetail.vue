@@ -348,14 +348,8 @@ export default {
             this.loadChartDataByTabId(this.activeTabId);
         },
 
-        async resolution(_value) {
-            const { activeTabId } = this;
-
-            if (activeTabId === 't-reserves') {
-                this.loadReserveSeries(this.timeSpan, _value);
-            } else if (activeTabId === 't-volumes') {
-                this.loadVolumeSeries(this.timeSpan, _value);
-            }
+        async resolution() {
+            this.loadChartDataByTabId(this.activeTabId);
         },
 
         activeTabId(_tabId) {
