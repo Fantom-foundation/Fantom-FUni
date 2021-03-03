@@ -90,7 +90,7 @@
                             }"
                         />
                     </f-tab>
-                    <f-tab id="t-volumes" title="Volumes">
+                    <f-tab id="t-volumes" title="Volume">
                         <f-lightweight-charts
                             ref="chart"
                             :series="volumeSeries"
