@@ -397,7 +397,7 @@ export default {
             });
         },
 
-        async loadVolumeSeries(_timeSpan = this.timeSpan, _resolution = 'day') {
+        async loadVolumeSeries(_timeSpan = this.timeSpan, _resolution = this.resolution) {
             const timeSpan = getTimeSpan(_timeSpan);
 
             this.volumeSeries = await this.fetchVolumes(this.params.pairAddress, _resolution, timeSpan[0], timeSpan[1]);
