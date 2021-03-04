@@ -10,7 +10,7 @@
             animation-out="scale-center-leave-active"
             @window-hide="$emit('window-hide', $event)"
         >
-            <defi-token-list :tokens="tokens" @defi-token-picked="onDefiTokenPicked" />
+            <defi-token-list :tokens="tokens" :hide-balance="hideBalance" @defi-token-picked="onDefiTokenPicked" />
         </f-window>
     </div>
 </template>
@@ -32,6 +32,7 @@ export default {
                 return [];
             },
         },
+        hideBalance: { ...DefiTokenList.props.hideBalance },
     },
 
     methods: {

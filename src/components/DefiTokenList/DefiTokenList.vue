@@ -10,7 +10,7 @@
             >
                 <div class="row align-items-center no-collapse">
                     <div class="col"><f-crypto-symbol :token="token" img-width="40px" img-height="40px" /></div>
-                    <div class="col available-balance">{{ getAvailableBalance(token) }}</div>
+                    <div v-if="!hideBalance" class="col available-balance">{{ getAvailableBalance(token) }}</div>
                 </div>
             </li>
         </ul>
@@ -34,6 +34,11 @@ export default {
             default() {
                 return [];
             },
+        },
+        /** @type {DefiToken[]} */
+        hideBalance: {
+            type: Boolean,
+            default: false,
         },
     },
 
