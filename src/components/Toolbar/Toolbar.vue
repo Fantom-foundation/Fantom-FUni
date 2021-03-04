@@ -47,7 +47,7 @@
             preferred-attach-position="bottom"
             title="Settings"
             :attach-margin="[4, 4, 4, 4]"
-            style="width: auto; min-width: 260px; max-width: 360px"
+            style="max-width: 420px"
             class="light"
             animation-in="scale-center-enter-active"
             animation-out="scale-center-leave-active"

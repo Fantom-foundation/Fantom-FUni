@@ -1,0 +1,35 @@
+.metamasksettings {
+    &_body {
+        max-width: 600px;
+        margin: 0 auto;
+    }
+
+    &_section {
+        margin-bottom: 8px;
+
+        h4 {
+            margin-bottom: 8px;
+        }
+    }
+
+    &_section + .metamasksettings_section {
+        margin-top: 24px;
+    }
+
+    .f-card {
+        margin-top: 20px;
+    }
+
+    button {
+        width: 100%;
+    }
+
+    button + button {
+        margin-top: 8px;
+    }
+
+    h3 {
+        //margin-top: 16px;
+        font-size: 18px;
+    }
+}

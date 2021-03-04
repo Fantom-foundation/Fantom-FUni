@@ -38,6 +38,8 @@
                 </div>
             </fieldset>
         </f-form>
+
+        <metamask-settings />
     </div>
 </template>
 
@@ -47,11 +49,12 @@ import FInput from '@/components/core/FInput/FInput.vue';
 import FInfo from '@/components/core/FInfo/FInfo.vue';
 import FMessage from '@/components/core/FMessage/FMessage.vue';
 import FDarkModeSwitch from '@/components/core/FDarkModeSwitch/FDarkModeSwitch.vue';
+import MetamaskSettings from '../MetamaskSettings/MetamaskSettings.vue';
 
 export default {
     name: 'Settings',
 
-    components: { FDarkModeSwitch, FMessage, FInfo, FInput, FForm },
+    components: { MetamaskSettings, FDarkModeSwitch, FMessage, FInfo, FInput, FForm },
 
     data() {
         return {
@@ -97,3 +100,7 @@ export default {
     },
 };
 </script>
+
+<style lang="scss">
+@import 'style';
+</style>

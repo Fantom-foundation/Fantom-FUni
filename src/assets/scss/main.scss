@@ -122,6 +122,16 @@ details {
     font-size: $fs-huge;
 }
 
+button.btn + button.btn {
+    margin-left: 4px;
+}
+
+button .v-spinner {
+    display: inline-block;
+    margin-left: 16px;
+    margin-right: -8px;
+}
+
 form {
     .f-input, .f-select {
         margin-bottom: 16px;
