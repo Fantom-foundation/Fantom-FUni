@@ -12,6 +12,7 @@
     "dependencies": {
         "@ledgerhq/hw-transport-u2f": "^5.19.1",
         "@metamask/detect-provider": "^1.1.0",
+        "@metamask/onboarding": "^1.0.0",
         "@yzfe/vue-svgicon-loader": "^1.0.0-alpha.0",
         "apollo-cache-inmemory": "^1.6.6",
         "apollo-client": "^2.6.8",
