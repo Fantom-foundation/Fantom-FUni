@@ -3,8 +3,35 @@ import appConfig from '../../../app.config.js';
 import Web3 from 'web3';
 import { store } from '@/store';
 import { SET_ACCOUNT, SET_CHAIN_ID } from '@/plugins/metamask/store.js';
+import './metamask.types.js';
 
 const OPERA_CHAIN_ID = appConfig.chainId;
+
+/** @type {MetamaskChain} */
+export const OPERA_MAINNET = {
+    chainId: appConfig.mainnet.chainId,
+    chainName: 'Fantom Opera Mainnet',
+    nativeCurrency: {
+        name: 'Fantom',
+        symbol: 'FTM',
+        decimals: 18,
+    },
+    rpcUrls: [appConfig.mainnet.rpc],
+    blockExplorerUrls: [appConfig.mainnet.explorerUrl],
+};
+
+/** @type {MetamaskChain} */
+export const OPERA_TESTNET = {
+    chainId: appConfig.testnet.chainId,
+    chainName: 'Fantom Testnet',
+    nativeCurrency: {
+        name: 'Fantom',
+        symbol: 'FTM',
+        decimals: 18,
+    },
+    rpcUrls: [appConfig.testnet.rpc],
+    blockExplorerUrls: [appConfig.testnet.explorerUrl],
+};
 
 /** @type {Metamask} */
 export let metamask = null;
@@ -40,9 +67,7 @@ export class Metamask {
     }
 
     async init() {
-        if (!this._initialized) {
-            this._initialized = true;
-
+        if (!this._initialized && window.ethereum) {
             await this._detectProvider();
 
             const provider = this._provider;
@@ -57,11 +82,16 @@ export class Metamask {
                 provider.on('accountsChanged', (_account) => {
                     this._onAccountsChange(_account);
                 });
+                provider.on('disconnect', () => {
+                    window.location.reload();
+                });
 
                 this._setChainId(provider.chainId);
                 this._setAccount(await this.getAccounts());
             }
         }
+
+        this._initialized = true;
     }
 
     /**
@@ -129,6 +159,32 @@ export class Metamask {
             } catch (_error) {
                 console.error(_error);
             }
+        }
+    }
+
+    /**
+     * @param {MetamaskChain} _chain
+     * @return {Promise<*>}
+     */
+    async addEthereumChain(_chain) {
+        if (this._provider) {
+            return await this._provider.request({
+                method: 'wallet_addEthereumChain',
+                params: [{ ..._chain }],
+            });
+        }
+    }
+
+    /**
+     * @param {MetamaskAsset} _asset
+     * @return {Promise<*>}
+     */
+    async watchAsset(_asset) {
+        if (this._provider) {
+            return await this._provider.request({
+                method: 'wallet_watchAsset',
+                params: { ..._asset },
+            });
         }
     }
 
