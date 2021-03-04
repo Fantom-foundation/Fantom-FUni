@@ -50,8 +50,12 @@ const appConfig = {
     },
     // Opera chain id
     chainId: '0xfa',
+    // JSON-RPC endpoint
+    rpc: 'https://rpcapi.fantom.network/',
     // used in links pointing to fantom explorer
     explorerUrl: 'https://ftmscan.com/',
+    // used in links pointing to validators
+    explorerUrl2: 'https://explorer.fantom.network/',
     // used in links pointing to fantom explorer's transaction detail
     explorerTransactionPath: 'tx',
     // used in links pointing to ethereum explorer
@@ -81,8 +85,12 @@ const appConfig = {
                 ws: '',
             },
         ],
+        // JSON-RPC endpoint
+        rpc: 'https://xapi.testnet.fantom.network/lachesis',
         // used in links pointing to fantom explorer
         explorerUrl: 'https://explorer.testnet.fantom.network/',
+        // used in links pointing to validators
+        explorerUrl2: 'https://explorer.testnet.fantom.network/',
         // used in links pointing to fantom explorer's transaction detail
         explorerTransactionPath: 'transactions',
         // chain id for testnet
@@ -115,10 +123,19 @@ const appConfig = {
     },
 };
 
+appConfig.mainnet = {
+    chainId: appConfig.chainId,
+    rpc: appConfig.rpc,
+    explorerUrl: appConfig.explorerUrl,
+    explorerUrl2: appConfig.explorerUrl2,
+};
+
 if (appConfig.useTestnet) {
     appConfig.apollo.providers = appConfig.testnet.providers;
     appConfig.explorerUrl = appConfig.testnet.explorerUrl;
+    appConfig.explorerUrl2 = appConfig.testnet.explorerUrl2;
     appConfig.explorerTransactionPath = appConfig.testnet.explorerTransactionPath;
+    appConfig.rpc = appConfig.testnet.rpc;
     appConfig.chainId = appConfig.testnet.chainId;
 }
 
