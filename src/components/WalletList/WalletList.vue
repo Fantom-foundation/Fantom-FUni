@@ -50,7 +50,7 @@ export default {
                 },
                 {
                     code: 'ledger',
-                    name: 'Ledger (Coming)',
+                    name: 'Ledger',
                     icon: ledgerIcon,
                     iconFill: true,
                 },

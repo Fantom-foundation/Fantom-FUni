@@ -4,7 +4,7 @@
             <li>
                 <button class="btn secondary" @click="onConnectWalletBtnClick">
                     <template v-if="!accountAddress">Connect to a wallet</template>
-                    <template v-else-if="badMetamaskChainId">Wrong network</template>
+                    <template v-else-if="badMetamaskChainId && !isLedgerAccount">Wrong network</template>
                     <template v-else>
                         <!--<account-name :account="currentAccount" :hide-name="true" class="toolbar__address" />-->
                         <f-ellipsis
@@ -104,6 +104,11 @@ export default {
 
         accountAddress() {
             return this.currentAccount ? this.currentAccount.address : '';
+        },
+
+        isLedgerAccount() {
+            console.log('isLedgerAccount', this.currentAccount);
+            return this.currentAccount && this.currentAccount.isLedgerAccount;
         },
     },
 
