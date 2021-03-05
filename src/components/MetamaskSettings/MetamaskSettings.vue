@@ -29,14 +29,21 @@
                     <div class="metamasksettings_section">
                         <h4>Assets</h4>
                         <button
-                            id="add_asset_btn"
+                            id="add_token_btn"
                             class="btn large"
-                            :disabled="addAssetInProgress"
-                            @click="onAddAssetClick"
+                            :disabled="addTokenInProgress"
+                            @click="onAddTokenClick"
                         >
-                            Add Asset <pulse-loader v-if="addAssetInProgress" color="#fff"></pulse-loader>
+                            Add Token <pulse-loader v-if="addTokenInProgress" color="#fff"></pulse-loader>
                         </button>
-                        <!--                        <button class="btn large secondary" @click="onAddOwnAssettClick">Add Your Own Asset</button>-->
+                        <button
+                            id="add_custom_token_btn"
+                            class="btn large secondary"
+                            :disabled="addCustomTokenInProgress"
+                            @click="onAddCustomTokenClick"
+                        >
+                            Add Custom Token <pulse-loader v-if="addCustomTokenInProgress" color="#fff"></pulse-loader>
+                        </button>
                     </div>
 
                     <f-window
@@ -64,6 +71,12 @@
                         @window-hide="stopLoadingIndicators"
                         @defi-token-picked="onDefiTokenPicked"
                     />
+
+                    <metamask-custom-token-window
+                        ref="customTokenWindow"
+                        @window-hide="stopLoadingIndicators"
+                        @custom-token-form-data="onCustomTokenFormData"
+                    />
                 </template>
                 <template v-else>
                     <button class="btn large" :disabled="installMetamaskInProgress" @click="onInstallMetamaskClick">
@@ -83,11 +96,12 @@ import { mapGetters } from 'vuex';
 import PulseLoader from 'vue-spinner/src/PulseLoader.vue';
 import DefiTokenPickerWindow from '@/components/windows/DefiTokenPickerWindow/DefiTokenPickerWindow.vue';
 import MetaMaskOnboarding from '@metamask/onboarding';
+import MetamaskCustomTokenWindow from '@/components/windows/MetamaskCustomTokenWindow/MetamaskCustomTokenWindow.vue';
 
 export default {
     name: 'MetamaskSettings',
 
-    components: { DefiTokenPickerWindow, FWindow, FCard, PulseLoader },
+    components: { MetamaskCustomTokenWindow, DefiTokenPickerWindow, FWindow, FCard, PulseLoader },
 
     data() {
         return {
@@ -96,7 +110,8 @@ export default {
             btnId: '',
             addFantomMainnetInProgress: false,
             addFantomTestnetInProgress: false,
-            addAssetInProgress: false,
+            addTokenInProgress: false,
+            addCustomTokenInProgress: false,
             installMetamaskInProgress: false,
             defiTokens: [],
             requestPendingMessage: 'Request already pending',
@@ -134,7 +149,8 @@ export default {
         stopLoadingIndicators() {
             this.addFantomMainnetInProgress = false;
             this.addFantomTestnetInProgress = false;
-            this.addAssetInProgress = false;
+            this.addTokenInProgress = false;
+            this.addCustomTokenInProgress = false;
             this.installMetamaskInProgress = false;
         },
 
@@ -190,16 +206,22 @@ export default {
             }
         },
 
-        async onAddAssetClick() {
+        async onAddTokenClick() {
             const accountAddress = this.currentAccount ? this.currentAccount.address : '';
+
             this.defiTokens =
                 this.defiTokens.length > 0 ? this.defiTokens : await this.$defi.fetchTokens(accountAddress);
-            this.addAssetInProgress = true;
+            this.addTokenInProgress = true;
             this.$refs.tokenPicker.show();
         },
 
-        async onDefiTokenPicked(_token) {
-            const btnId = 'add_asset_btn';
+        onAddCustomTokenClick() {
+            this.addCustomTokenInProgress = true;
+            this.$refs.customTokenWindow.show();
+        },
+
+        async onDefiTokenPicked(_token, _btnId) {
+            const btnId = _btnId || 'add_token_btn';
 
             try {
                 const response = await this.$metamask.watchAsset({
@@ -227,8 +249,8 @@ export default {
             }
         },
 
-        onAddOwnAssettClick() {
-            alert('Not implemented yet');
+        onCustomTokenFormData(_data) {
+            this.onDefiTokenPicked(_data, 'add_custom_token_btn');
         },
 
         onInstallMetamaskClick() {

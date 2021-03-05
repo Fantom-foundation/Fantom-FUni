@@ -35,7 +35,6 @@ export default {
                 return [];
             },
         },
-        /** @type {DefiToken[]} */
         hideBalance: {
             type: Boolean,
             default: false,
