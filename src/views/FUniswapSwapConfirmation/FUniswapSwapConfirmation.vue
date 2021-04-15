@@ -190,14 +190,6 @@ export default {
                 return;
             }
 
-            if (!fromToken.decimals) {
-                fromToken.decimals = 18;
-            }
-
-            if (!toToken.decimals) {
-                toToken.decimals = 18;
-            }
-
             if (params.step === 1) {
                 this.allowValue =
                     params.maximumSold > 0 ? params.fromValue * (1 + slippageTolerance) : params.fromValue;

@@ -588,7 +588,7 @@ export default {
 
             if (toToken.address && value > 0 && this.sufficientPairLiquidity) {
                 let amounts = await this.$defi.fetchUniswapAmountsOut(
-                    Web3.utils.toHex(this.$defi.shiftDecPointRight(value.toString(), fromToken.decimals || 18)),
+                    Web3.utils.toHex(this.$defi.shiftDecPointRight(value.toString(), fromToken.decimals)),
                     [fromToken.address, toToken.address]
                 );
 
@@ -608,7 +608,7 @@ export default {
 
             if (toToken.address && value > 0 && this.sufficientPairLiquidity) {
                 const amounts = await this.$defi.fetchUniswapAmountsIn(
-                    Web3.utils.toHex(this.$defi.shiftDecPointRight(value.toString(), toToken.decimals || 18)),
+                    Web3.utils.toHex(this.$defi.shiftDecPointRight(value.toString(), toToken.decimals)),
                     [fromToken.address, toToken.address]
                 );
 

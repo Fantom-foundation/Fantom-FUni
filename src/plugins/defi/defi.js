@@ -381,7 +381,7 @@ export class DeFi {
         let value = 0;
 
         if (_value !== undefined && !isNaN(_value)) {
-            value = parseFloat(this.shiftDecPointLeft(_value, _isPrice ? _token.priceDecimals : _token.decimals || 18));
+            value = parseFloat(this.shiftDecPointLeft(_value, _isPrice ? _token.priceDecimals : _token.decimals));
         }
 
         return value;
