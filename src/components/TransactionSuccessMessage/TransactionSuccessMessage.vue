@@ -111,7 +111,7 @@ export default {
         async _verifyTransaction() {
             const data = await this.$apollo.query({
                 query: gql`
-                    query TransactionByHash($hash: Hash!) {
+                    query TransactionByHash($hash: Bytes32!) {
                         transaction(hash: $hash) {
                             status
                         }
