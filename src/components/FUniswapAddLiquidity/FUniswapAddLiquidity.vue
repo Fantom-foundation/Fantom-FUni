@@ -117,7 +117,17 @@
                         </div>
                     </div>
                     <div class="col">
-                        <div>{{ shareOfPool }}</div>
+                        <div>
+                            <template v-if="shareOfPool > 0">
+                                <f-token-value
+                                    :value="shareOfPool"
+                                    :decimals="3"
+                                    :use-placeholder="false"
+                                    no-currency
+                                />%
+                            </template>
+                            <template v-else>-</template>
+                        </div>
                         <div class="defi-label">Share of Pool</div>
                     </div>
                 </div>
@@ -263,10 +273,10 @@ export default {
                     share += this.fromValue_ / this.$defi.fromTokenValue(pairToken.balanceOf, this.fromToken);
                 }
 
-                return !isNaN(share) ? `${(share * 100).toFixed(3)}%` : '-';
+                return !isNaN(share) ? share * 100 : 0;
             }
 
-            return '-';
+            return 0;
         },
 
         backButtonRoute() {

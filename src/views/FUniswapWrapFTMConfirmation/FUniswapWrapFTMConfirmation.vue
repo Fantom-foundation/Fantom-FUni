@@ -23,11 +23,23 @@
             <div class="confirmation-info">
                 You're trading
                 <span class="price">
-                    {{ params.fromValue.toFixed($defi.getTokenDecimals(params.fromToken)) }} {{ fromTokenSymbol }}
+                    <f-token-value
+                        :value="params.fromValue"
+                        :token="params.fromToken"
+                        :use-placeholder="false"
+                        no-currency
+                    />
+                    {{ fromTokenSymbol }}
                 </span>
                 &#10141;
                 <span class="price">
-                    {{ params.toValue.toFixed($defi.getTokenDecimals(params.toToken)) }} {{ toTokenSymbol }}
+                    <f-token-value
+                        :value="params.toValue"
+                        :token="params.toToken"
+                        :use-placeholder="false"
+                        no-currency
+                    />
+                    {{ toTokenSymbol }}
                 </span>
             </div>
 
@@ -51,11 +63,12 @@ import { getAppParentNode } from '../../app-structure.js';
 import FMessage from '../../components/core/FMessage/FMessage.vue';
 import Web3 from 'web3';
 import wftmUtils from 'fantom-ledgerjs/src/wftm-utils.js';
+import FTokenValue from '@/components/core/FTokenValue/FTokenValue.vue';
 
 export default {
     name: 'FUniswapWrapFTMConfirmation',
 
-    components: { FMessage, FBackButton, LedgerConfirmationContent, TxConfirmation },
+    components: { FTokenValue, FMessage, FBackButton, LedgerConfirmationContent, TxConfirmation },
 
     props: {
         /** Address of smart contract. */

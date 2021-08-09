@@ -30,13 +30,33 @@
 
             <div class="funiswap__box funiswap-remove-liquidity__tokens">
                 <div class="row no-collapse">
-                    <div class="col">{{ fromTokenLiquidityFormatted }}</div>
+                    <div class="col">
+                        <f-token-value
+                            v-if="fromTokenLiquidityFormatted > 0"
+                            :token="fromToken"
+                            :value="fromTokenLiquidityFormatted"
+                            :use-placeholder="false"
+                            :add-decimals="addDecimals"
+                            no-currency
+                        />
+                        <template v-else>-</template>
+                    </div>
                     <div class="col align-right">
                         <f-crypto-symbol :token="fromToken" img-width="24px" img-height="auto" />
                     </div>
                 </div>
                 <div class="row no-collapse">
-                    <div class="col">{{ toTokenLiquidityFormatted }}</div>
+                    <div class="col">
+                        <f-token-value
+                            v-if="toTokenLiquidityFormatted > 0"
+                            :token="toToken"
+                            :value="toTokenLiquidityFormatted"
+                            :use-placeholder="false"
+                            :add-decimals="addDecimals"
+                            no-currency
+                        />
+                        <template v-else>-</template>
+                    </div>
                     <div class="col align-right">
                         <f-crypto-symbol :token="toToken" img-width="24px" img-height="auto" />
                     </div>
@@ -77,7 +97,6 @@ import FTokenValue from '@/components/core/FTokenValue/FTokenValue.vue';
 import FSlider from '@/components/core/FSlider/FSlider.vue';
 import FCryptoSymbol from '@/components/core/FCryptoSymbol/FCryptoSymbol.vue';
 import FUniswapPairLiquidityInfo from '@/components/FUniswapPairLiquidityInfo/FUniswapPairLiquidityInfo.vue';
-import { formatNumberByLocale } from '@/filters.js';
 import { pollingMixin } from '@/mixins/polling.js';
 import { TokenPairs } from '@/utils/token-pairs.js';
 import FBackButton from '@/components/core/FBackButton/FBackButton.vue';
@@ -149,13 +168,10 @@ export default {
             const { fromTokenLiquidity } = this;
 
             if (fromTokenLiquidity > 0) {
-                return formatNumberByLocale(
-                    fromTokenLiquidity,
-                    this.$defi.getTokenDecimals(this.fromToken) + this.addDecimals
-                );
+                return fromTokenLiquidity;
             }
 
-            return '-';
+            return 0;
         },
 
         toTokenLiquidity() {
@@ -178,13 +194,10 @@ export default {
             const { toTokenLiquidity } = this;
 
             if (toTokenLiquidity > 0) {
-                return formatNumberByLocale(
-                    toTokenLiquidity,
-                    this.$defi.getTokenDecimals(this.toToken) + this.addDecimals
-                );
+                return toTokenLiquidity;
             }
 
-            return '-';
+            return 0;
         },
 
         submitDisabled() {

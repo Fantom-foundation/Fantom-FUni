@@ -24,29 +24,59 @@
                 <template v-if="params.step === 1">
                     You’re allowing
                     <span class="price">
-                        {{ allowValue.toFixed($defi.getTokenDecimals(params.fromToken)) }} {{ fromTokenSymbol }}
+                        <f-token-value
+                            :value="allowValue"
+                            :token="params.fromToken"
+                            :use-placeholder="false"
+                            no-currency
+                        />
+                        {{ fromTokenSymbol }}
                     </span>
                 </template>
                 <template v-else>
                     You're trading expected
                     <span class="price">
-                        {{ params.fromValue.toFixed($defi.getTokenDecimals(params.fromToken)) }} {{ fromTokenSymbol }}
+                        <f-token-value
+                            :value="params.fromValue"
+                            :token="params.fromToken"
+                            :use-placeholder="false"
+                            no-currency
+                        />
+                        {{ fromTokenSymbol }}
                     </span>
                     &#10141;
                     <span class="price">
-                        {{ params.toValue.toFixed($defi.getTokenDecimals(params.toToken)) }} {{ toTokenSymbol }}
+                        <f-token-value
+                            :value="params.toValue"
+                            :token="params.toToken"
+                            :use-placeholder="false"
+                            no-currency
+                        />
+                        {{ toTokenSymbol }}
                     </span>
                     <br /><br />
                     <template v-if="minimumReceived > 0">
                         Minimum Received
                         <span class="price">
-                            {{ minimumReceived.toFixed($defi.getTokenDecimals(params.toToken)) }} {{ toTokenSymbol }}
+                            <f-token-value
+                                :value="minimumReceived"
+                                :token="params.toToken"
+                                :use-placeholder="false"
+                                no-currency
+                            />
+                            {{ toTokenSymbol }}
                         </span>
                     </template>
                     <template v-else>
                         Maximum Spent
                         <span class="price">
-                            {{ maximumSold.toFixed($defi.getTokenDecimals(params.fromToken)) }} {{ fromTokenSymbol }}
+                            <f-token-value
+                                :value="maximumSold"
+                                :token="params.fromToken"
+                                :use-placeholder="false"
+                                no-currency
+                            />
+                            {{ fromTokenSymbol }}
                         </span>
                     </template>
                 </template>
@@ -74,11 +104,12 @@ import uniswapUtils from 'fantom-ledgerjs/src/uniswap-utils.js';
 import erc20Utils from 'fantom-ledgerjs/src/erc20-utils.js';
 import Web3 from 'web3';
 import appConfig from '../../../app.config.js';
+import FTokenValue from '@/components/core/FTokenValue/FTokenValue.vue';
 
 export default {
     name: 'FUniswapSwapConfirmation',
 
-    components: { FMessage, FBackButton, LedgerConfirmationContent, TxConfirmation },
+    components: { FTokenValue, FMessage, FBackButton, LedgerConfirmationContent, TxConfirmation },
 
     props: {
         /** Address of smart contract. */

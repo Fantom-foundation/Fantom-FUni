@@ -25,23 +25,47 @@
                 <template v-if="params.step === 1">
                     You’re allowing
                     <span class="price">
-                        {{ params.fromValue.toFixed($defi.getTokenDecimals(params.fromToken)) }} {{ fromTokenSymbol }}
+                        <f-token-value
+                            :value="params.fromValue"
+                            :token="params.fromToken"
+                            :use-placeholder="false"
+                            no-currency
+                        />
+                        {{ fromTokenSymbol }}
                     </span>
                 </template>
                 <template v-else-if="params.step === 2">
                     You’re allowing
                     <span class="price">
-                        {{ params.toValue.toFixed($defi.getTokenDecimals(params.toToken)) }} {{ toTokenSymbol }}
+                        <f-token-value
+                            :value="params.toValue"
+                            :token="params.toToken"
+                            :use-placeholder="false"
+                            no-currency
+                        />
+                        {{ toTokenSymbol }}
                     </span>
                 </template>
                 <template v-else>
                     You're adding
                     <span class="price">
-                        {{ params.fromValue.toFixed($defi.getTokenDecimals(params.fromToken)) }} {{ fromTokenSymbol }}
+                        <f-token-value
+                            :value="params.fromValue"
+                            :token="params.fromToken"
+                            :use-placeholder="false"
+                            no-currency
+                        />
+                        {{ fromTokenSymbol }}
                     </span>
                     ,
                     <span class="price">
-                        {{ params.toValue.toFixed($defi.getTokenDecimals(params.toToken)) }} {{ toTokenSymbol }}
+                        <f-token-value
+                            :value="params.toValue"
+                            :token="params.toToken"
+                            :use-placeholder="false"
+                            no-currency
+                        />
+                        {{ toTokenSymbol }}
                     </span>
                 </template>
             </div>
@@ -69,11 +93,12 @@ import uniswapUtils from 'fantom-ledgerjs/src/uniswap-utils.js';
 import Web3 from 'web3';
 import erc20Utils from 'fantom-ledgerjs/src/erc20-utils.js';
 import appConfig from '../../../app.config.js';
+import FTokenValue from '@/components/core/FTokenValue/FTokenValue.vue';
 
 export default {
     name: 'FUniswapAddLiquidityConfirmation',
 
-    components: { FMessage, FBackButton, LedgerConfirmationContent, TxConfirmation },
+    components: { FTokenValue, FMessage, FBackButton, LedgerConfirmationContent, TxConfirmation },
 
     props: {
         /** Address of smart contract. */

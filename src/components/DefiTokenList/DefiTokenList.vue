@@ -10,7 +10,14 @@
             >
                 <div class="row align-items-center no-collapse">
                     <div class="col"><f-crypto-symbol :token="token" img-width="40px" img-height="40px" /></div>
-                    <div v-if="!hideBalance" class="col available-balance">{{ getAvailableBalance(token) }}</div>
+                    <div v-if="!hideBalance" class="col available-balance">
+                        <f-token-value
+                            :token="token"
+                            :value="getAvailableBalance(token)"
+                            :use-placeholder="false"
+                            no-currency
+                        />
+                    </div>
                 </div>
             </li>
         </ul>
@@ -21,11 +28,12 @@
 import { cloneObject } from '../../utils';
 import { isAriaAction } from '../../utils/aria.js';
 import FCryptoSymbol from '../core/FCryptoSymbol/FCryptoSymbol.vue';
+import FTokenValue from '@/components/core/FTokenValue/FTokenValue.vue';
 
 export default {
     name: 'DefiTokenList',
 
-    components: { FCryptoSymbol },
+    components: { FTokenValue, FCryptoSymbol },
 
     props: {
         /** @type {DefiToken[]} */
@@ -73,9 +81,7 @@ export default {
          * @return {number}
          */
         getAvailableBalance(_token) {
-            const balance = this.$defi.fromTokenValue(_token.availableBalance, _token) || 0;
-
-            return balance > 0 ? balance.toFixed(this.$defi.getTokenDecimals(_token)) : 0;
+            return this.$defi.fromTokenValue(_token.availableBalance, _token) || 0;
         },
 
         /**

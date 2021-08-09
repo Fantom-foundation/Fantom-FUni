@@ -34,12 +34,22 @@
                 <template v-else>
                     You're removing
                     <span class="price">
-                        {{ params.fromTokenLiquidity.toFixed($defi.getTokenDecimals(params.fromToken)) }}
+                        <f-token-value
+                            :value="params.fromTokenLiquidity"
+                            :token="params.fromToken"
+                            :use-placeholder="false"
+                            no-currency
+                        />
                         {{ fromTokenSymbol }}
                     </span>
                     ,
                     <span class="price">
-                        {{ params.toTokenLiquidity.toFixed($defi.getTokenDecimals(params.toToken)) }}
+                        <f-token-value
+                            :value="params.toTokenLiquidity"
+                            :token="params.toToken"
+                            :use-placeholder="false"
+                            no-currency
+                        />
                         {{ toTokenSymbol }}
                     </span>
                 </template>
@@ -66,11 +76,12 @@ import FMessage from '../../components/core/FMessage/FMessage.vue';
 import uniswapUtils from 'fantom-ledgerjs/src/uniswap-utils.js';
 import Web3 from 'web3';
 import appConfig from '../../../app.config.js';
+import FTokenValue from '@/components/core/FTokenValue/FTokenValue.vue';
 
 export default {
     name: 'FUniswapRemoveLiquidityConfirmation',
 
-    components: { FMessage, FBackButton, LedgerConfirmationContent, TxConfirmation },
+    components: { FTokenValue, FMessage, FBackButton, LedgerConfirmationContent, TxConfirmation },
 
     props: {
         /** Address of smart contract. */

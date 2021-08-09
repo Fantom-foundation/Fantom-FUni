@@ -4,7 +4,14 @@
             <template v-slot="{ item }">
                 <div class="row align-items-center no-collapse">
                     <div class="col"><f-crypto-symbol :token="item" img-width="40px" img-height="40px" /></div>
-                    <div class="col available-balance">{{ getAvailableBalance(item) }}</div>
+                    <div class="col available-balance">
+                        <f-token-value
+                            :token="item"
+                            :value="getAvailableBalance(item)"
+                            :use-placeholder="false"
+                            no-currency
+                        />
+                    </div>
                 </div>
             </template>
         </f-listbox>
@@ -16,11 +23,12 @@ import { cloneObject, defer } from '@/utils';
 import FCryptoSymbol from '../core/FCryptoSymbol/FCryptoSymbol.vue';
 import { mapGetters } from 'vuex';
 import FListbox from '@/components/core/FListbox/FListbox.vue';
+import FTokenValue from '@/components/core/FTokenValue/FTokenValue.vue';
 
 export default {
     name: 'Erc20TokenList',
 
-    components: { FListbox, FCryptoSymbol },
+    components: { FTokenValue, FListbox, FCryptoSymbol },
 
     props: {
         /** @type {ERC20Token[]} */
@@ -93,9 +101,7 @@ export default {
          * @return {number}
          */
         getAvailableBalance(_token) {
-            const balance = this.$defi.fromTokenValue(_token.balanceOf, _token) || 0;
-
-            return balance > 0 ? balance.toFixed(this.$defi.getTokenDecimals(_token)) : 0;
+            return this.$defi.fromTokenValue(_token.balanceOf, _token) || 0;
         },
 
         /**

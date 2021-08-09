@@ -8,19 +8,47 @@
                     <span>/</span>
                     <f-crypto-symbol :token="toToken" img-width="18px" img-height="auto" />
                 </div>
-                <div class="col align-right">{{ $defi.fromTokenValue(pair.shareOf, fromToken).toFixed(1) }}</div>
+                <div class="col align-right">
+                    <f-token-value
+                        :value="$defi.fromTokenValue(pair.shareOf, fromToken)"
+                        :decimals="1"
+                        :use-placeholder="false"
+                        no-currency
+                    />
+                </div>
             </div>
             <div class="row no-vert-col-padding no-collapse">
                 <div class="col defi-label">Your pool share:</div>
-                <div class="col align-right">{{ shareOfPool }}</div>
+                <div class="col align-right">
+                    <template v-if="shareOfPool > 0">
+                        <f-token-value :value="shareOfPool" :decimals="3" :use-placeholder="false" no-currency />%
+                    </template>
+                    <template v-else>-</template>
+                </div>
             </div>
             <div class="row no-vert-col-padding no-collapse">
                 <div class="col defi-label">{{ $defi.getTokenSymbol(fromToken) }}</div>
-                <div class="col align-right">{{ fromTokenLiquidityFormatted }}</div>
+                <div class="col align-right">
+                    <f-token-value
+                        :value="fromTokenLiquidityFormatted"
+                        :token="fromToken"
+                        :add-decimals="addDecimals"
+                        :use-placeholder="false"
+                        no-currency
+                    />
+                </div>
             </div>
             <div class="row no-vert-col-padding no-collapse">
                 <div class="col defi-label">{{ $defi.getTokenSymbol(toToken) }}</div>
-                <div class="col align-right">{{ toTokenLiquidityFormatted }}</div>
+                <div class="col align-right">
+                    <f-token-value
+                        :value="toTokenLiquidityFormatted"
+                        :token="toToken"
+                        :add-decimals="addDecimals"
+                        :use-placeholder="false"
+                        no-currency
+                    />
+                </div>
             </div>
 
             <br />
@@ -41,10 +69,11 @@
 import FCryptoSymbol from '@/components/core/FCryptoSymbol/FCryptoSymbol.vue';
 import { formatNumberByLocale } from '@/filters.js';
 import { TokenPairs } from '@/utils/token-pairs.js';
+import FTokenValue from '@/components/core/FTokenValue/FTokenValue.vue';
 
 export default {
     name: 'FUniswapPairLiquidityInfo',
-    components: { FCryptoSymbol },
+    components: { FTokenValue, FCryptoSymbol },
     props: {
         pair: {
             type: Object,
@@ -93,13 +122,10 @@ export default {
             const { fromTokenLiquidity } = this;
 
             if (fromTokenLiquidity > 0) {
-                return this.formatNumberByLocale(
-                    fromTokenLiquidity,
-                    this.$defi.getTokenDecimals(this.fromToken) + this.addDecimals
-                );
+                return fromTokenLiquidity;
             }
 
-            return '-';
+            return 0;
         },
 
         toTokenLiquidity() {
@@ -119,14 +145,10 @@ export default {
             const { toTokenLiquidity } = this;
 
             if (toTokenLiquidity > 0) {
-                return this.formatNumberByLocale(
-                    toTokenLiquidity,
-                    this.$defi.getTokenDecimals(this.toToken) + this.addDecimals
-                );
-                // return toTokenLiquidity.toFixed(this.$defi.getTokenDecimals(this.toToken) + this.addDecimals);
+                return toTokenLiquidity;
             }
 
-            return '-';
+            return 0;
         },
 
         totalFromTokenLiquidity() {
@@ -147,10 +169,10 @@ export default {
             const { share } = this;
 
             if (share > 0) {
-                return `${this.formatNumberByLocale(share * 100, 3)}%`;
+                return share * 100;
             }
 
-            return '-';
+            return 0;
         },
     },
 

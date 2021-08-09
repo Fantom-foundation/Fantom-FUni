@@ -21,6 +21,30 @@
             class="f-data-table-body-bg-color"
             @fetch-more="fetchMore"
         >
+            <template v-slot:column-token1amount="{ value, column }">
+                <div v-if="column" class="row no-collapse no-vert-col-padding">
+                    <div class="col-6 f-row-label">{{ column.label }}</div>
+                    <div class="col break-word">
+                        <f-token-value :value="value.value" :use-placeholder="false" no-currency /> {{ value.symbol }}
+                    </div>
+                </div>
+                <template v-else>
+                    <f-token-value :value="value.value" :use-placeholder="false" no-currency /> {{ value.symbol }}
+                </template>
+            </template>
+
+            <template v-slot:column-token2amount="{ value, column }">
+                <div v-if="column" class="row no-collapse no-vert-col-padding">
+                    <div class="col-6 f-row-label">{{ column.label }}</div>
+                    <div class="col break-word">
+                        <f-token-value :value="value.value" :use-placeholder="false" no-currency /> {{ value.symbol }}
+                    </div>
+                </div>
+                <template v-else>
+                    <f-token-value :value="value.value" :use-placeholder="false" no-currency /> {{ value.symbol }}
+                </template>
+            </template>
+
             <template v-slot:column-action="{ value, item, column }">
                 <div v-if="column" class="row no-collapse no-vert-col-padding">
                     <div class="col-6 f-row-label">{{ column.label }}</div>
@@ -60,11 +84,12 @@ import { cloneObject } from '@/utils';
 import FTabs from '@/components/core/FTabs/FTabs.vue';
 import FTab from '@/components/core/FTabs/FTab.vue';
 import appConfig from '../../../../app.config.js';
+import FTokenValue from '@/components/core/FTokenValue/FTokenValue.vue';
 
 export default {
     name: 'FUniswapTransactionList',
 
-    components: { FTab, FTabs, FDataTable },
+    components: { FTokenValue, FTab, FTabs, FDataTable },
 
     mixins: [eventBusMixin],
 
@@ -184,7 +209,6 @@ export default {
 
     created() {
         this.init();
-        // this._eventBus.on('account-picked', this.onAccountPicked);
     },
 
     methods: {
@@ -257,13 +281,16 @@ export default {
                 amount = amountOut;
             }
 
-            return `${this.getTokenAmount(amount, tokenNum)} ${symbol}`;
+            return {
+                value: this.getTokenAmount(amount, tokenNum),
+                symbol,
+            };
         },
 
         getTokenAmount(_amount, _tokenNum) {
             const token = _tokenNum === 1 ? this.token1 : this.token2;
 
-            return this.$defi.fromTokenValue(_amount, token).toFixed(2);
+            return this.$defi.fromTokenValue(_amount, token);
         },
 
         /**
