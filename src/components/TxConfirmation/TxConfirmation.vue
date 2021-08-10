@@ -205,6 +205,14 @@ export default {
                 this.tx.nonce = `0x${this.tx.nonce.toString(16)}`;
                 this.tx.chainId = appConfig.chainId;
 
+                if (!this.tx.gas) {
+                    this.errorMsg = this.tx._error || 'Transaction Error';
+                    return;
+                }
+
+                delete this.tx._error;
+                delete this.tx._fee;
+
                 // console.log('tx', this.tx);
 
                 if (currentAccount.keystore) {

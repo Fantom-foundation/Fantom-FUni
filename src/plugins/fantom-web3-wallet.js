@@ -525,10 +525,17 @@ export class FantomWeb3Wallet {
     async getTransactionToSign({ from, to, value, memo = '' }) {
         const nonce = await this.getTransactionCount(from);
         const gasPrice = await this.getGasPrice(true);
-        let gasLimit = to ? await this.getEstimateGas(from, to, null, value) : '';
+        // let gasLimit = to ? await this.getEstimateGas(from, to, null, value) : '';
+        let gasLimit = to ? await this.getEstimateGas(from, to, memo ? Web3.utils.asciiToHex(memo) : null, value) : '';
+        let error = '';
 
-        if (!gasLimit) {
-            gasLimit = GAS_LIMITS.max;
+        if (gasLimit && gasLimit.indexOf('0x') === -1) {
+            error = gasLimit;
+            gasLimit = '';
+        }
+
+        if (error) {
+            console.error(error);
         }
 
         return {
@@ -541,6 +548,8 @@ export class FantomWeb3Wallet {
             gasPrice,
             nonce,
             data: memo ? Web3.utils.asciiToHex(memo) : '0x',
+            _error: error || undefined,
+            _fee: !error ? this.WEIToFTM(this.getTransactionFee(gasPrice, gasLimit)) : 0,
         };
     }
 
@@ -555,9 +564,15 @@ export class FantomWeb3Wallet {
         const gasPrice = await this.getGasPrice(true);
         let gasLimit =
             _gasLimit || (_tx && _tx.to ? await this.getEstimateGas(_from, _tx.to, _tx.data, _tx.value) : '');
+        let error = '';
 
-        if (!gasLimit) {
-            gasLimit = GAS_LIMITS.max;
+        if (gasLimit && gasLimit.indexOf('0x') === -1) {
+            error = gasLimit;
+            gasLimit = '';
+        }
+
+        if (error) {
+            console.error(error);
         }
 
         return {
@@ -566,6 +581,8 @@ export class FantomWeb3Wallet {
             gas: gasLimit,
             gasLimit: gasLimit,
             nonce,
+            _error: error || undefined,
+            _fee: !error ? this.WEIToFTM(this.getTransactionFee(gasPrice, gasLimit)) : 0,
         };
     }
 
@@ -580,9 +597,15 @@ export class FantomWeb3Wallet {
         const gasPrice = await this.getGasPrice(true);
         let gasLimit =
             _gasLimit || (_tx && _tx.to ? await this.getEstimateGas(_from, _tx.to, _tx.data, _tx.value) : '');
+        let error = '';
 
-        if (!gasLimit) {
-            gasLimit = GAS_LIMITS.max;
+        if (gasLimit && gasLimit.indexOf('0x') === -1) {
+            error = gasLimit;
+            gasLimit = '';
+        }
+
+        if (error) {
+            console.error(error);
         }
 
         return {
@@ -591,6 +614,8 @@ export class FantomWeb3Wallet {
             gas: gasLimit,
             gasLimit: gasLimit,
             nonce,
+            _error: error || undefined,
+            _fee: !error ? this.WEIToFTM(this.getTransactionFee(gasPrice, gasLimit)) : 0,
         };
     }
 
