@@ -11,6 +11,7 @@
     },
     "dependencies": {
         "@ledgerhq/hw-transport-u2f": "^5.19.1",
+        "@ledgerhq/hw-transport-webhid": "^6.4.1",
         "@metamask/detect-provider": "^1.1.0",
         "@metamask/onboarding": "^1.0.0",
         "@yzfe/vue-svgicon-loader": "^1.0.0-alpha.0",
@@ -33,6 +34,7 @@
         "register-service-worker": "^1.6.2",
         "shortid": "^2.2.15",
         "subscriptions-transport-ws": "^0.9.16",
+        "underscore": "^1.13.1",
         "vue": "^2.6.11",
         "vue-apollo": "^3.0.4",
         "vue-async-computed": "^3.8.2",
