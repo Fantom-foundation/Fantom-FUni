@@ -3,14 +3,14 @@
     align-items: center;
 
     .f-crypto-symbol {
-        margin-right: 0;
-        padding-right: 0;
+        margin-inline-end: 0;
+        padding-inline-end: 0;
         z-index: 2;
     }
 
     .first-symbol {
-        //margin-right: -6px;
+        //margin-inline-end: -6px;
         z-index: 1;
-        margin-right: -16px;
+        margin-inline-end: -16px;
     }
 }

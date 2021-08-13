@@ -64,7 +64,7 @@
 }
 
 @include buttons(':not(.same-size) svg') {
-    margin-right: 8px;
+    margin-inline-end: 8px;
 }
 
 @include buttons('.light:not([disabled]):not(.disabled):hover') {
@@ -108,8 +108,8 @@
     .btn {
         &.btn-large-font {
             font-size: 18px;
-            padding-left: 16px;
-            padding-right: 16px;
+            padding-inline-start: 16px;
+            padding-inline-end: 16px;
         }
     }
 }

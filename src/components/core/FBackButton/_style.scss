@@ -6,7 +6,7 @@
     font-size: 16px;
     font-weight: bold;
     cursor: pointer;
-    //padding-left: 8px;
+    //padding-inline-start: 8px;
 
     &:hover {
         text-decoration: underline;
@@ -29,7 +29,7 @@
 /*
 @include media-max($bp-small) {
     .with-back-btn {
-        padding-left: var(--f-back-button-parent-padding-left);
+        padding-inline-start: var(--f-back-button-parent-padding-left);
     }
 }
 */

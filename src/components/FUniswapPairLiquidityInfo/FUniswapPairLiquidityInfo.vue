@@ -8,7 +8,7 @@
                     <span>/</span>
                     <f-crypto-symbol :token="toToken" img-width="18px" img-height="auto" />
                 </div>
-                <div class="col align-right">
+                <div class="col align-end">
                     <f-token-value
                         :value="$defi.fromTokenValue(pair.shareOf, fromToken)"
                         :decimals="1"
@@ -19,7 +19,7 @@
             </div>
             <div class="row no-vert-col-padding no-collapse">
                 <div class="col defi-label">Your pool share:</div>
-                <div class="col align-right">
+                <div class="col align-end">
                     <template v-if="shareOfPool > 0">
                         <f-token-value :value="shareOfPool" :decimals="3" :use-placeholder="false" no-currency />%
                     </template>
@@ -28,7 +28,7 @@
             </div>
             <div class="row no-vert-col-padding no-collapse">
                 <div class="col defi-label">{{ $defi.getTokenSymbol(fromToken) }}</div>
-                <div class="col align-right">
+                <div class="col align-end">
                     <f-token-value
                         :value="fromTokenLiquidityFormatted"
                         :token="fromToken"
@@ -40,7 +40,7 @@
             </div>
             <div class="row no-vert-col-padding no-collapse">
                 <div class="col defi-label">{{ $defi.getTokenSymbol(toToken) }}</div>
-                <div class="col align-right">
+                <div class="col align-end">
                     <f-token-value
                         :value="toTokenLiquidityFormatted"
                         :token="toToken"
@@ -55,11 +55,11 @@
             <h4>Pool total</h4>
             <div class="row no-vert-col-padding no-collapse">
                 <div class="col defi-label">{{ $defi.getTokenSymbol(fromToken) }}</div>
-                <div class="col align-right">{{ totalFromTokenLiquidity }}</div>
+                <div class="col align-end">{{ totalFromTokenLiquidity }}</div>
             </div>
             <div class="row no-vert-col-padding no-collapse">
                 <div class="col defi-label">{{ $defi.getTokenSymbol(toToken) }}</div>
-                <div class="col align-right">{{ totalToTokenLiquidity }}</div>
+                <div class="col align-end">{{ totalToTokenLiquidity }}</div>
             </div>
         </template>
     </div>

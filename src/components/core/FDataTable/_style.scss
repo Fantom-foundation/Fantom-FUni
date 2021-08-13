@@ -138,7 +138,7 @@
                     !*top: 80px;*!
                     top: 48px;
                     left: 50%;
-                    margin-left: -60px;
+                    margin-inline-start: -60px;
                     width: 120px;
                     text-align: center;
                     padding: 8px 16px;
@@ -164,7 +164,7 @@
 
         > div {
             position: relative;
-            padding-right: 20px;
+            padding-inline-end: 20px;
 
             &::after {
                 position: absolute;
@@ -231,11 +231,11 @@
         tr {
             td, th {
                 &.f-col {
-                    padding-left: 0;
+                    padding-inline-start: 0;
                 }
 
                 &.l-col {
-                    padding-right: 0;
+                    padding-inline-end: 0;
                 }
             }
         }
@@ -247,8 +247,8 @@
         .mobile-view {
             &.f-data-layout {
                 @include flexbox-cols() {
-                    padding-left: 8px;
-                    padding-right: 8px;
+                    padding-inline-start: 8px;
+                    padding-inline-end: 8px;
                 }
             }
         }

@@ -4,7 +4,7 @@
             <li v-for="wallet in wallets" :key="wallet.code" :data-wallet-code="wallet.code" tabindex="0">
                 <div class="row align-items-center no-collapse">
                     <div class="col">{{ wallet.name }}</div>
-                    <div class="col-4 align-right">
+                    <div class="col-4 align-end">
                         <icon
                             v-if="wallet.icon && !wallet.loading"
                             :data="wallet.icon"

@@ -41,7 +41,7 @@
                         />
                         <template v-else>-</template>
                     </div>
-                    <div class="col align-right">
+                    <div class="col align-end">
                         <f-crypto-symbol :token="fromToken" img-width="24px" img-height="auto" />
                     </div>
                 </div>
@@ -57,7 +57,7 @@
                         />
                         <template v-else>-</template>
                     </div>
-                    <div class="col align-right">
+                    <div class="col align-end">
                         <f-crypto-symbol :token="toToken" img-width="24px" img-height="auto" />
                     </div>
                 </div>

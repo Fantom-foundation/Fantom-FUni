@@ -17,7 +17,7 @@
         justify-content: center;
 
         &_pair {
-            padding-left: 8px;
+            padding-inline-start: 8px;
         }
     }
 
@@ -49,7 +49,7 @@
             font-size: 28px;
 
             .f-crypto-symbol {
-                margin-right: -2px;
+                margin-inline-end: -2px;
             }
         }
 
@@ -87,7 +87,7 @@
             display: inline-block;
 
             & + * {
-                margin-left: var(--funiswappairdetail-gap);
+                margin-inline-start: var(--funiswappairdetail-gap);
             }
 
             &.f-card {
@@ -98,7 +98,7 @@
         .f-crypto-symbol {
             position: relative;
             top: 2px;
-            margin-right: -6px;
+            margin-inline-end: -6px;
         }
     }
 
@@ -115,7 +115,18 @@
 
             .btn {
                 vertical-align: top;
-                margin-left: 8px;
+                margin-inline-start: 8px;
+            }
+        }
+    }
+}
+
+html[dir="rtl"], body[dir="rtl"] {
+    .funiswappairdetail {
+        &_charts {
+            .chart-controls-top-bar {
+                right: unset;
+                left: 16px;
             }
         }
     }

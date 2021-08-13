@@ -9,7 +9,7 @@
 
         li {
             display: inline-block;
-            margin-left: 4px;
+            margin-inline-start: 4px;
 
             @include links() {
                 color: var(--f-simple-navigation-link-color);
@@ -45,7 +45,7 @@
                 display: block;
 
                 svg {
-                    margin-right: 8px;
+                    margin-inline-end: 8px;
                 }
             }
         }

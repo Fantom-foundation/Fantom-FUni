@@ -141,7 +141,7 @@
                             confirmed.
                         </f-info>
                     </div>
-                    <div class="col align-right">
+                    <div class="col align-end">
                         <!--<f-token-value ref="minimumReceived" :value="0" :token="toToken" />-->
                         <f-token-value v-if="minimumReceived > 0" :value="minimumReceived" :token="toToken" />
                         <f-token-value v-else :value="maximumSold" :token="fromToken" />
@@ -154,7 +154,7 @@
                             The difference between the market price and estimated price due to trade size.
                         </f-info>
                     </div>
-                    <div class="col align-right">{{ priceImpact }}</div>
+                    <div class="col align-end">{{ priceImpact }}</div>
                 </div>
                 <div class="row no-vert-col-padding no-collapse">
                     <div class="col defi-label">
@@ -164,7 +164,7 @@
                             protocol incentive.
                         </f-info>
                     </div>
-                    <div class="col align-right">
+                    <div class="col align-end">
                         <f-token-value
                             :value="fromValue_ * liquidityProviderFee"
                             :token="fromToken"
