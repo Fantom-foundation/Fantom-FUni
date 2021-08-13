@@ -3,6 +3,8 @@
 import FantomNano from 'fantom-ledgerjs/src/fantom-nano.js';
 import TransportU2F from '@ledgerhq/hw-transport-u2f';
 // import TransportWebUSB from '@ledgerhq/hw-transport-webusb';
+import TransportWebHID from '@ledgerhq/hw-transport-webhid';
+import { clientInfo } from '../utils/client-info.js';
 
 const ethUtil = require('ethereumjs-util');
 
@@ -19,6 +21,7 @@ export let fNano = null;
 export class FNano {
     constructor() {
         this._transport = null;
+        this.useWebHID = clientInfo.browser === 'Chrome';
     }
 
     static install(_Vue, _options) {
@@ -37,14 +40,20 @@ export class FNano {
 
             const bridge = new FantomNano(transport);
 
-            version = await bridge.getVersion();
+            try {
+                version = await bridge.getVersion();
+            } catch (error) {
+                console.error(error);
+                this.closeTransport();
+                throw new Error(error);
+            }
         }
 
         return version;
     }
 
     async signTransaction(_tx, _accountId, _addressId) {
-        console.log('signTransaction', _accountId, _accountId);
+        // console.log('signTransaction', _accountId, _accountId);
 
         const transport = await this._getTransport();
 
@@ -52,9 +61,16 @@ export class FNano {
             transport.setExchangeTimeout(300000);
 
             const bridge = new FantomNano(transport);
-            const result = await bridge.signTransaction(_accountId, _addressId, _tx);
 
-            return ethUtil.bufferToHex(result.raw);
+            try {
+                const result = await bridge.signTransaction(_accountId, _addressId, _tx);
+
+                return ethUtil.bufferToHex(result.raw);
+            } catch (error) {
+                console.error(error);
+                this.closeTransport();
+                throw new Error(error);
+            }
         }
 
         return null;
@@ -80,7 +96,7 @@ export class FNano {
 
                 account = { address, accountId: _accountId, addressId: _addressId, balance: 0, totalBalance: 0 };
             } catch (e) {
-                console.log(e);
+                console.error(e);
                 throw e;
             }
         }
@@ -102,7 +118,7 @@ export class FNano {
             transport.setExchangeTimeout(300000);
 
             const bridge = new FantomNano(transport);
-            console.log(bridge, _accountId, _firstAddressId, _length);
+            // console.log(bridge, _accountId, _firstAddressId, _length);
 
             try {
                 const addresses = await bridge.listAddresses(_accountId, _firstAddressId, _length);
@@ -120,7 +136,22 @@ export class FNano {
     }
 
     async _getTransport() {
-        return await TransportU2F.create();
+        if (this.useWebHID) {
+            if (!this._transport) {
+                this._transport = await TransportWebHID.create();
+            }
+            // console.log('TransportWebHID', this._transport);
+            return this._transport;
+        } else {
+            return await TransportU2F.create();
+        }
+    }
+
+    async closeTransport() {
+        if (this._transport) {
+            await this._transport.close();
+            this._transport = null;
+        }
     }
 
     /*
