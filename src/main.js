@@ -16,6 +16,7 @@ import { FantomWeb3Wallet } from './plugins/fantom-web3-wallet.js';
 import { FNano } from './plugins/fantom-nano.js';
 import { DeFi } from './plugins/defi/defi.js';
 import { Metamask } from './plugins/metamask/metamask.js';
+import { Walletlink } from '@/plugins/walletlink/Walletlink.js';
 import 'focus-visible';
 
 import './wallet.types.js';
@@ -29,6 +30,7 @@ Vue.use(DeFi, {
     apolloClient,
 });
 Vue.use(Metamask);
+Vue.use(Walletlink);
 
 Vue.config.productionTip = false;
 

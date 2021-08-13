@@ -47,7 +47,7 @@ import { eventBusMixin } from './mixins/event-bus.js';
 import FNetworkStatus from '@/components/core/FNetworkStatus/FNetworkStatus.vue';
 import MetamaskAccountPickerWindow from '@/components/windows/MetamaskAccountPickerWindow/MetamaskAccountPickerWindow.vue';
 import { mapGetters } from 'vuex';
-import { ADD_METAMASK_ACCOUNT } from '@/store/actions.type.js';
+import { ADD_COINBASE_ACCOUNT, ADD_METAMASK_ACCOUNT } from '@/store/actions.type.js';
 import { ADD_LEDGER_ACCOUNT } from './store/actions.type.js';
 
 export default {
@@ -98,6 +98,9 @@ export default {
         filtersOptions.currency = this.$store.state.currency;
         filtersOptions.fractionDigits = this.$store.state.fractionDigits;
         this.setTokenPrice(this.$store.state.currency);
+
+        // tmp
+        // this.$store.dispatch(REMOVE_ACCOUNT_BY_ADDRESS, '0x5fEd....');
     },
 
     methods: {
@@ -191,11 +194,21 @@ export default {
             this.pickAccount(_account.address);
         },
 
+        async addCoinbaseWalletAccount(_address) {
+            if (!this.accountExists(_address)) {
+                await this.$store.dispatch(ADD_COINBASE_ACCOUNT, _address);
+            }
+
+            this.pickAccount(_address);
+        },
+
         /**
          * @param {string} _address
          */
         pickAccount(_address) {
             this.$store.commit(DEACTIVATE_ACTIVE_ACCOUNT);
+
+            console.log('pickAccount?', _address);
 
             if (_address) {
                 this.$store.commit(SET_ACTIVE_ACCOUNT_BY_ADDRESS, _address);

@@ -5,7 +5,11 @@
 
             <transaction-confirmation-form
                 :error-message="errorMsg"
-                :show-password-field="!currentAccount.isLedgerAccount && !currentAccount.isMetamaskAccount"
+                :show-password-field="
+                    !currentAccount.isLedgerAccount &&
+                    !currentAccount.isMetamaskAccount &&
+                    !currentAccount.isCoinbaseAccount
+                "
                 :password-label="passwordLabel"
                 :send-button-label="sendButtonLabel"
                 :waiting="waiting"
@@ -50,6 +54,8 @@
                 </div>
             </div>
         </f-window>
+
+        <coinbase-wallet-notice-window v-if="currentAccount.isCoinbaseAccount" ref="coinbaseNoticeWindow" />
     </div>
 </template>
 
@@ -61,6 +67,7 @@ import { mapGetters, mapState } from 'vuex';
 import gql from 'graphql-tag';
 import { UPDATE_ACCOUNT_BALANCE } from '../../store/actions.type.js';
 import appConfig from '../../../app.config.js';
+import CoinbaseWalletNoticeWindow from '@/components/windows/CoinbaseWalletNoticeWindow/CoinbaseWalletNoticeWindow.vue';
 
 /**
  * Base component for other 'transaction confirmation and send' components.
@@ -68,7 +75,7 @@ import appConfig from '../../../app.config.js';
 export default {
     name: 'TxConfirmation',
 
-    components: { TransactionConfirmationForm, FWindow, FCard },
+    components: { CoinbaseWalletNoticeWindow, TransactionConfirmationForm, FWindow, FCard },
 
     props: {
         /** Transaction object to send */
@@ -273,6 +280,39 @@ export default {
                     }
 
                     this.waiting = false;
+                } else if (currentAccount.isCoinbaseAccount) {
+                    if (!this.areWalletlinkParamsOk()) {
+                        this.$refs.coinbaseNoticeWindow.show();
+                    } else {
+                        try {
+                            const from = currentAccount.address;
+                            const to = this.tx.to;
+
+                            this.waiting = true;
+                            const txHash = await this.$walletlink.signTransaction(
+                                { ...this.tx },
+                                currentAccount.address
+                            );
+
+                            if (this.onSendTransactionSuccess && txHash) {
+                                this.onSendTransactionSuccess({
+                                    data: {
+                                        sendTransaction: {
+                                            hash: txHash,
+                                            from,
+                                            to,
+                                        },
+                                    },
+                                });
+                            }
+                        } catch (err) {
+                            if (!this.$walletlink.selectedAddress) {
+                                await this.$walletlink.connect();
+                            }
+
+                            this.waiting = false;
+                        }
+                    }
                 }
 
                 if (rawTx) {
@@ -291,6 +331,16 @@ export default {
                 this.$metamask.isInstalled() &&
                 this.metamaskAccount.toLowerCase() === this.currentAccount.address.toLowerCase() &&
                 this.$metamask.isCorrectChainId()
+            );
+        },
+
+        areWalletlinkParamsOk() {
+            const { $walletlink } = this;
+
+            return (
+                $walletlink.selectedAddress &&
+                $walletlink.selectedAddress.toLowerCase() === this.currentAccount.address.toLowerCase() &&
+                $walletlink.isCorrectChainId()
             );
         },
     },

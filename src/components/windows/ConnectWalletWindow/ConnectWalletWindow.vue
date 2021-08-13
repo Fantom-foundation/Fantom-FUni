@@ -13,6 +13,7 @@
         </f-window>
 
         <ledger-accounts-window ref="ledgerAccountsWindow" />
+        <coinbase-wallet-notice-window v-if="showCBWindow" ref="coinbaseNoticeWindow" />
     </div>
 </template>
 
@@ -20,11 +21,18 @@
 import FWindow from '@/components/core/FWindow/FWindow.vue';
 import WalletList from '@/components/WalletList/WalletList.vue';
 import LedgerAccountsWindow from '../LedgerAccountsWindow/LedgerAccountsWindow.vue';
+import CoinbaseWalletNoticeWindow from '@/components/windows/CoinbaseWalletNoticeWindow/CoinbaseWalletNoticeWindow.vue';
 
 export default {
     name: 'ConnectWalletWindow',
 
-    components: { LedgerAccountsWindow, WalletList, FWindow },
+    components: { CoinbaseWalletNoticeWindow, LedgerAccountsWindow, WalletList, FWindow },
+
+    data() {
+        return {
+            showCBWindow: false,
+        };
+    },
 
     methods: {
         show() {
@@ -32,10 +40,10 @@ export default {
         },
 
         async onWalletPicked(_wallet) {
+            const appNode = this.$root.$children[0];
+
             if (_wallet.code === 'metamask') {
                 // root node (App.vue)
-                const appNode = this.$root.$children[0];
-
                 if (!this.$metamask.isInstalled()) {
                     appNode.showMetamaskAccountPickerWindow('');
                     this.$refs.win.hide('fade-leave-active');
@@ -57,6 +65,24 @@ export default {
             } else if (_wallet.code === 'ledger') {
                 this.$refs.win.hide('fade-leave-active');
                 this.$refs.ledgerAccountsWindow.show();
+            } else if (_wallet.code === 'coinbase') {
+                try {
+                    const accounts = await this.$walletlink.connect();
+
+                    await appNode.addCoinbaseWalletAccount(accounts[0]);
+
+                    this.$refs.win.hide('fade-leave-active');
+
+                    if (!this.$walletlink.isCorrectChainId()) {
+                        this.$refs.win.hide('fade-leave-active');
+                        this.showCBWindow = true;
+                        this.$nextTick(() => {
+                            this.$refs.coinbaseNoticeWindow.show();
+                        });
+                    }
+                } catch (err) {
+                    console.error(err);
+                }
             }
         },
     },

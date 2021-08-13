@@ -45,6 +45,7 @@
         "vue-timeago": "^5.1.2",
         "vuex": "^3.4.0",
         "vuex-persist": "^2.2.0",
+        "walletlink": "^2.1.7",
         "web3": "^1.2.11"
     },
     "devDependencies": {

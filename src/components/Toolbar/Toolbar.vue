@@ -4,7 +4,7 @@
             <li>
                 <button class="btn secondary" @click="onConnectWalletBtnClick">
                     <template v-if="!accountAddress">Connect to a wallet</template>
-                    <template v-else-if="badMetamaskChainId && !isLedgerAccount">Wrong network</template>
+                    <template v-else-if="badChainId && !isLedgerAccount">Wrong network</template>
                     <template v-else>
                         <!--<account-name :account="currentAccount" :hide-name="true" class="toolbar__address" />-->
                         <f-ellipsis
@@ -90,7 +90,7 @@ export default {
 
     data() {
         return {
-            badMetamaskChainId: false,
+            badChainId: false,
         };
     },
 
@@ -98,6 +98,10 @@ export default {
         ...mapState('metamask', {
             metamaskAccount: 'account',
             metamaskChainId: 'chainId',
+        }),
+
+        ...mapState('walletlink', {
+            walletlinkChainId: 'chainId',
         }),
 
         ...mapGetters(['currentAccount', 'getAccountByAddress']),
@@ -135,7 +139,11 @@ export default {
         },
 
         metamaskChainId(_chainId) {
-            this.badMetamaskChainId = !this.$metamask.isCorrectChainId(_chainId);
+            this.badChainId = !this.$metamask.isCorrectChainId(_chainId);
+        },
+
+        walletlinkChainId() {
+            this.badChainId = !this.$walletlink.isCorrectChainId();
         },
     },
 
