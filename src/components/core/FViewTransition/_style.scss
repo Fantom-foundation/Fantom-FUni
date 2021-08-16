@@ -15,3 +15,16 @@
 .view-transition-on {
     overflow-x: hidden;
 }
+
+html[dir="rtl"], body[dir="rtl"] {
+    .view-transition {
+        &.animation-container {
+            &.children-absolute {
+                > *[class*="-enter-active"], > *[class*="-leave-active"] {
+                    left: unset;
+                    right: 0;
+                }
+            }
+        }
+    }
+}

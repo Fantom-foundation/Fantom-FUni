@@ -25,6 +25,17 @@
     }
 }
 
+html[dir="rtl"], body[dir="rtl"] {
+    .toolbar {
+        .account-name {
+            .metamask-account-active {
+                left: unset;
+                right: -14px;
+            }
+        }
+    }
+}
+
 .f-footer {
     .toolbar {
         &__items-wrap {

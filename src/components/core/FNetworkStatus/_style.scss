@@ -6,3 +6,10 @@
     text-align: center;
     background-color: red;
 }
+
+html[dir="rtl"], body[dir="rtl"] {
+    .f-network-status-window {
+        left: unset;
+        right: calc(50% - 170px);
+    }
+}

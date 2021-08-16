@@ -26,6 +26,15 @@
     }
 }
 
+html[dir="rtl"], body[dir="rtl"] {
+    .with-back-btn {
+        .f-back-button {
+            left: unset;
+            right: -8px;
+        }
+    }
+}
+
 /*
 @include media-max($bp-small) {
     .with-back-btn {

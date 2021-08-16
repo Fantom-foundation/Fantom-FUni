@@ -2,7 +2,7 @@
     <span class="f-back-button" @click="onClick">
         <slot>
             <button class="btn light large same-size round" title="Back">
-                <icon data="@/assets/svg/arrow-left.svg" aria-hidden="true" />
+                <icon data="@/assets/svg/arrow-left.svg" aria-hidden="true" class="rtl-mirror" />
             </button>
         </slot>
     </span>

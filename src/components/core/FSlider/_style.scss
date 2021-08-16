@@ -127,3 +127,26 @@
         }
     }
 }
+
+
+html[dir="rtl"], body[dir="rtl"] {
+    .f-slider {
+        &.use-upper-fill-bar {
+            .f-input .f-inp::after {
+                left: unset;
+                right: calc(var(--f-slider-value) * 1%);
+            }
+        }
+
+        .labels {
+            > div {
+                > * {
+                    > span {
+                        left: unset;
+                        right: 0;
+                    }
+                }
+            }
+        }
+    }
+}
