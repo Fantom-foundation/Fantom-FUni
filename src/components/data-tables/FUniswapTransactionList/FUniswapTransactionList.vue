@@ -123,7 +123,7 @@ export default {
                     formatter: () => {
                         return '-';
                     },
-                    css: { textAlign: 'right' },
+                    cssClass: 'align-end',
                 },*/
                 {
                     name: 'token1amount',
@@ -132,7 +132,7 @@ export default {
                     formatter: (_value) => {
                         return this.formatTokenAmount(_value);
                     },
-                    css: { textAlign: 'right' },
+                    cssClass: 'align-end',
                 },
                 {
                     name: 'token2amount',
@@ -141,7 +141,7 @@ export default {
                     formatter: (_value) => {
                         return this.formatTokenAmount(_value, 2);
                     },
-                    css: { textAlign: 'right' },
+                    cssClass: 'align-end',
                 },
                 {
                     name: 'time',
@@ -152,7 +152,7 @@ export default {
                         return timestampToDate(_value);
                         // return formatDate(timestampToDate(_value), true, true, { month: 'numeric' });
                     },
-                    css: { textAlign: 'right' },
+                    cssClass: 'align-end',
                 },
             ],
             /** -1 - all, 0 - swap, 1 - mint, 2 - burn */

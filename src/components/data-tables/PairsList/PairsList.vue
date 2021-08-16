@@ -213,7 +213,7 @@ export default {
                     formatter: (_value) => {
                         return _value[0];
                     },
-                    css: { textAlign: 'right' },
+                    cssClass: 'align-end',
                 },
                 {
                     name: 'liquidityB',
@@ -222,7 +222,7 @@ export default {
                     formatter: (_value) => {
                         return _value[1];
                     },
-                    css: { textAlign: 'right' },
+                    cssClass: 'align-end',
                 },
                 {
                     name: 'price',
@@ -232,7 +232,7 @@ export default {
                         return _value[1].symbol === 'FUSD' ? [_value[1], _value[0]] : _value;
                     },
                     width: '180px',
-                    css: { textAlign: 'right' },
+                    cssClass: 'align-end',
                 },
                 /*
                 {
@@ -246,18 +246,18 @@ export default {
                             this.defi.getTokenDecimals(token)
                         );
                     },
-                    css: { textAlign: 'center' },
+                    cssClass: 'align-center',
                 },
                 */
                 {
                     name: 'position',
                     label: 'Your Position',
-                    css: { textAlign: 'center' },
+                    cssClass: 'align-center',
                 },
                 {
                     name: 'actions',
                     label: 'Actions',
-                    css: { textAlign: 'right' },
+                    cssClass: 'align-end',
                 },
             ],
             /** Stop loading data */
