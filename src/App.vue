@@ -49,6 +49,7 @@ import MetamaskAccountPickerWindow from '@/components/windows/MetamaskAccountPic
 import { mapGetters } from 'vuex';
 import { ADD_METAMASK_ACCOUNT } from '@/store/actions.type.js';
 import { ADD_LEDGER_ACCOUNT } from './store/actions.type.js';
+import { switchRTLDirection } from '@/components/RTLSwitch/RTLSwitch.vue';
 
 export default {
     name: 'App',
@@ -91,6 +92,7 @@ export default {
         // const useDarkColorScheme = window.matchMedia('(prefers-color-scheme: dark)');
 
         this.darkMode(this.$store.state.darkMode);
+        switchRTLDirection(this.$store.state.rtlDir);
         // this.setDarkMode(false);
 
         // useDarkColorScheme.addEventListener('change', (_event) => this.darkMode(_event.matches));

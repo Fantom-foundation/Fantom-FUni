@@ -34,7 +34,10 @@
                     </f-input>
 
                     <br />
-                    <f-dark-mode-switch />
+                    <div class="settings_switches">
+                        <f-dark-mode-switch />
+                        <r-t-l-switch />
+                    </div>
                 </div>
             </fieldset>
         </f-form>
@@ -50,11 +53,12 @@ import FInfo from '@/components/core/FInfo/FInfo.vue';
 import FMessage from '@/components/core/FMessage/FMessage.vue';
 import FDarkModeSwitch from '@/components/core/FDarkModeSwitch/FDarkModeSwitch.vue';
 import MetamaskSettings from '../MetamaskSettings/MetamaskSettings.vue';
+import RTLSwitch from '@/components/RTLSwitch/RTLSwitch.vue';
 
 export default {
     name: 'Settings',
 
-    components: { MetamaskSettings, FDarkModeSwitch, FMessage, FInfo, FInput, FForm },
+    components: { RTLSwitch, MetamaskSettings, FDarkModeSwitch, FMessage, FInfo, FInput, FForm },
 
     data() {
         return {
