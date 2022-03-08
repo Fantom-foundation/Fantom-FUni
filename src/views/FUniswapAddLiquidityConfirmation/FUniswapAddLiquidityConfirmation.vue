@@ -8,20 +8,12 @@
             :tmp-pwd-count="params.step === 1 ? 2 : 0"
             :send-button-label="sendButtonLabel"
             :password-label="passwordLabel"
+            :show-cancel-button="true"
+            :window-mode="true"
+            class="min-h-100"
             :on-send-transaction-success="onSendTransactionSuccess"
-            @change-component="onChangeComponent"
         >
-            <h1 class="with-back-btn">
-                <f-back-button
-                    v-if="!params.steps || params.step === 1"
-                    :route-name="backButtonRoute"
-                    :params="{ fromToken: params.fromToken, toToken: params.toToken }"
-                />
-                Confirm Supply
-                <template v-if="params.steps">({{ params.step }}/{{ params.steps }})</template>
-            </h1>
-
-            <div class="confirmation-info">
+            <div class="confirmation-info" tabindex="0" data-focus>
                 <template v-if="params.step === 1">
                     You’re allowing
                     <span class="price">
@@ -85,7 +77,6 @@ import TxConfirmation from '../../components/TxConfirmation/TxConfirmation.vue';
 import LedgerConfirmationContent from '../../components/LedgerConfirmationContent/LedgerConfirmationContent.vue';
 import { mapGetters } from 'vuex';
 import { toFTM } from '../../utils/transactions.js';
-import FBackButton from '../../components/core/FBackButton/FBackButton.vue';
 import { getAppParentNode } from '../../app-structure.js';
 import FMessage from '../../components/core/FMessage/FMessage.vue';
 import uniswapUtils from 'fantom-ledgerjs/src/uniswap-utils.js';
@@ -98,13 +89,19 @@ import FTokenValue from '@/components/core/FTokenValue/FTokenValue.vue';
 export default {
     name: 'FUniswapAddLiquidityConfirmation',
 
-    components: { FTokenValue, FMessage, FBackButton, LedgerConfirmationContent, TxConfirmation },
+    components: { FTokenValue, FMessage, LedgerConfirmationContent, TxConfirmation },
 
     props: {
         /** Address of smart contract. */
         contractAddress: {
             type: String,
             default: '',
+        },
+        props: {
+            type: Object,
+            default() {
+                return {};
+            },
         },
     },
 
@@ -124,9 +121,7 @@ export default {
          * @return {{fromValue: number, toValue: number, fromToken: DefiToken, toToken: DefiToken}}
          */
         params() {
-            const { $route } = this;
-
-            return $route && $route.params ? $route.params : {};
+            return this.props;
         },
 
         hasCorrectParams() {
@@ -144,12 +139,12 @@ export default {
         sendButtonLabel() {
             let label = '';
 
-            if (this.params.step === 1) {
-                label = 'Continue to the next step';
-            } else {
-                label = 'Submit';
-                // label = 'Trade now';
-            }
+            // if (this.params.step === 1) {
+            //     label = 'Continue to the next step';
+            // } else {
+            label = 'Submit';
+            // label = 'Trade now';
+            // }
 
             return label;
         },
@@ -312,36 +307,20 @@ export default {
                 };
             }
 
-            this.$router.replace({
-                name: transactionSuccessComp,
-                params,
-            });
-        },
-
-        /**
-         * Re-target `'change-component'` event.
-         *
-         * @param {object} _data
-         */
-        onChangeComponent(_data) {
-            let transactionRejectComp = `${this.confirmationCompName}-transaction-reject-message`;
-
-            if (_data.to === 'transaction-reject-message') {
-                if (this.params.step === 3) {
-                    transactionRejectComp = `${this.confirmationCompName}-transaction-reject-message3`;
-                }
-
-                this.$router.replace({
-                    name: transactionRejectComp,
-                    params: {
-                        continueTo: this.compName,
-                        continueToParams: {
-                            fromToken: { ...this.params.fromToken },
-                            toToken: { ...this.params.toToken },
-                        },
-                    },
-                });
+            if (this.params.step === 1 || this.params.step === 2) {
+                params.continueToParams = {
+                    props: { ...params.continueToParams },
+                };
+                params.title = `Success`;
+            } else if (this.params.step === 3 || !this.params.step) {
+                params.continueTo = 'hide-window';
+                params.continueButtonLabel = 'Close';
             }
+
+            this.$emit('change-component', {
+                to: transactionSuccessComp,
+                data: { ...params, cardOff: true, windowMode: true },
+            });
         },
 
         toFTM,

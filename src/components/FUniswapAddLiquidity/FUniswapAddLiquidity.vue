@@ -1,8 +1,8 @@
 <template>
-    <div class="funiswap-add-liquidity funiswap">
-        <h1 class="with-back-btn">
-            <f-back-button :route-name="backButtonRoute" />
+    <section class="funiswap-add-liquidity funiswap" :aria-labelledby="labelId">
+        <h1 :id="labelId" class="with-back-btn h1" data-focus>
             Add Liquidity
+            <f-back-button :route-name="backButtonRoute" />
         </h1>
         <br />
 
@@ -32,10 +32,17 @@
                             autocomplete="off"
                             placeholder="0"
                             class="text-input no-style"
+                            :aria-label="`Amount of ${fromToken.symbol}`"
                             @keydown="onInputKeydown"
                         />
                     </span>
-                    <button class="btn small secondary max-amount" @click="onFromMaxAmountClick">Max</button>
+                    <button
+                        class="btn small secondary max-amount"
+                        :aria-label="`Set maximum ${fromToken.symbol} balance`"
+                        @click="onFromMaxAmountClick"
+                    >
+                        Max
+                    </button>
                     <f-select-button
                         collapsed
                         aria-label="pick a token"
@@ -76,11 +83,18 @@
                             autocomplete="off"
                             placeholder="0"
                             class="text-input no-style"
+                            :aria-label="`Amount of ${toToken.symbol}`"
                             @keydown="onInputKeydown"
                         />
                     </span>
                     <template v-if="toToken.address">
-                        <button class="btn small secondary max-amount" @click="onToMaxAmountClick">Max</button>
+                        <button
+                            class="btn small secondary max-amount"
+                            :aria-label="`Set maximum ${toToken.symbol} balance`"
+                            @click="onToMaxAmountClick"
+                        >
+                            Max
+                        </button>
                         <f-select-button
                             collapsed
                             aria-label="pick a token"
@@ -134,7 +148,13 @@
             </div>
 
             <div class="funiswap__submit-cont">
-                <button ref="submitBut" class="btn large" :disabled="submitBtnDisabled" @click="onSubmit">
+                <button
+                    ref="submitBut"
+                    class="btn large"
+                    :disabled="submitBtnDisabled"
+                    :aria-label="submitBtnAriaLabel"
+                    @click="onSubmit"
+                >
                     {{ submitLabel }}
                 </button>
             </div>
@@ -148,6 +168,8 @@
             <f-uniswap-pair-liquidity-info v-else :pair="dPair" :from-token="fromToken" :to-token="toToken" />
         </div>
 
+        <f-message type="error" alert class="not-visible">{{ alertMessage }}</f-message>
+
         <erc20-token-picker-window
             ref="pickFromTokenWindow"
             :tokens="tokenPickerTokens"
@@ -158,7 +180,17 @@
             :tokens="tokenPickerTokens"
             @erc20-token-picked="onToTokenPicked"
         />
-    </div>
+
+        <tx-confirmation-window
+            ref="confirmationWindow"
+            body-min-height="350px"
+            :steps-count="3"
+            :active-step="1"
+            window-title="Add Liquidity"
+            :steps="['Allow', 'Allow', 'Confirm', 'Finished']"
+            @cancel-button-click="onCancelButtonClick"
+        />
+    </section>
 </template>
 
 <script>
@@ -175,11 +207,16 @@ import Erc20TokenPickerWindow from '@/components/windows/Erc20TokenPickerWindow/
 import { TokenPairs } from '@/utils/token-pairs.js';
 import { getAppParentNode } from '@/app-structure.js';
 import appConfig from '../../../app.config.js';
+import { focusElem } from '@/utils/aria.js';
+import FMessage from '@/components/core/FMessage/FMessage.vue';
+import TxConfirmationWindow from '@/components/windows/TxConfirmationWindow/TxConfirmationWindow.vue';
 
 export default {
     name: 'FUniswapAddLiquidity',
 
     components: {
+        TxConfirmationWindow,
+        FMessage,
         FBackButton,
         Erc20TokenPickerWindow,
         FUniswapPairLiquidityInfo,
@@ -217,6 +254,7 @@ export default {
             pairs: [],
             tokenPickerTokens: [],
             addDecimals: 0,
+            labelId: getUniqueId(),
         };
     },
 
@@ -290,6 +328,22 @@ export default {
 
             return dPair && dPair.pairAddress && dPair.totalSupply !== '0x0';
         },
+
+        submitBtnAriaLabel() {
+            let label = '';
+
+            if (!this.submitBtnDisabled) {
+                label = `Supply ${this.fromValue_.toFixed(2)} ${this.fromToken.symbol} and ${this.toValue_.toFixed(
+                    2
+                )} ${this.toToken.symbol}`;
+            }
+
+            return label;
+        },
+
+        alertMessage() {
+            return this.submitLabel !== 'Supply' ? this.submitLabel : '';
+        },
     },
 
     watch: {
@@ -332,7 +386,10 @@ export default {
                 if (_value.address && this.toToken.address) {
                     const dPair = await this.getUniswapPair();
 
-                    if (dPair.pairAddress !== this.dPair.pairAddress) {
+                    if (
+                        dPair.pairAddress !== this.dPair.pairAddress ||
+                        dPair.reservesTimeStamp !== this.dPair.reservesTimeStamp
+                    ) {
                         this.dPair = dPair;
                         this.setTokenPrices();
                     }
@@ -360,7 +417,10 @@ export default {
                 if (_value.address && this.fromToken.address) {
                     const dPair = await this.getUniswapPair();
 
-                    if (dPair.pairAddress !== this.dPair.pairAddress) {
+                    if (
+                        dPair.pairAddress !== this.dPair.pairAddress ||
+                        dPair.reservesTimeStamp !== this.dPair.reservesTimeStamp
+                    ) {
                         this.dPair = dPair;
                         this.setTokenPrices();
                     }
@@ -415,6 +475,10 @@ export default {
             },
             4000
         );
+    },
+
+    mounted() {
+        focusElem(this.$el);
     },
 
     methods: {
@@ -890,21 +954,32 @@ export default {
                 toToken: { ...toToken },
                 slippageTolerance: this.fUniswapSlippageTolerance,
                 steps: 3,
-                step: 1,
+                step: this.$refs.confirmationWindow.activeStep,
                 max: this.maxFromInputValue === this.fromValue,
             };
 
             if (!this.submitDisabled) {
-                this.$router.push({
+                this.$refs.confirmationWindow.changeComponent('funiswap-add-liquidity-confirmation', {
+                    props: { ...params },
+                });
+                this.$refs.confirmationWindow.show();
+
+                /*this.$router.push({
                     name: 'funiswap-add-liquidity-confirmation',
                     params,
-                });
+                });*/
             }
         },
 
         onAccountPicked() {
             this.init(true);
             this.resetInputValues();
+        },
+
+        onCancelButtonClick(cancelBtnClicked) {
+            if (!cancelBtnClicked) {
+                this.init(true);
+            }
         },
     },
 };
