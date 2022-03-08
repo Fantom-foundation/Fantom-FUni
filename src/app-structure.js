@@ -17,22 +17,27 @@ const appStructure = [
                     {
                         id: 'funiswap-swap-confirmation',
                         route: 'funiswap-swap-confirmation',
+                        component: 'f-uniswap-swap-confirmation',
                         _c: [
                             {
                                 id: 'funiswap-swap-transaction-success-message',
                                 route: 'funiswap-swap-transaction-success-message',
+                                component: 'transaction-success-message',
                                 _c: [
                                     {
                                         id: 'funiswap-swap-confirmation2',
                                         route: 'funiswap-swap-confirmation2',
+                                        component: 'f-uniswap-swap-confirmation',
                                         _c: [
                                             {
                                                 id: 'funiswap-swap-transaction-success-message2',
                                                 route: 'funiswap-swap-transaction-success-message2',
+                                                component: 'transaction-success-message',
                                             },
                                             {
                                                 id: 'funiswap-swap-transaction-reject-message2',
                                                 route: 'funiswap-swap-transaction-reject-message2',
+                                                component: 'transaction-reject-message',
                                             },
                                         ],
                                     },
@@ -41,6 +46,7 @@ const appStructure = [
                             {
                                 id: 'funiswap-swap-transaction-reject-message',
                                 route: 'funiswap-swap-transaction-reject-message',
+                                component: 'transaction-reject-message',
                             },
                         ],
                     },
@@ -63,34 +69,41 @@ const appStructure = [
                             {
                                 id: 'funiswap-add-liquidity-confirmation',
                                 route: 'funiswap-add-liquidity-confirmation',
+                                component: 'f-uniswap-add-liquidity-confirmation',
                                 _c: [
                                     {
                                         id: 'funiswap-add-liquidity-transaction-success-message',
                                         route: 'funiswap-add-liquidity-transaction-success-message',
+                                        component: 'transaction-success-message',
                                         _c: [
                                             {
                                                 id: 'funiswap-add-liquidity-confirmation2',
                                                 route: 'funiswap-add-liquidity-confirmation2',
+                                                component: 'f-uniswap-add-liquidity-confirmation',
                                                 _c: [
                                                     {
                                                         id: 'funiswap-add-liquidity-transaction-success-message2',
                                                         route: 'funiswap-add-liquidity-transaction-success-message2',
+                                                        component: 'transaction-success-message',
                                                         _c: [
                                                             {
                                                                 id: 'funiswap-add-liquidity-confirmation3',
                                                                 route: 'funiswap-add-liquidity-confirmation3',
+                                                                component: 'f-uniswap-add-liquidity-confirmation',
                                                                 _c: [
                                                                     {
                                                                         id:
                                                                             'funiswap-add-liquidity-transaction-success-message3',
                                                                         route:
                                                                             'funiswap-add-liquidity-transaction-success-message3',
+                                                                        component: 'transaction-success-message',
                                                                     },
                                                                     {
                                                                         id:
                                                                             'funiswap-add-liquidity-transaction-reject-message3',
                                                                         route:
                                                                             'funiswap-add-liquidity-transaction-reject-message3',
+                                                                        component: 'transaction-reject-message',
                                                                     },
                                                                 ],
                                                             },
@@ -99,6 +112,7 @@ const appStructure = [
                                                     {
                                                         id: 'funiswap-add-liquidity-transaction-reject-message2',
                                                         route: 'funiswap-add-liquidity-transaction-reject-message2',
+                                                        component: 'transaction-reject-message',
                                                     },
                                                 ],
                                             },
@@ -107,6 +121,7 @@ const appStructure = [
                                     {
                                         id: 'funiswap-add-liquidity-transaction-reject-message',
                                         route: 'funiswap-add-liquidity-transaction-reject-message',
+                                        component: 'transaction-reject-message',
                                     },
                                 ],
                             },
@@ -119,22 +134,27 @@ const appStructure = [
                             {
                                 id: 'funiswap-remove-liquidity-confirmation',
                                 route: 'funiswap-remove-liquidity-confirmation',
+                                component: 'f-uniswap-remove-liquidity-confirmation',
                                 _c: [
                                     {
                                         id: 'funiswap-remove-liquidity-transaction-success-message',
                                         route: 'funiswap-remove-liquidity-transaction-success-message',
+                                        component: 'transaction-success-message',
                                         _c: [
                                             {
                                                 id: 'funiswap-remove-liquidity-confirmation2',
                                                 route: 'funiswap-remove-liquidity-confirmation2',
+                                                component: 'f-uniswap-remove-liquidity-confirmation',
                                                 _c: [
                                                     {
                                                         id: 'funiswap-remove-liquidity-transaction-success-message2',
                                                         route: 'funiswap-remove-liquidity-transaction-success-message2',
+                                                        component: 'transaction-success-message',
                                                     },
                                                     {
                                                         id: 'funiswap-remove-liquidity-transaction-reject-message2',
                                                         route: 'funiswap-remove-liquidity-transaction-reject-message2',
+                                                        component: 'transaction-reject-message',
                                                     },
                                                 ],
                                             },
@@ -143,6 +163,7 @@ const appStructure = [
                                     {
                                         id: 'funiswap-remove-liquidity-transaction-reject-message',
                                         route: 'funiswap-remove-liquidity-transaction-reject-message',
+                                        component: 'transaction-reject-message',
                                     },
                                 ],
                             },

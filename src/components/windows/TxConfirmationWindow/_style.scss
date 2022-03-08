@@ -1,0 +1,45 @@
+@import '../../../assets/scss/vars';
+
+.tx-confirmation-f-window {
+    --f-window-padding: 32px 40px;
+
+    max-width: 600px;
+
+    header .title {
+        overflow: initial;
+
+        h2 {
+            font-size: 28px;
+            font-weight: normal;
+        }
+    }
+
+    .transaction-success-message,
+    .transaction-reject-message {
+        margin: 0;
+    }
+
+    &.f-window {
+        .body {
+            overflow: hidden;
+        }
+    }
+
+    .fsteps {
+        --fsteps-padding: 16px;
+
+        &_cont {
+            max-width: 300px;
+        }
+    }
+}
+
+@include prefers-reduced-motion(false) {
+    .view-transition-on {
+        .tx-confirmation-f-window {
+            .body {
+                overflow-x: hidden;
+            }
+        }
+    }
+}

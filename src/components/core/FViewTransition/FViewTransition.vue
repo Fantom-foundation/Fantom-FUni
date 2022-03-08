@@ -32,8 +32,17 @@ export default {
             type: String,
             default: 'slide-right',
         },
+        appNodeId: {
+            type: String,
+            default: '',
+        },
         /** Watch for router changes. */
         watchRoute: {
+            type: Boolean,
+            default: false,
+        },
+        /** Transitions are disabled */
+        disabled: {
             type: Boolean,
             default: false,
         },
@@ -47,12 +56,48 @@ export default {
 
     watch: {
         $route(_to, _from) {
+            if (this.watchRoute) {
+                this.runTransition(_from.name, _to.name);
+            }
+        },
+
+        appNodeId(_value, _oldValue) {
+            this.runTransition(_oldValue, _value);
+        },
+
+        disabled(_value) {
+            if (_value) {
+                this._transitionName = this.transitionName;
+                this.transitionName = '';
+            } else {
+                this.transitionName = this._transitionName;
+            }
+        },
+    },
+
+    created() {
+        /** @type {Tree} */
+        this._viewsStructure = this.viewsStructure.length > 0 ? new Tree(this.viewsStructure) : null;
+        this._transitionName = '';
+    },
+
+    beforeDestroy() {
+        this._viewsStructure = null;
+    },
+
+    methods: {
+        runTransition(_nodeFromName, _nodeToName) {
             const { _viewsStructure } = this;
 
+            if (this.disabled) {
+                this.transitionName = '';
+                return;
+            }
+
             // Choose transition (forward or backward) according to position of route nodes in views structure.
-            if (this.watchRoute && _viewsStructure) {
-                const nodeTo = _viewsStructure.getBy(_to.name, 'route');
-                const nodeFrom = _viewsStructure.getBy(_from.name, 'route');
+            if (_viewsStructure) {
+                const nodeFrom = _viewsStructure.getBy(_nodeFromName, 'id');
+                const nodeTo = _viewsStructure.getBy(_nodeToName, 'id');
 
                 if (nodeTo && nodeFrom) {
                     // if nodeFrom is parent of nodeTo
@@ -61,21 +106,12 @@ export default {
                     } else {
                         this.transitionName = this.backwardTransition;
                     }
+                } else {
+                    this.transitionName = '';
                 }
             }
         },
-    },
 
-    created() {
-        /** @type {Tree} */
-        this._viewsStructure = this.viewsStructure.length > 0 ? new Tree(this.viewsStructure) : null;
-    },
-
-    beforeDestroy() {
-        this._viewsStructure = null;
-    },
-
-    methods: {
         onBeforeEnter() {
             document.body.classList.add('view-transition-on');
         },

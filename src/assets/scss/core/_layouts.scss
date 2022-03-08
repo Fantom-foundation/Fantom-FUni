@@ -1,0 +1,42 @@
+.column-layout {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+
+    &--header-body-footer, &--header-body {
+        > div:nth-child(2) {
+            flex: 1;
+            height: 100%;
+            overflow: auto;
+        }
+    }
+
+    &--body-footer {
+        > div:first-child {
+            flex: 1;
+            height: 100%;
+            overflow: auto;
+        }
+    }
+}
+
+.min-h-100 {
+    display: flex;
+    flex-direction: column;
+
+    > * {
+        flex: 1;
+    }
+}
+
+@include prefers-reduced-motion(false) {
+    .view-transition-on {
+        .view-transition.min-h-100 {
+            flex-direction: row;
+
+            > * {
+                height: 100%;
+            }
+        }
+    }
+}

@@ -17,6 +17,7 @@ import { FNano } from './plugins/fantom-nano.js';
 import { DeFi } from './plugins/defi/defi.js';
 import { Metamask } from './plugins/metamask/metamask.js';
 import 'focus-visible';
+import './global-components.js';
 
 import './wallet.types.js';
 

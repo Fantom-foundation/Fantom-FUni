@@ -3,6 +3,7 @@
         <div
             v-if="isVisible"
             :id="id"
+            ref="window"
             class="f-window"
             :class="cssClass"
             :style="style"
@@ -10,10 +11,11 @@
             :aria-modal="modal"
             :aria-labelledby="_ids.title"
             :aria-describedby="_ids.body"
+            tabindex="-1"
             @keyup="onKeyup"
             @keydown="onKeydown"
         >
-            <div ref="doc" role="document" tabindex="-1" class="doc">
+            <div role="document" class="doc">
                 <header v-if="withHeader">
                     <div :id="_ids.title" class="title">
                         <!-- @slot Default to `title` prop -->
@@ -21,7 +23,7 @@
                             <h2>{{ title }}</h2>
                         </slot>
                     </div>
-                    <div class="controls" @click="onControlsClick">
+                    <div v-if="!noControls" class="controls" @click="onControlsClick">
                         <!-- @slot Default to `close-btn` button -->
                         <slot name="controls">
                             <button class="btn close-btn same-size round light" title="Close window">
@@ -32,7 +34,9 @@
                 </header>
 
                 <div :id="_ids.body" class="body">
-                    <slot></slot>
+                    <div :class="{ 'min-h-100': bodyMinHeight !== 'auto' }" :style="{ minHeight: bodyMinHeight }">
+                        <slot></slot>
+                    </div>
                 </div>
 
                 <footer v-if="withFooter">
@@ -56,7 +60,7 @@
 import { getLengthAndUnit, getComputedStyle } from '../../../utils/css.js';
 import { getUniqueId, throttle } from '../../../utils/index.js';
 import FOverlay from '../FOverlay/FOverlay.vue';
-import { focusTrap, isKey, returnFocus, setReceiveFocusFromAttr } from '../../../utils/aria.js';
+import { focusElem, focusTrap, isKey, returnFocus, setReceiveFocusFromAttr } from '../../../utils/aria.js';
 import ResizeObserver from 'resize-observer-polyfill';
 import { helpersMixin } from '../../../mixins/helpers.js';
 import {
@@ -187,6 +191,11 @@ export default {
             type: Number,
             default: 0,
         },
+        /** Minimal height of window's body. */
+        bodyMinHeight: {
+            type: String,
+            default: 'auto',
+        },
         /** Center window horizontally. */
         centerHorizontally: {
             type: Boolean,
@@ -217,6 +226,11 @@ export default {
             type: Boolean,
             default: true,
         },
+        /** Hide controls in the header. */
+        noControls: {
+            type: Boolean,
+            default: false,
+        },
     },
 
     data() {
@@ -242,6 +256,7 @@ export default {
                 'with-header': this.withHeader,
                 'with-footer': this.withFooter,
                 'no-title': this.noTitle,
+                'no-controls': this.noControls,
                 modal: this.modal,
                 popover: this.popover,
             };
@@ -400,20 +415,20 @@ export default {
          * Focus element with `data-focus` attribute or focus `.doc` by default.
          */
         focus() {
-            const focusElem = this.$el.querySelector('[data-focus]');
+            const focusEl = this.$el.querySelector('[data-focus]');
             let inputElem = null;
 
-            if (focusElem) {
+            if (focusEl) {
                 // try to find element with `name` attribute
-                inputElem = focusElem.querySelector('[name]');
+                inputElem = focusEl.querySelector('[name]');
                 if (inputElem) {
                     inputElem.focus();
                 } else {
-                    focusElem.focus();
+                    focusElem(this.$el);
                 }
             } else {
                 this.$nextTick(() => {
-                    this.$refs.doc.focus();
+                    this.$refs.window.focus();
                 });
             }
         },
