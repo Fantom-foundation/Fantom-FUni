@@ -1,6 +1,6 @@
 <template>
     <div class="check-password-form">
-        <f-form center-form @f-form-submit="$emit('f-form-submit', $event)">
+        <f-form center-form @f-form-submit="onSubmit">
             <fieldset class="">
                 <legend class="not-visible">Confirm Transaction</legend>
 
@@ -33,7 +33,20 @@
                             <br />
                         </div>
 
+                        <p class="max-fee" tabindex="0">Max Fee: {{ dMaxFee }} FTM</p>
+
+                        <advanced-tx-functions ref="atxfuncs" :gas-info="gasInfo" />
+
                         <template v-if="!waiting">
+                            <button
+                                v-if="showCancelButton"
+                                type="button"
+                                class="btn secondary large break-word"
+                                style="max-width: 100%"
+                                @click="onCancelButtonClick"
+                            >
+                                {{ cancelButtonLabel }}
+                            </button>
                             <button
                                 type="submit"
                                 class="btn large break-word"
@@ -68,11 +81,12 @@ import FMessage from '../core/FMessage/FMessage.vue';
 import PulseLoader from 'vue-spinner/src/PulseLoader.vue';
 import { mapGetters } from 'vuex';
 import { formatNumberByLocale } from '@/filters.js';
+import AdvancedTxFunctions from '@/components/AdvancedTxFunctions/AdvancedTxFunctions.vue';
 
 export default {
     name: 'TransactionConfirmationForm',
 
-    components: { FMessage, FPasswordField, FForm, PulseLoader },
+    components: { AdvancedTxFunctions, FMessage, FPasswordField, FForm, PulseLoader },
 
     props: {
         showPasswordField: {
@@ -91,10 +105,27 @@ export default {
             type: String,
             default: 'Send',
         },
+        cancelButtonLabel: {
+            type: String,
+            default: 'Cancel',
+        },
+        showCancelButton: {
+            type: Boolean,
+            default: false,
+        },
         /** Transaction's gas limit */
         gasLimit: {
             type: String,
             default: '',
+        },
+        gasInfo: {
+            type: Object,
+            default() {
+                return {
+                    gasLimit: '',
+                    gasPrice: '',
+                };
+            },
         },
         /** */
         waiting: {
@@ -111,11 +142,16 @@ export default {
             type: String,
             default: '',
         },
+        maxFee: {
+            type: [String, Number],
+            default: '',
+        },
     },
 
     data() {
         return {
             gasPrice: '',
+            dMaxFee: this.maxFee,
         };
     },
 
@@ -139,6 +175,14 @@ export default {
         },
     },
 
+    watch: {
+        maxFee(value) {
+            if (value) {
+                this.dMaxFee = value;
+            }
+        },
+    },
+
     created() {
         this.$fWallet.getGasPrice().then((_gasPrice) => {
             this.gasPrice = _gasPrice;
@@ -148,6 +192,19 @@ export default {
     methods: {
         checkPassword(_value) {
             return _value && _value.length > 0;
+        },
+
+        onCancelButtonClick() {
+            this.$emit('cancel-button-click');
+        },
+
+        onSubmit(event) {
+            event.detail.data = {
+                ...event.detail.data,
+                ...this.$refs.atxfuncs.getGasInfo(),
+            };
+
+            this.$emit('f-form-submit', event);
         },
 
         formatNumberByLocale,

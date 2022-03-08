@@ -29,10 +29,10 @@
                 </div>
             </div>
         </li>
-        <li v-if="maxFee > 0">
+        <li v-if="txFee > 0">
             <div class="row no-collapse">
                 <div class="col-3 f-row-label">Max Fee</div>
-                <div class="col">{{ maxFee }}</div>
+                <div class="col">{{ txFee }}</div>
             </div>
         </li>
         <slot></slot>
@@ -67,7 +67,7 @@ export default {
     },
 
     computed: {
-        ...mapGetters(['currentAccount']),
+        ...mapGetters(['currentAccount', 'txFee']),
     },
 
     methods: {

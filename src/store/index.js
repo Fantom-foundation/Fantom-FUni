@@ -19,6 +19,7 @@ import {
     SET_DARK_MODE,
     SET_FUNISWAP_SLIPPAGE_TOLERANCE,
     SET_RTL_DIR,
+    SET_TX_FEE,
 } from './mutations.type.js';
 import {
     ADD_ACCOUNT,
@@ -88,6 +89,7 @@ export const store = new Vuex.Store({
         // index of active stored account
         activeAccountIndex: -1,
         activeAccountAddress: '',
+        txFee: 0,
     },
 
     getters: {
@@ -155,6 +157,13 @@ export const store = new Vuex.Store({
 
                 return ret;
             };
+        },
+        /**
+         * @param {Object} _state
+         * @return {number}
+         */
+        txFee(_state) {
+            return _state.txFee;
         },
     },
 
@@ -296,6 +305,13 @@ export const store = new Vuex.Store({
             if (from !== to && from >= 0 && to >= 0 && from < accountsLen && to < accountsLen) {
                 _state.accounts.splice(to, 0, _state.accounts.splice(from, 1)[0]);
             }
+        },
+        /**
+         * @param {Object} _state
+         * @param {number} _fee
+         */
+        [SET_TX_FEE](_state, _fee) {
+            _state.txFee = parseFloat(_fee);
         },
     },
 

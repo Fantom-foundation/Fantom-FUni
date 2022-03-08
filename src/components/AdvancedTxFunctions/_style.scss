@@ -1,0 +1,12 @@
+.advancedtxfunctions {
+    details {
+        margin-top: 0;
+        margin-bottom: 16px;
+    }
+
+    &_inputs {
+        display: flex;
+        gap: 16px;
+        padding-top: 16px;
+    }
+}

@@ -1,18 +1,33 @@
 <template>
     <div class="tx-confirmation">
-        <f-card class="f-card-double-padding f-data-layout" :off="cardOff">
-            <slot></slot>
+        <f-card
+            class="f-card-double-padding f-data-layout"
+            :class="[windowMode ? 'column-layout column-layout--body-footer' : '']"
+            :off="cardOff"
+        >
+            <div :class="{ 'center-v': windowMode }">
+                <slot></slot>
+            </div>
 
-            <transaction-confirmation-form
-                :error-message="errorMsg"
-                :show-password-field="!currentAccount.isLedgerAccount && !currentAccount.isMetamaskAccount"
-                :password-label="passwordLabel"
-                :send-button-label="sendButtonLabel"
-                :waiting="waiting"
-                :disabled-submit="disabledSubmit"
-                :gas-limit="dGasLimit"
-                @f-form-submit="onFFormSubmit"
-            />
+            <div>
+                <ledger-message :error="error" @ledger-status-code="onLedgerStatusCode" />
+
+                <transaction-confirmation-form
+                    :error-message="errorMsg"
+                    :show-password-field="!currentAccount.isLedgerAccount && !currentAccount.isMetamaskAccount"
+                    :password-label="passwordLabel"
+                    :send-button-label="sendButtonLabel"
+                    :waiting="waiting"
+                    :disabled-submit="disabledSubmit"
+                    :gas-limit="dGasLimit"
+                    :gas-info="gasInfo"
+                    :cancel-button-label="cancelButtonLabel"
+                    :show-cancel-button="showCancelButton"
+                    :max-fee="tx ? tx._fee : -1"
+                    @f-form-submit="onFFormSubmit"
+                    @cancel-button-click="$emit('cancel-button-click', $event)"
+                />
+            </div>
         </f-card>
 
         <f-window
@@ -61,6 +76,10 @@ import { mapGetters, mapState } from 'vuex';
 import gql from 'graphql-tag';
 import { UPDATE_ACCOUNT_BALANCE } from '../../store/actions.type.js';
 import appConfig from '../../../app.config.js';
+import { SET_TX_FEE } from '@/store/mutations.type.js';
+import { focusElem } from '@/utils/aria.js';
+import LedgerMessage from '@/components/LedgerMessage/LedgerMessage.vue';
+import { U2FStatus } from '@/plugins/fantom-nano.js';
 
 /**
  * Base component for other 'transaction confirmation and send' components.
@@ -68,7 +87,7 @@ import appConfig from '../../../app.config.js';
 export default {
     name: 'TxConfirmation',
 
-    components: { TransactionConfirmationForm, FWindow, FCard },
+    components: { LedgerMessage, TransactionConfirmationForm, FWindow, FCard },
 
     props: {
         /** Transaction object to send */
@@ -88,6 +107,15 @@ export default {
         sendButtonLabel: {
             type: String,
             default: '',
+        },
+        /** Label for button in TransactionConfirmationForm component */
+        cancelButtonLabel: {
+            type: String,
+            default: 'Cancel',
+        },
+        showCancelButton: {
+            type: Boolean,
+            default: false,
         },
         /** Label for password field in TransactionConfirmationForm component */
         passwordLabel: {
@@ -112,6 +140,11 @@ export default {
             type: Boolean,
             default: false,
         },
+        /** Component is placed in FWindow */
+        windowMode: {
+            type: Boolean,
+            default: false,
+        },
         /** Count of usage of temporary password */
         tmpPwdCount: {
             type: Number,
@@ -126,6 +159,7 @@ export default {
             waiting: false,
             disabledSubmit: true,
             dGasLimit: '',
+            gasInfo: {},
         };
     },
 
@@ -160,10 +194,23 @@ export default {
         },
     },
 
+    mounted() {
+        focusElem(this.$el);
+    },
+
     methods: {
         async init() {
             this.dGasLimit = this.tx.gasLimit;
             this.disabledSubmit = false;
+
+            this.gasInfo = {
+                gasLimit: this.tx.gasLimit,
+                gasPrice: this.tx.gasPrice,
+            };
+
+            if (!this.tx.gas && this.tx._error) {
+                this.errorMsg = this.tx._error;
+            }
         },
 
         sendTransaction(_rawTransaction) {
@@ -195,15 +242,34 @@ export default {
         async onFFormSubmit(_event) {
             const { currentAccount } = this;
             const fWallet = this.$fWallet;
-            const pwd = _event.detail.data.pwd;
+            const { data } = _event.detail;
+            const pwd = data.pwd;
             let rawTx = null;
 
-            _event.detail.data.pwd = '';
+            data.pwd = '';
 
             if (currentAccount && this.tx && fWallet.isValidAddress(this.tx.to)) {
                 this.tx.nonce = await fWallet.getTransactionCount(currentAccount.address);
                 this.tx.nonce = `0x${this.tx.nonce.toString(16)}`;
                 this.tx.chainId = appConfig.chainId;
+
+                if (data.gasLimit) {
+                    this.tx.gas = data.gasLimit;
+                    this.tx.gasLimit = data.gasLimit;
+                }
+
+                if (data.gasPrice) {
+                    this.tx.gasPrice = data.gasPrice;
+                }
+
+                if (data.gasLimit && data.gasPrice) {
+                    this.$store.commit(
+                        SET_TX_FEE,
+                        fWallet.WEIToFTM(fWallet.getTransactionFee(data.gasPrice, data.gasLimit))
+                    );
+                } else {
+                    this.$store.commit(SET_TX_FEE, this.tx._fee);
+                }
 
                 if (!this.tx.gas) {
                     this.errorMsg = this.tx._error || 'Transaction Error';
@@ -292,6 +358,20 @@ export default {
                 this.metamaskAccount.toLowerCase() === this.currentAccount.address.toLowerCase() &&
                 this.$metamask.isCorrectChainId()
             );
+        },
+
+        /**
+         * Triggered on 'ledger-status-code' event.
+         *
+         * @param {string} _code
+         */
+        onLedgerStatusCode(_code) {
+            if (_code === U2FStatus.USER_REJECTED_REQUESTED_ACTION) {
+                this.$emit('change-component', {
+                    to: 'transaction-reject-message',
+                    from: this.confirmationCompName,
+                });
+            }
         },
     },
 };

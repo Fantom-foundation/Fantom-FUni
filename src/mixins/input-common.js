@@ -14,7 +14,7 @@ export const inputCommonMixin = {
             default: '',
         },
         value: {
-            type: String,
+            type: [String, Number, Boolean, Object, Date],
             default: '',
         },
         name: {

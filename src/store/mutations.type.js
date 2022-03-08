@@ -13,3 +13,4 @@ export const APPEND_ACCOUNT = 'appendAccount';
 export const REMOVE_ACTIVE_ACCOUNT = 'removeAccount';
 export const SET_ACCOUNT = 'setAccount';
 export const MOVE_ACCOUNT = 'moveAccount';
+export const SET_TX_FEE = 'setTxFee';
