@@ -162,12 +162,7 @@ export default {
     },
 
     created() {
-        if (!this.hasCorrectParams) {
-            // redirect to <this.compName>
-            setTimeout(() => {
-                this.$router.replace({ name: this.compName });
-            }, 3000);
-        } else {
+        if (this.hasCorrectParams) {
             this.setTx();
         }
     },

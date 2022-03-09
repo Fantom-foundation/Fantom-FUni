@@ -122,7 +122,6 @@ export default {
     watch: {
         loading() {
             defer(() => {
-                console.log('lllloading change');
                 focusElem(this.$el);
             });
         },
