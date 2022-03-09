@@ -1,6 +1,8 @@
 <template>
     <div class="funiswap-wrap-ftm funiswap">
-        <f-card>
+        <f-card tag="section" :aria-labelledby="labelId">
+            <h2 :id="labelId" class="not-visible">Wrap FTM</h2>
+
             <div class="funiswap__box">
                 <div class="funiswap__token__balance">
                     <span>From</span>
@@ -98,6 +100,16 @@
                 </button>
             </div>
         </f-card>
+
+        <tx-confirmation-window
+            ref="confirmationWindow"
+            body-min-height="350px"
+            :steps-count="2"
+            :active-step="1"
+            :window-title="`${wrapLabel} FTM`"
+            :steps="['Confirm', 'Finished']"
+            @cancel-button-click="onCancelButtonClick"
+        />
     </div>
 </template>
 
@@ -108,11 +120,13 @@ import { defer, getUniqueId } from '../../utils';
 import FTokenValue from '@/components/core/FTokenValue/FTokenValue.vue';
 import FPlaceholder from '@/components/core/FPlaceholder/FPlaceholder.vue';
 import FCard from '@/components/core/FCard/FCard.vue';
+import TxConfirmationWindow from '@/components/windows/TxConfirmationWindow/TxConfirmationWindow.vue';
 
 export default {
     name: 'FUniswapWrapFTM',
 
     components: {
+        TxConfirmationWindow,
         FCard,
         FPlaceholder,
         FTokenValue,
@@ -145,6 +159,7 @@ export default {
             submitLabel: 'Enter an amount',
             dPair: {},
             addDecimals: 2,
+            labelId: getUniqueId(),
         };
     },
 
@@ -208,6 +223,14 @@ export default {
 
         submitDisabled() {
             return !this.currentAccount || this.correctFromInputValue(this.fromValue) === 0;
+        },
+
+        wrap() {
+            return this.toToken.symbol === 'WFTM';
+        },
+
+        wrapLabel() {
+            return this.wrap ? 'Wrap' : 'Unwrap';
         },
     },
 
@@ -327,6 +350,8 @@ export default {
             this.setToInputValue(this.toValue);
 
             this.setPerPrice();
+
+            this.updateSubmitLabel();
         },
 
         /**
@@ -441,7 +466,7 @@ export default {
                 if (parseFloat(fromValue) > this.maxFromInputValue || parseFloat(toValue) > this.maxToInputValue) {
                     this.submitLabel = `Insufficient ${this.$defi.getTokenSymbol(this.fromToken)} balance`;
                 } else {
-                    this.submitLabel = 'Swap';
+                    this.submitLabel = this.wrapLabel;
                     this.submitBtnDisabled = false;
                 }
             } else if (fromValue && fromValue !== '0') {
@@ -515,16 +540,28 @@ export default {
             };
 
             if (!this.submitDisabled) {
-                this.$router.push({
+                this.$refs.confirmationWindow.changeComponent('funiswap-wrap-ftm-confirmation', {
+                    props: { ...params },
+                });
+                this.$refs.confirmationWindow.show();
+
+                /*this.$router.push({
                     name: 'funiswap-wrap-ftm-confirmation',
                     params,
-                });
+                });*/
             }
         },
 
         onAccountPicked() {
             this.init();
             this.resetInputValues();
+        },
+
+        onCancelButtonClick(cancelBtnClicked) {
+            if (!cancelBtnClicked) {
+                this.fromValue = '';
+                this.init();
+            }
         },
     },
 };

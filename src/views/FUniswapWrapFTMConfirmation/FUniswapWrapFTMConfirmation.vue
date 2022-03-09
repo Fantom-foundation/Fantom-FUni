@@ -7,20 +7,13 @@
             set-tmp-pwd
             send-button-label="Submit"
             :password-label="passwordLabel"
+            :show-cancel-button="true"
+            :window-mode="true"
+            class="min-h-100"
             :on-send-transaction-success="onSendTransactionSuccess"
-            @change-component="onChangeComponent"
+            @cancel-button-click="$emit('cancel-button-click', $event)"
         >
-            <h1 class="with-back-btn">
-                <f-back-button
-                    v-if="!params.steps || params.step === 1"
-                    :route-name="backButtonRoute"
-                    :params="{ fromToken: params.fromToken, toToken: params.toToken }"
-                />
-                Confirm Swap
-                <template v-if="params.steps">({{ params.step }}/{{ params.steps }})</template>
-            </h1>
-
-            <div class="confirmation-info">
+            <div class="confirmation-info" tabindex="0" data-focus>
                 You're trading
                 <span class="price">
                     <f-token-value
@@ -58,7 +51,6 @@ import TxConfirmation from '../../components/TxConfirmation/TxConfirmation.vue';
 import LedgerConfirmationContent from '../../components/LedgerConfirmationContent/LedgerConfirmationContent.vue';
 import { mapGetters } from 'vuex';
 import { toFTM } from '../../utils/transactions.js';
-import FBackButton from '../../components/core/FBackButton/FBackButton.vue';
 import { getAppParentNode } from '../../app-structure.js';
 import FMessage from '../../components/core/FMessage/FMessage.vue';
 import Web3 from 'web3';
@@ -68,13 +60,19 @@ import FTokenValue from '@/components/core/FTokenValue/FTokenValue.vue';
 export default {
     name: 'FUniswapWrapFTMConfirmation',
 
-    components: { FTokenValue, FMessage, FBackButton, LedgerConfirmationContent, TxConfirmation },
+    components: { FTokenValue, FMessage, LedgerConfirmationContent, TxConfirmation },
 
     props: {
         /** Address of smart contract. */
         contractAddress: {
             type: String,
             default: '',
+        },
+        props: {
+            type: Object,
+            default() {
+                return {};
+            },
         },
     },
 
@@ -93,9 +91,7 @@ export default {
          * @return {{fromValue: number, toValue: number, fromToken: DefiToken, toToken: DefiToken}}
          */
         params() {
-            const { $route } = this;
-
-            return $route && $route.params ? $route.params : {};
+            return this.props;
         },
 
         hasCorrectParams() {
@@ -130,12 +126,7 @@ export default {
     },
 
     created() {
-        if (!this.hasCorrectParams) {
-            // redirect to <this.compName>
-            setTimeout(() => {
-                this.$router.replace({ name: this.compName });
-            }, 3000);
-        } else {
+        if (this.hasCorrectParams) {
             this.setTx();
         }
     },
@@ -188,33 +179,13 @@ export default {
                 fromToken: { ...this.params.fromToken },
                 toToken: { ...this.params.toToken },
             };
+            params.continueTo = 'hide-window';
+            params.continueButtonLabel = 'Close';
 
-            this.$router.replace({
-                name: transactionSuccessComp,
-                params,
+            this.$emit('change-component', {
+                to: transactionSuccessComp,
+                data: { ...params, cardOff: true, windowMode: true },
             });
-        },
-
-        /**
-         * Re-target `'change-component'` event.
-         *
-         * @param {object} _data
-         */
-        onChangeComponent(_data) {
-            let transactionRejectComp = `${this.confirmationCompName}-transaction-reject-message`;
-
-            if (_data.to === 'transaction-reject-message') {
-                this.$router.replace({
-                    name: transactionRejectComp,
-                    params: {
-                        continueTo: this.compName,
-                        continueToParams: {
-                            fromToken: { ...this.params.fromToken },
-                            toToken: { ...this.params.toToken },
-                        },
-                    },
-                });
-            }
         },
 
         toFTM,

@@ -202,14 +202,17 @@ const appStructure = [
                     {
                         id: 'funiswap-wrap-ftm-confirmation',
                         route: 'funiswap-wrap-ftm-confirmation',
+                        component: 'f-uniswap-wrap-f-t-m-confirmation',
                         _c: [
                             {
                                 id: 'funiswap-wrap-ftm-transaction-success-message',
                                 route: 'funiswap-wrap-ftm-transaction-success-message',
+                                component: 'transaction-success-message',
                             },
                             {
                                 id: 'funiswap-wrap-ftm-transaction-reject-message',
                                 route: 'funiswap-wrap-ftm-transaction-reject-message',
+                                component: 'transaction-reject-message',
                             },
                         ],
                     },
