@@ -86,8 +86,8 @@ export class Metamask {
                     window.location.reload();
                 });
 
-                this._setChainId(provider.chainId);
                 this._setAccount(await this.getAccounts());
+                this._setChainId(provider.chainId);
             }
         }
 
