@@ -1,0 +1,5 @@
+h1[data-focus]:focus, h2[data-focus]:focus, h3[data-focus]:focus,
+[data-focus-not-visible]:focus, [tabindex="0"]:focus {
+    outline: none;
+    box-shadow: none;
+}
