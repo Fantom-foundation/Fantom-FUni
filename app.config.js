@@ -1,5 +1,5 @@
 const appConfig = {
-    // app title
+    // app title !
     name: 'fUNI',
     // app description
     description: 'fUNI',
