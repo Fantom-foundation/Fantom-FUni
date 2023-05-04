@@ -59,7 +59,11 @@ export default {
                     message = 'Please unlock the device';
                     this.messageType = 'info';
                     statusCode = _error.statusCode;
-                } else if (_error.statusCode === U2FStatus.USER_REJECTED_REQUESTED_ACTION) {
+                } else if (
+                    _error.statusCode === U2FStatus.USER_REJECTED_REQUESTED_ACTION ||
+                    _error.message.indexOf('User rejected') > -1 ||
+                    _error.message.indexOf('denied by the user') > -1
+                ) {
                     message = 'User action rejected';
                     this.messageType = 'info';
                     statusCode = _error.statusCode;
@@ -72,7 +76,7 @@ export default {
                     this.messageType = 'info';
                     statusCode = U2FStatus.DEVICE_INELIGIBLE;
                 } else {
-                    message = _error.toString();
+                    message = _error.message || _error.toString();
                     this.messageType = 'error';
                     console.error(_error);
                 }

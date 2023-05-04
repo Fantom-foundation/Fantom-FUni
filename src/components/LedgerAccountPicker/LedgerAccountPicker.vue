@@ -57,6 +57,12 @@ export default {
             type: Boolean,
             default: false,
         },
+        ledgerApp: {
+            type: Object,
+            default() {
+                return this.$fNano;
+            },
+        },
     },
 
     data() {
@@ -95,7 +101,7 @@ export default {
 
         async waitForDevice() {
             try {
-                await this.$fNano.getVersion();
+                await this.ledgerApp.getVersion();
             } catch (_error) {
                 console.error(_error);
                 this.showLedgerConnectMessage = true;
@@ -110,7 +116,7 @@ export default {
         },
 
         async appendLedgerAccount(_accountId = 0, _addressId = 0) {
-            const account = await this.$fNano.getLedgerAccount(_accountId, _addressId, false);
+            const account = await this.ledgerApp.getLedgerAccount(_accountId, _addressId, false);
             const balance = await this.$fWallet.getBalance(account.address);
 
             account.balance = balance.balance;
@@ -143,7 +149,7 @@ export default {
             if (account) {
                 _event.preventDefault();
 
-                appNode.addLedgerAccount(account);
+                appNode.addLedgerAccount(account, this.ledgerApp);
 
                 this.$emit('ledger-account-picked');
             }

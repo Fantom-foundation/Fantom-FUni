@@ -92,17 +92,13 @@ const appStructure = [
                                                                 component: 'f-uniswap-add-liquidity-confirmation',
                                                                 _c: [
                                                                     {
-                                                                        id:
-                                                                            'funiswap-add-liquidity-transaction-success-message3',
-                                                                        route:
-                                                                            'funiswap-add-liquidity-transaction-success-message3',
+                                                                        id: 'funiswap-add-liquidity-transaction-success-message3',
+                                                                        route: 'funiswap-add-liquidity-transaction-success-message3',
                                                                         component: 'transaction-success-message',
                                                                     },
                                                                     {
-                                                                        id:
-                                                                            'funiswap-add-liquidity-transaction-reject-message3',
-                                                                        route:
-                                                                            'funiswap-add-liquidity-transaction-reject-message3',
+                                                                        id: 'funiswap-add-liquidity-transaction-reject-message3',
+                                                                        route: 'funiswap-add-liquidity-transaction-reject-message3',
                                                                         component: 'transaction-reject-message',
                                                                     },
                                                                 ],

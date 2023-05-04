@@ -50,7 +50,13 @@ export default {
                 },
                 {
                     code: 'ledger',
-                    name: 'Ledger',
+                    name: 'Ledger - Fantom app',
+                    icon: ledgerIcon,
+                    iconFill: true,
+                },
+                {
+                    code: 'ledgerEth',
+                    name: 'Ledger - Ethereum app',
                     icon: ledgerIcon,
                     iconFill: true,
                 },

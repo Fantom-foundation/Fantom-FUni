@@ -47,7 +47,7 @@ import { eventBusMixin } from './mixins/event-bus.js';
 import FNetworkStatus from '@/components/core/FNetworkStatus/FNetworkStatus.vue';
 import MetamaskAccountPickerWindow from '@/components/windows/MetamaskAccountPickerWindow/MetamaskAccountPickerWindow.vue';
 import { mapGetters } from 'vuex';
-import { ADD_METAMASK_ACCOUNT } from '@/store/actions.type.js';
+import { ADD_LEDGER_ETH_ACCOUNT, ADD_METAMASK_ACCOUNT } from '@/store/actions.type.js';
 import { ADD_LEDGER_ACCOUNT } from './store/actions.type.js';
 import { switchRTLDirection } from '@/components/RTLSwitch/RTLSwitch.vue';
 
@@ -100,15 +100,18 @@ export default {
         filtersOptions.currency = this.$store.state.currency;
         filtersOptions.fractionDigits = this.$store.state.fractionDigits;
         this.setTokenPrice(this.$store.state.currency);
+
+        this.$store.commit('adjustAccountTypes');
     },
 
     methods: {
         /**
          * @param {string} _address
+         * @param {string} [accountType]
          * @return {?WalletAccount}
          */
-        accountExists(_address) {
-            return this.getAccountByAddress(_address);
+        accountExists(_address, accountType) {
+            return this.getAccountByAddress(_address, accountType);
         },
 
         async setTokenPrice(_currency = filtersOptions.currency) {
@@ -185,22 +188,25 @@ export default {
             this.pickAccount(_address);
         },
 
-        async addLedgerAccount(_account) {
-            if (!this.accountExists(_account.address)) {
-                await this.$store.dispatch(ADD_LEDGER_ACCOUNT, _account);
+        async addLedgerAccount(_account, ledgerApp) {
+            const ledgerEth = ledgerApp === this.$ledgerEth;
+            const accountType = ledgerEth ? 'ledgerEth' : 'ledger';
+
+            if (!this.accountExists(_account.address, accountType)) {
+                await this.$store.dispatch(ledgerEth ? ADD_LEDGER_ETH_ACCOUNT : ADD_LEDGER_ACCOUNT, _account);
             }
 
-            this.pickAccount(_account.address);
+            this.pickAccount(_account.address, accountType);
         },
 
         /**
          * @param {string} _address
          */
-        pickAccount(_address) {
+        pickAccount(_address, _accountType) {
             this.$store.commit(DEACTIVATE_ACTIVE_ACCOUNT);
 
             if (_address) {
-                this.$store.commit(SET_ACTIVE_ACCOUNT_BY_ADDRESS, _address);
+                this.$store.commit(SET_ACTIVE_ACCOUNT_BY_ADDRESS, { address: _address, accountType: _accountType });
                 this.$store.commit(SET_ACTIVE_ACCOUNT_ADDRESS, _address);
             }
         },

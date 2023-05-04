@@ -1,6 +1,5 @@
 import gql from 'graphql-tag';
 import web3utils from 'web3-utils';
-import Accounts from 'web3-eth-accounts';
 import { fFetch } from '@/plugins/ffetch.js';
 
 // const strongPasswordRE = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{8,})/;
@@ -26,7 +25,6 @@ export let fWallet = null;
 
 export const Web3 = {
     utils: web3utils,
-    accounts: new Accounts(),
 };
 
 /**
@@ -469,26 +467,14 @@ export class FantomWeb3Wallet {
      * @param {String} _privateKey
      * @return {Account}
      */
-    restoreAccountByPrivateKey(_privateKey) {
-        return Web3.accounts.privateKeyToAccount(_privateKey);
-    }
-
-    /**
-     * @param {String} _privateKey
-     * @param {String} _password
-     * @return {EncryptedKeystoreV3Json}
-     */
-    encryptToKeystore(_privateKey, _password) {
-        return Web3.accounts.encrypt(_privateKey, _password);
-    }
 
     /**
      * @param {Object} _keystoreJsonV3
      * @param {String} _password
      * @return {Account}
      */
-    decryptFromKeystore(_keystoreJsonV3, _password) {
-        return Web3.accounts.decrypt(_keystoreJsonV3, _password);
+    decryptFromKeystore() {
+        return null;
     }
 
     /**
@@ -497,13 +483,6 @@ export class FantomWeb3Wallet {
      */
     getKeystoreFileName(_publicAddress) {
         return `UTC--${new Date().toISOString()} -- ${_publicAddress}`;
-    }
-
-    /**
-     * @return {Account}
-     */
-    createAccount() {
-        return Web3.accounts.create();
     }
 
     /**

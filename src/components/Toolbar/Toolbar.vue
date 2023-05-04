@@ -107,7 +107,6 @@ export default {
         },
 
         isLedgerAccount() {
-            console.log('isLedgerAccount', this.currentAccount);
             return this.currentAccount && this.currentAccount.isLedgerAccount;
         },
     },

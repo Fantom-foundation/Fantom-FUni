@@ -12,7 +12,7 @@
             <wallet-list @wallet-picked="onWalletPicked" />
         </f-window>
 
-        <ledger-accounts-window ref="ledgerAccountsWindow" />
+        <ledger-accounts-window ref="ledgerAccountsWindow" :ledger-app="ledgerApp" />
     </div>
 </template>
 
@@ -25,6 +25,12 @@ export default {
     name: 'ConnectWalletWindow',
 
     components: { LedgerAccountsWindow, WalletList, FWindow },
+
+    data() {
+        return {
+            ledgerApp: this.$fNano,
+        };
+    },
 
     methods: {
         show() {
@@ -54,7 +60,13 @@ export default {
                 } catch (_error) {
                     console.log('!!', _error);
                 }
-            } else if (_wallet.code === 'ledger') {
+            } else if (_wallet.code === 'ledger' || _wallet.code === 'ledgerEth') {
+                this.ledgerApp = this.$fNano;
+
+                if (_wallet.code === 'ledgerEth') {
+                    this.ledgerApp = this.$ledgerEth;
+                }
+
                 this.$refs.win.hide('fade-leave-active');
                 this.$refs.ledgerAccountsWindow.show();
             }

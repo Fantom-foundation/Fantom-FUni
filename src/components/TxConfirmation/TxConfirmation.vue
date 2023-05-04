@@ -217,7 +217,7 @@ export default {
             this.$apollo
                 .mutate({
                     mutation: gql`
-                        mutation($tx: Bytes!) {
+                        mutation ($tx: Bytes!) {
                             sendTransaction(tx: $tx) {
                                 hash
                                 from
@@ -303,7 +303,9 @@ export default {
                     try {
                         this.$refs.confirmationWindow.show();
 
-                        rawTx = await this.$fNano.signTransaction(
+                        const ledgerApp = currentAccount.isLedgerEthAccount ? this.$ledgerEth : this.$fNano;
+
+                        rawTx = await ledgerApp.signTransaction(
                             this.tx,
                             currentAccount.accountId,
                             currentAccount.addressId

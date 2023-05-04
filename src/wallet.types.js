@@ -18,6 +18,7 @@
  * @property {string} pendingRewards Hex number.
  * @property {Object} keystore Keystore file.
  * @property {boolean} isLedgerAccount
+ * @property {boolean} isLedgerEthAccount
  * @property {number} accountId Ledger account id.
  * @property {number} addressId Ledger address id.
  */

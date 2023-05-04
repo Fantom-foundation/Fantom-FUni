@@ -20,12 +20,14 @@ import 'focus-visible';
 import './global-components.js';
 
 import './wallet.types.js';
+import { LedgerEth } from '@/plugins/LedgerEth.js';
 
 Vue.use(FFetch);
 Vue.use(FantomWeb3Wallet, {
     apolloClient,
 });
 Vue.use(FNano);
+Vue.use(LedgerEth);
 Vue.use(DeFi, {
     apolloClient,
 });

@@ -29,6 +29,7 @@ import {
     UPDATE_ACCOUNTS_BALANCES,
     REMOVE_ACCOUNT_BY_ADDRESS,
     ADD_METAMASK_ACCOUNT,
+    ADD_LEDGER_ETH_ACCOUNT,
 } from './actions.type.js';
 import { fWallet } from '../plugins/fantom-web3-wallet.js';
 import { arrayEquals } from '@/utils/array.js';
@@ -126,10 +127,18 @@ export const store = new Vuex.Store({
          * @return {function(*=): ?WalletAccount}
          */
         getAccountByAddress(_state) {
-            return (_address) => {
+            return (_address, _accountType) => {
                 const address = fWallet.toChecksumAddress(_address);
 
-                return _state.accounts.find((_item) => _item.address === address);
+                return _state.accounts.find((_item) => {
+                    let ok = _item.address.toLowerCase() === address.toLowerCase();
+
+                    if (ok && _accountType) {
+                        ok = _item.type === _accountType;
+                    }
+
+                    return ok;
+                });
             };
         },
         /**
@@ -139,7 +148,7 @@ export const store = new Vuex.Store({
          * @return {function(string): {index: number, account: WalletAccount}}
          */
         getAccountAndIndexByAddress(_state) {
-            return (_address) => {
+            return (_address, _accountType) => {
                 const { accounts } = _state;
                 const address = fWallet.toChecksumAddress(_address);
                 const ret = {
@@ -148,7 +157,10 @@ export const store = new Vuex.Store({
                 };
 
                 for (let i = 0, len1 = accounts.length; i < len1; i++) {
-                    if (accounts[i].address === address) {
+                    if (
+                        accounts[i].address.toLowerCase() === address.toLowerCase() &&
+                        (!_accountType || _accountType === accounts[i].type)
+                    ) {
                         ret.account = { ...accounts[i] };
                         ret.index = i;
                         break;
@@ -168,6 +180,23 @@ export const store = new Vuex.Store({
     },
 
     mutations: {
+        adjustAccountTypes(_state) {
+            _state.accounts.forEach((account) => {
+                if (!account.type) {
+                    let type = 'metamask';
+
+                    if (account.isLedgerAccount) {
+                        type = 'ledger';
+
+                        if (account.isLedgerEthAccount) {
+                            type = 'ledgerEth';
+                        }
+                    }
+
+                    account.type = type;
+                }
+            });
+        },
         /**
          * @param {Object} _state
          * @param {Object} _breakpoint
@@ -229,20 +258,12 @@ export const store = new Vuex.Store({
         },
         /**
          * @param {Object} _state
-         * @param {string} _address
+         * @param {Object} _account
          */
-        [SET_ACTIVE_ACCOUNT_BY_ADDRESS](_state, _address) {
-            const { accounts } = _state;
-            const address = fWallet.toChecksumAddress(_address);
+        [SET_ACTIVE_ACCOUNT_BY_ADDRESS](_state, _account) {
+            const { index } = this.getters.getAccountAndIndexByAddress(_account.address, _account.accountType);
 
-            _state.activeAccountIndex = -1;
-
-            for (let i = 0, len1 = accounts.length; i < len1; i++) {
-                if (accounts[i].address === address) {
-                    _state.activeAccountIndex = i;
-                    break;
-                }
-            }
+            _state.activeAccountIndex = index;
         },
         /**
          * @param {Object} _state
@@ -264,7 +285,7 @@ export const store = new Vuex.Store({
          */
         [APPEND_ACCOUNT](_state, _account) {
             // if account is not created already
-            if (!_state.accounts.find((_item) => _item.address === _account.address)) {
+            if (!this.getters.getAccountByAddress(_account.address, _account.type)) {
                 _state.accounts.push(_account);
             }
         },
@@ -341,7 +362,7 @@ export const store = new Vuex.Store({
         async [ADD_LEDGER_ACCOUNT](_context, _account) {
             const address = fWallet.toChecksumAddress(_account.address);
 
-            if (!_context.getters.getAccountByAddress(address)) {
+            if (!_context.getters.getAccountByAddress(address, 'ledger')) {
                 const balance = await fWallet.getBalance(address);
                 const account = {
                     ..._account,
@@ -350,6 +371,31 @@ export const store = new Vuex.Store({
                     totalBalance: balance.totalValue,
                     pendingRewards: getPendingRewards(balance),
                     isLedgerAccount: true,
+                    type: 'ledger',
+                    name: `Wallet ${_context.state.accounts.length + 1}`,
+                };
+
+                _context.commit(APPEND_ACCOUNT, account);
+            }
+        },
+        /**
+         * @param {Object} _context
+         * @param {WalletAccount} _account
+         */
+        async [ADD_LEDGER_ETH_ACCOUNT](_context, _account) {
+            const address = fWallet.toChecksumAddress(_account.address);
+
+            if (!_context.getters.getAccountByAddress(address, 'ledgerEth')) {
+                const balance = await fWallet.getBalance(address);
+                const account = {
+                    ..._account,
+                    address,
+                    balance: balance.balance,
+                    totalBalance: balance.totalValue,
+                    pendingRewards: getPendingRewards(balance),
+                    isLedgerAccount: true,
+                    isLedgerEthAccount: true,
+                    type: 'ledgerEth',
                     name: `Wallet ${_context.state.accounts.length + 1}`,
                 };
 
@@ -363,7 +409,7 @@ export const store = new Vuex.Store({
         async [ADD_METAMASK_ACCOUNT](_context, _address) {
             const address = fWallet.toChecksumAddress(_address);
 
-            if (!_context.getters.getAccountByAddress(address)) {
+            if (!_context.getters.getAccountByAddress(address, 'metamask')) {
                 const balance = await fWallet.getBalance(address);
                 const account = {
                     address,
@@ -371,6 +417,7 @@ export const store = new Vuex.Store({
                     totalBalance: balance.totalValue,
                     pendingRewards: getPendingRewards(balance),
                     isMetamaskAccount: true,
+                    type: 'metamask',
                     name: `Wallet ${_context.state.accounts.length + 1}`,
                 };
 
@@ -414,7 +461,7 @@ export const store = new Vuex.Store({
             const account = _account || _context.getters.currentAccount;
 
             if (account) {
-                const { index } = _context.getters.getAccountAndIndexByAddress(account.address);
+                const { index } = _context.getters.getAccountAndIndexByAddress(account.address, account.type);
                 let balance = await fWallet.getBalance(account.address, false, true);
                 let pendingRewards = getPendingRewards(balance);
 
@@ -439,7 +486,10 @@ export const store = new Vuex.Store({
          * @param {Object} _accountData
          */
         [UPDATE_ACCOUNT](_context, _accountData) {
-            const { account, index } = _context.getters.getAccountAndIndexByAddress(_accountData.address);
+            const { account, index } = _context.getters.getAccountAndIndexByAddress(
+                _accountData.address,
+                _accountData.type
+            );
 
             if (account) {
                 const name = _accountData.name !== account.address ? _accountData.name : '';

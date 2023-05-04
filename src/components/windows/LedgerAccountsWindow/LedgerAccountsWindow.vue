@@ -16,7 +16,11 @@
                 </button>
             </template>
 
-            <ledger-account-picker show-try-again-button @ledger-account-picked="onLedgerAccountPicked" />
+            <ledger-account-picker
+                :ledger-app="ledgerApp"
+                show-try-again-button
+                @ledger-account-picked="onLedgerAccountPicked"
+            />
         </f-window>
     </div>
 </template>
@@ -29,6 +33,15 @@ export default {
     name: 'LedgerAccountsWindow',
 
     components: { FWindow, LedgerAccountPicker },
+
+    props: {
+        ledgerApp: {
+            type: Object,
+            default() {
+                return this.$fNano;
+            },
+        },
+    },
 
     methods: {
         show() {
