@@ -24,6 +24,12 @@ export default {
             navigation: [
                 {
                     url: {
+                        name: 'funiswap-wrap-ftm',
+                    },
+                    title: 'Wrap FTM',
+                },
+                {
+                    url: {
                         name: 'funiswap-swap',
                     },
                     title: 'Swap',
@@ -33,12 +39,6 @@ export default {
                         name: 'funiswap-pools',
                     },
                     title: 'Pools',
-                },
-                {
-                    url: {
-                        name: 'funiswap-wrap-ftm',
-                    },
-                    title: 'Wrap FTM',
                 },
             ],
         };

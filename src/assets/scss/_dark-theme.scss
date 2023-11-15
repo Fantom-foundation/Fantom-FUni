@@ -1,13 +1,13 @@
 :root.dark-theme {
     //--f-primary-color: #286FF6;
 
-    --f-dark-color: #222431;
-    --f-darker-color: #2C2E3F;
-    --f-darker-color-2: #33364a;
+    --f-dark-color: #111112;
+    --f-darker-color: #222223;
+    --f-darker-color-2: #313030;
     //--f-darker-color-3: #41455e;
-    --f-darker-color-3: #3e425b;
-    --f-darker-color-4: #252736;
-    --f-lighter-color: #8997b1;
+    --f-darker-color-3: #494949;
+    --f-darker-color-4: #2d2d2e;
+    --f-lighter-color: #808080;
 
     --f-orange-color: #F8782A;
     --f-orange-color-darker: #de6b26;
@@ -28,7 +28,7 @@
 
     .f-header {
         color: #fff;
-        border-bottom-color: var(--f-darker-color-2);
+        border-bottom: 1px solid var(--f-darker-color);
 
         a, a:visited {
             --f-link-color: #fff;
