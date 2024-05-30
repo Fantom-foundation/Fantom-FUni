@@ -3,8 +3,9 @@
     "version": "0.1.0",
     "scripts": {
         "serve": "vue-cli-service serve",
+        "serve.production": "export NODE_OPTIONS=--openssl-legacy-provider && vue-cli-service serve --mode production",
         "serve:chrome-extension:app": "vue-cli-service serve --mode chrome-extension-development",
-        "build": "vue-cli-service build",
+        "build": "export NODE_OPTIONS=--openssl-legacy-provider && vue-cli-service build",
         "lint": "vue-cli-service lint",
         "format:prettier": "prettier \"**/*.vue\" --write --ignore-path .gitignore",
         "i18n:report": "vue-cli-service i18n:report --src './src/**/*.?(js|vue)' --locales './src/locales/**/*.json'"
